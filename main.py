@@ -1,35 +1,53 @@
 import rozvoj
+import time
+import pomocne
 # zjednodušení - from rozvoj import Soustava, pak mi stačí psát Soustava
 
 if __name__ == "__main__":
-    print("Vytvářím základní soustavu")
-    zlaty_rez = rozvoj.Soustava('x**3-x**2-x-1',znamenko=-1,levy_kraj='(1-x)/2')
-    #zlaty_rez.nalezeni_rozvoje_leveho_kraje(20)
-    #zlaty_rez.nalezeni_rozvoje_praveho_kraje(20)
+    zacatek=time.time()
+    Zn=[1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+    levy=['0','-1/2','-x/(x+1)','-x/3','-0.6','(x-3)/2','-4*x/13','(2-2*x)/3','-0.55','-1/x','-0.5','(1-x)/2']
+    #cyklus = zacatek
+    for i in range(12):
+        start_cyklu=time.time()
+        print("Vytvářím základní soustavu znamenko {} a okraj {}".format(Zn[i], levy[i]))
+        tribonacci = rozvoj.Soustava('x**3-x**2-x-1',znamenko=Zn[i],levy_kraj=levy[i])
+        print("Rozvoj leveho kraje: ")
+        print(tribonacci.rozvoj_leveho_kraje.rozvoj_bodu)
+        print(tribonacci.rozvoj_leveho_kraje.perioda)
+        print("Snaha o rozvoj praveho kraje:")
+        print(tribonacci.rozvoj_praveho_kraje.rozvoj_bodu)
+        print(tribonacci.rozvoj_praveho_kraje.perioda)
+        print("Následuje po řádcích mink, maxk, vzdálenosti:")
+        tribonacci.vytvoreni_mink_maxk(15)
+        print(tribonacci.mink)
+        print(tribonacci.maxk)
+        tribonacci.spocteni_vzdalenosti(15)
+        print(tribonacci.delta)
+        cyklus=time.time()-start_cyklu
+        print("Cyklus trval {0:.2f} s".format(cyklus))
+    #print("Nyní se podíváme na zlatý řez pro kladnou bázi: ")
+    #levy2=['0','-1+1/x','-1/x','(-x+1)/2','-x/2','']
+
+    print("Nový příklad")
+    zlaty_rez=rozvoj.Soustava('x**2-x-1',1,'-x**2/(x**2+1)')
+    print("Rozvoj leveho kraje: ")
     print(zlaty_rez.rozvoj_leveho_kraje.rozvoj_bodu)
     print(zlaty_rez.rozvoj_leveho_kraje.perioda)
+    print("Snaha o rozvoj praveho kraje:")
     print(zlaty_rez.rozvoj_praveho_kraje.rozvoj_bodu)
     print(zlaty_rez.rozvoj_praveho_kraje.perioda)
-    #puvodni = [-1, 0, 0, -1, 0, 1, 0, -1, 0, 0, 0, 0, -1, 1, 0, -1, 0, 0, 0, 0, 1, -1, 0, 0, 1]
-    #print(puvodni==zlaty_rez.rozvoj_leveho_kraje)
-    #print(zlaty_rez.perioda_leveho_kraje)
-    '''print(zlaty_rez.porovnej_retezce([],[]))
-    print(zlaty_rez.porovnej_retezce([1],[]))
-    print(zlaty_rez.porovnej_retezce([0,0],[0,1]))
-    print(zlaty_rez.porovnej_retezce([0, 1,1], [0, 1,2]))
-    print(zlaty_rez.je_retezec_zleva_pripustny([]))
-    print(zlaty_rez.je_retezec_zprava_pripustny([]))
-    print(zlaty_rez.je_retezec_zleva_pripustny([1,0,-1,0,1,0,-1,0]))
-    print(zlaty_rez.je_retezec_zprava_pripustny([1,0,-1,0,1,0,-1,0]))
-    print(zlaty_rez.je_retezec_zleva_pripustny([1,0,-1,-1,-1,-1]))
-    print(zlaty_rez.je_retezec_zprava_pripustny([1,0,-1,-1,-1,-1]))
-    print("Zkouška")
-    print(zlaty_rez.je_retezec_pripustny([]))
-    print(zlaty_rez.je_retezec_pripustny([1,0,-1,0,1,0,-1,0]))
-    print(zlaty_rez.je_retezec_pripustny([1,0,-1,-1,-1,-1]))'''
+    zlaty_rez.vytvoreni_mink_maxk(10)
+    zlaty_rez.spocteni_vzdalenosti(10)
+    print("Mink = {}".format(zlaty_rez.mink))
+    print("Maxk = {}".format(zlaty_rez.maxk))
+    print("Vzdálenosti {}".format(zlaty_rez.delta))
 
-    print(zlaty_rez.prilep_periodu([1,0,1,0,1,1],2,9))
-    print(zlaty_rez.prilep_periodu([1,0,0,1,-1],None,8))
+    konec=time.time() - zacatek
+    print("Celé to trvalo {0:.2f} s".format(konec))
+
+
+
 
 
 
