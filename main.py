@@ -29,19 +29,21 @@ if __name__ == "__main__":
     #print("Nyní se podíváme na zlatý řez pro kladnou bázi: ")
     #levy2=['0','-1+1/x','-1/x','(-x+1)/2','-x/2','']
 
-    print("Nový příklad")
+    # print("Nový příklad")
     zlaty_rez=rozvoj.Soustava('x**2-x-1',1,'-x**2/(x**2+1)')
-    print("Rozvoj leveho kraje: ")
-    print(zlaty_rez.rozvoj_leveho_kraje.rozvoj_bodu)
-    print(zlaty_rez.rozvoj_leveho_kraje.perioda)
-    print("Snaha o rozvoj praveho kraje:")
-    print(zlaty_rez.rozvoj_praveho_kraje.rozvoj_bodu)
-    print(zlaty_rez.rozvoj_praveho_kraje.perioda)
-    zlaty_rez.vytvoreni_mink_maxk(10)
-    zlaty_rez.spocteni_vzdalenosti(10)
-    print("Mink = {}".format(zlaty_rez.mink))
-    print("Maxk = {}".format(zlaty_rez.maxk))
-    print("Vzdálenosti {}".format(zlaty_rez.delta))
+    # print("Rozvoj leveho kraje: ")
+    # print(zlaty_rez.rozvoj_leveho_kraje.rozvoj_bodu)
+    # print(zlaty_rez.rozvoj_leveho_kraje.perioda)
+    # print("Snaha o rozvoj praveho kraje:")
+    # print(zlaty_rez.rozvoj_praveho_kraje.rozvoj_bodu)
+    # print(zlaty_rez.rozvoj_praveho_kraje.perioda)
+    # zlaty_rez.vytvoreni_mink_maxk(10)
+    # zlaty_rez.spocteni_vzdalenosti(10)
+    # print("Mink = {}".format(zlaty_rez.mink))
+    # print("Maxk = {}".format(zlaty_rez.maxk))
+    # print("Vzdálenosti {}".format(zlaty_rez.delta))
+
+    #ahoj=rozvoj.Soustava('x**2-5*x+6',1,'0')
 
     konec=time.time() - zacatek
     print("Celé to trvalo {0:.2f} s".format(konec))

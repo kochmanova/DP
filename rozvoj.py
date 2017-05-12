@@ -9,7 +9,8 @@ MALO = 2e-8
 
 class Soustava(object):
     """třída Soustava"""
-    """pro zadanou fci, levý kraj a sgn báze vypočte bázi, ..."""
+    """pro zadanou fci, levý kraj a sgn báze vypočte bázi, rozvoj levého a pravého kraje"""
+    """s možností spočítat mink,maxk a jejich vzdálenosti"""
 
     def __init__(self, fce='x**3-x**2-x-1', znamenko=1, levy_kraj='-x/3'):
         """funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží znaménko, bázi, levý kraj, rozvoje"""
@@ -28,9 +29,9 @@ class Soustava(object):
         polebazi = [i for i in reseni if np.isreal(np.complex(i))]
         if len(polebazi) < 1:
             raise ValueError("Špatně zvolená rovnice. Rovnice musí mít alespoň jeden reálný kořen.")
-        # Máme ověřeno, že polebazi[0] je největší?
         baze = [i for i in polebazi if i > 1]
         if len(baze) != 1:
+            #může mít báze více reálných kořenů > 1
             raise ValueError(
                 "Bázi je nutno volit tak, aby měla jeden reálný kořen větší jak 1. Špatně zvolená rovnice.")
         self.beta = baze[0]
@@ -43,8 +44,7 @@ class Soustava(object):
         if (kraj > 0) or (kraj < -1):
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
         if (self.znamenko == -1) and ((-kraj / self.beta - EPS > (kraj + 1)) or -(kraj + 1) / self.beta + EPS < kraj):
-            # Je tu snížená přesnost čísel, tedy neporovnávám úplně ty dvě čísla, protože jsem měla problémy u -beta/(beta+1)
-            # if (self.znamenko == -1) and ((-self.beta/(self.beta+1) >= kraj) or (-1/(self.beta+1)<kraj)):
+            # Je tu snížená přesnost čísel, tedy neporovnávám úplně ty dvě čísla, protože jsem měla problémy u el=-beta/(beta+1)
             raise ValueError("Nejsou splněny základní požadavky, interval není invariantní vůči posunutí.")
         self.levy_kraj = symbolicky_levy_kraj
         self.pravy_kraj = symbolicky_levy_kraj + 1 - EPS
@@ -93,8 +93,6 @@ class Soustava(object):
         if (perioda_druheho is not None):
             pridam_nuly = [0] * perioda_druheho
             pracovni_retezec_1.extend(pridam_nuly)
-        # delka_prvniho = len(pracovni_retezec_1)
-        # delka_druheho = len(pracovni_retezec_2)
         if len(pracovni_retezec_1) > len(pracovni_retezec_2):
             pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, len(pracovni_retezec_1))
         elif len(pracovni_retezec_2) > len(pracovni_retezec_1):
@@ -110,8 +108,6 @@ class Soustava(object):
     def je_retezec_zleva_pripustny(self, retezec, perioda_retezce):
         """funkce, která zjistí, zda je retezec a libovolný jeho sufix >= rozvoj_leveho_kraje.rozvoj_bodu"""
         pracovni_retezec = retezec.copy()
-        # if len(pracovni_retezec)> len(self.rozvoj_leveho_kraje.rozvoj_bodu):
-        # delka_kraje = len(self.rozvoj_leveho_kraje)
         while len(pracovni_retezec) > 0:
             if self.porovnej_retezce(self.rozvoj_leveho_kraje.rozvoj_bodu, pracovni_retezec,
                                      self.rozvoj_leveho_kraje.perioda, perioda_retezce) > 0:
@@ -216,35 +212,9 @@ class Rozvoj(object):
             self.bod = bod
         self.perioda = None
         self.rozvoj_bodu = None
-        # self.nalezeni_rozvoje(pocet_cifer)
-        # self.perioda2 = None
-        # self.rozvoj_bodu2 = None
-        self.nalezeni_rozvoje2(pocet_cifer)
+        self.nalezeni_rozvoje(pocet_cifer)
 
     def nalezeni_rozvoje(self, pocet_cifer=30):
-        """pomocná funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer"""
-        perioda = False
-        iterace = list()
-        rozvoj = list()
-        iterace.append(self.bod)
-        i = 1
-        while (not perioda) and (i < pocet_cifer):
-            transformace = self.znamenko * self.baze * iterace[i - 1] - self.levy_kraj
-            iterace.append(
-                sp.N(self.znamenko * self.baze * iterace[i - 1] - sp.floor(transformace).subs({x: self.baze}),
-                     n=40))  # n určuje přesnost vyčíslení
-            # print(sp.N(transformace.subs({x: self.baze}), n=30))
-            rozvoj.append(sp.floor(sp.N(transformace.subs({x: self.baze}), n=30)))
-            # POZOR - nutno nějak zapracovat s přesností, ještě to dost zlobí, někde je asi chyba...
-            for j in range(len(iterace)):
-                if (abs(iterace[j] - iterace[i]) < MALO) and (j != i):
-                    perioda = True
-                    self.perioda = i - j
-            i += 1
-        print(iterace)
-        self.rozvoj_bodu = rozvoj
-
-    def nalezeni_rozvoje2(self, pocet_cifer=30):
         """pomocná funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer"""
         perioda = False
         transformace = list()
@@ -261,5 +231,4 @@ class Rozvoj(object):
                     perioda = True
                     self.perioda = i - j
             i += 1
-        # print(transformace)
         self.rozvoj_bodu = rozvoj
