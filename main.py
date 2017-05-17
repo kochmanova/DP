@@ -1,17 +1,16 @@
 import rozvoj
 import time
-import pomocne
-# zjednodušení - from rozvoj import Soustava, pak mi stačí psát Soustava
 
 if __name__ == "__main__":
-    zacatek=time.time()
-    Zn=[1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-    levy=['0','-1/2','-x/(x+1)','-x/3','-0.6','(x-3)/2','-4*x/13','(2-2*x)/3','-0.55','-1/x','-0.5','(1-x)/2']
-    #cyklus = zacatek
+    zacatek = time.time()
+    Zn = [1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
+            '(1-x)/2']
+    # cyklus = zacatek
     for i in range(12):
-        start_cyklu=time.time()
+        start_cyklu = time.time()
         print("Vytvářím základní soustavu znamenko {} a okraj {}".format(Zn[i], levy[i]))
-        tribonacci = rozvoj.Soustava('x**3-x**2-x-1',znamenko=Zn[i],levy_kraj=levy[i])
+        tribonacci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
         print("Rozvoj leveho kraje: ")
         print(tribonacci.rozvoj_leveho_kraje.rozvoj_bodu)
         print(tribonacci.rozvoj_leveho_kraje.perioda)
@@ -24,32 +23,8 @@ if __name__ == "__main__":
         print(tribonacci.maxk)
         tribonacci.spocteni_vzdalenosti(15)
         print(tribonacci.delta)
-        cyklus=time.time()-start_cyklu
+        cyklus = time.time() - start_cyklu
         print("Cyklus trval {0:.2f} s".format(cyklus))
-    #print("Nyní se podíváme na zlatý řez pro kladnou bázi: ")
-    #levy2=['0','-1+1/x','-1/x','(-x+1)/2','-x/2','']
 
-    # print("Nový příklad")
-    zlaty_rez=rozvoj.Soustava('x**2-x-1',1,'-x**2/(x**2+1)')
-    # print("Rozvoj leveho kraje: ")
-    # print(zlaty_rez.rozvoj_leveho_kraje.rozvoj_bodu)
-    # print(zlaty_rez.rozvoj_leveho_kraje.perioda)
-    # print("Snaha o rozvoj praveho kraje:")
-    # print(zlaty_rez.rozvoj_praveho_kraje.rozvoj_bodu)
-    # print(zlaty_rez.rozvoj_praveho_kraje.perioda)
-    # zlaty_rez.vytvoreni_mink_maxk(10)
-    # zlaty_rez.spocteni_vzdalenosti(10)
-    # print("Mink = {}".format(zlaty_rez.mink))
-    # print("Maxk = {}".format(zlaty_rez.maxk))
-    # print("Vzdálenosti {}".format(zlaty_rez.delta))
-
-    #ahoj=rozvoj.Soustava('x**2-5*x+6',1,'0')
-
-    konec=time.time() - zacatek
+    konec = time.time() - zacatek
     print("Celé to trvalo {0:.2f} s".format(konec))
-
-
-
-
-
-

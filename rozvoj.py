@@ -8,12 +8,20 @@ MALO = 2e-8
 
 
 class Soustava(object):
-    """třída Soustava"""
-    """pro zadanou fci, levý kraj a sgn báze vypočte bázi, rozvoj levého a pravého kraje"""
-    """s možností spočítat mink,maxk a jejich vzdálenosti"""
+    """třída Soustava
+    pro zadanou fci, levý kraj a sgn báze vypočte bázi, rozvoj levého a pravého kraje
+    s možností spočítat mink,maxk a jejich vzdálenosti"""
 
     def __init__(self, fce='x**3-x**2-x-1', znamenko=1, levy_kraj='-x/3'):
-        """funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží znaménko, bázi, levý kraj, rozvoje"""
+        """funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží
+         znaménko, bázi, levý kraj, rozvoje"""
+        # inicializace proměnných
+        self.beta = None
+        self.levy_kraj = None
+        self.delta = None
+        self.maxk = None
+        self.mink = None
+        self.pravy_kraj = None
         self.fce = fce
         if (znamenko != 1) and (znamenko != -1):
             raise ValueError("Báze může být kladná s hodnotou 1 nebo záporná s hodnotou -1.")
@@ -31,38 +39,37 @@ class Soustava(object):
             raise ValueError("Špatně zvolená rovnice. Rovnice musí mít alespoň jeden reálný kořen.")
         baze = [i for i in polebazi if i > 1]
         if len(baze) != 1:
-            #může mít báze více reálných kořenů > 1
+            # může mít báze více reálných kořenů > 1 ?
             raise ValueError(
                 "Bázi je nutno volit tak, aby měla jeden reálný kořen větší jak 1. Špatně zvolená rovnice.")
         self.beta = baze[0]
 
     def vycisleni_leveho_kraje(self, levy_kraj):
-        """funkce, která pro levý kraj, jak symbolický vyjádřený pomocí bety(x), tak hodnotu, zjistí, zda splňuje námi požadované podmínky a přiřadí ho do proměnné"""
+        """funkce, která pro levý kraj, jak symbolický vyjádřený pomocí bety(x), tak hodnotu, zjistí, zda
+        splňuje námi požadované podmínky a přiřadí ho do proměnné"""
         symbolicky_levy_kraj = sp.sympify(levy_kraj)
         kraj = sp.N(symbolicky_levy_kraj.subs({x: self.beta}))
         print(kraj)
         if (kraj > 0) or (kraj < -1):
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
         if (self.znamenko == -1) and ((-kraj / self.beta - EPS > (kraj + 1)) or -(kraj + 1) / self.beta + EPS < kraj):
-            # Je tu snížená přesnost čísel, tedy neporovnávám úplně ty dvě čísla, protože jsem měla problémy u el=-beta/(beta+1)
             raise ValueError("Nejsou splněny základní požadavky, interval není invariantní vůči posunutí.")
         self.levy_kraj = symbolicky_levy_kraj
         self.pravy_kraj = symbolicky_levy_kraj + 1 - EPS
 
     def nalezeni_rozvoje_leveho_kraje(self, pocet_cifer=30):
-        """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj levého kraje a jeho periodu"""
-        # tyto hodnoty lze pak nalézt v self.rozvoj_leveho_kraje.rozvoj_bodu a self.rozvoj_leveho_kraje.perioda"""
+        """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj levého kraje a jeho periodu
+        tyto hodnoty lze pak nalézt v self.rozvoj_leveho_kraje.rozvoj_bodu a self.rozvoj_leveho_kraje.perioda"""
         self.rozvoj_leveho_kraje = Rozvoj(self.beta, self.levy_kraj, self.levy_kraj, self.znamenko, True, pocet_cifer)
 
     def nalezeni_rozvoje_praveho_kraje(self, pocet_cifer=30):
-        """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj pravého kraje a jeho periodu"""
-        # tyto hodnoty lze pak nalézt v self.rozvoj_leveho_kraje.rozvoj_bodu a self.rozvoj_leveho_kraje.perioda"""
-        # hodnota pravého kraje je levý kraj + 1 - EPS
+        """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj pravého kraje a jeho periodu
+        tyto hodnoty lze pak nalézt v self.rozvoj_leveho_kraje.rozvoj_bodu a self.rozvoj_leveho_kraje.perioda"""
         self.rozvoj_praveho_kraje = Rozvoj(self.beta, self.pravy_kraj, self.levy_kraj, self.znamenko, True, pocet_cifer)
 
     def prilep_periodu(self, retezec, perioda, delka_retezce):
-        """pomocná funkce, která k retezci v případě periody přilepí periodu tolikrát, aby délka řetězce byla rovna delka_retezce"""
-        # v případě, že rětezec nemá periodu, mu přilepí tolik 0, aby jeho délka byla rovna delka_retezce
+        """pomocná funkce, která k retezci v případě periody přilepí periodu tolikrát, aby délka řetězce byla rovna
+        delka_retezce v případě, že rětezec nemá periodu, mu přilepí tolik 0, aby jeho délka byla rovna delka_retezce"""
         delka = len(retezec)
         if (perioda is None):
             pridam_nuly = [0] * (delka_retezce - delka)
@@ -77,20 +84,19 @@ class Soustava(object):
         return retezec
 
     def porovnej_retezce(self, prvni_retezec, druhy_retezec, perioda_prvniho, perioda_druheho):
-        """Funkce, která dokáže porovnat dva řetězce i různé délky"""
-        # vrátí výsledek: -1: prvni_retezec < druhy_retezec
-        #                  1: prvni_retezec > druhy_retezec
-        #                  0: prvni_retezec = druhy_retezec
-        # POZOR - nutno se trochu zamyslet, jak je to v případě dvou periodických řetězců, jde to
+        """Funkce, která dokáže porovnat dva řetězce i různé délky
+         vrátí výsledek: -1: prvni_retezec < druhy_retezec
+                          1: prvni_retezec > druhy_retezec
+                          0: prvni_retezec = druhy_retezec"""
         if (perioda_prvniho is not None) and (perioda_druheho is not None):
             raise ValueError("V současnosti neumíme a neporovnáváme dva řetězce s periodou!")
         # Nyní zjistíme, který z řetězců je periodický
         pracovni_retezec_1 = prvni_retezec.copy()
         pracovni_retezec_2 = druhy_retezec.copy()
-        if (perioda_prvniho is not None):
+        if perioda_prvniho is not None:
             pridam_nuly = [0] * perioda_prvniho
             pracovni_retezec_2.extend(pridam_nuly)
-        if (perioda_druheho is not None):
+        if perioda_druheho is not None:
             pridam_nuly = [0] * perioda_druheho
             pracovni_retezec_1.extend(pridam_nuly)
         if len(pracovni_retezec_1) > len(pracovni_retezec_2):
@@ -126,7 +132,8 @@ class Soustava(object):
         return True
 
     def je_retezec_pripustny(self, retezec, perioda_retezce):
-        """funkce, která spojuje fce je_retezec_zleva_pripustny a fci je_retezec_zprava_pripustny a určuje, zda je retezec připustný"""
+        """funkce, která spojuje fce je_retezec_zleva_pripustny a fci je_retezec_zprava_pripustny a určuje,
+        zda je retezec připustný"""
         if self.je_retezec_zprava_pripustny(retezec, perioda_retezce) \
                 and self.je_retezec_zleva_pripustny(retezec, perioda_retezce):
             return True
@@ -175,7 +182,7 @@ class Soustava(object):
                     if not self.je_retezec_pripustny(maxi, None):
                         maxi = mozne_max1
                 mk += 1
-            mink.append(mini) # do mink, resp. maxk se na pozici k připojuje řetezec mink pro konkrétní k
+            mink.append(mini)  # do mink, resp. maxk se na pozici k připojuje řetezec mink pro konkrétní k
             maxk.append(maxi)
         self.mink = mink
         self.maxk = maxk
@@ -183,25 +190,29 @@ class Soustava(object):
     def gamma_funkce(self, retezec):
         """Tato funkce pro zadaný konečný řetězec ho převede do desítkové soustavy"""
         gamma = 0
-        obraceny_retezec = retezec[::-1] #přetočíme pro jednodušší počty
+        obraceny_retezec = retezec[::-1]  # přetočíme pro jednodušší počty
         for i in range(len(retezec)):
             gamma += (self.znamenko * self.beta) ** i * obraceny_retezec[i]
-        return sp.N(gamma,n=20)
+        return sp.N(gamma, n=20)
 
-    def spocteni_vzdalenosti(self,k):
+    def spocteni_vzdalenosti(self, k):
         """Tato funkce pro zadaná mink a maxk spočte jednotlivé vzdálenosti podle vzorce vzdálenost = abs()"""
-        delta=list()
+        delta = list()
         for i in range(k):
-            vzdalenost=sp.N(abs((self.znamenko*self.beta)**i + self.gamma_funkce(self.mink[i])-self.gamma_funkce(self.maxk[i])), n=20)
+            vzdalenost = sp.N(abs(
+                (self.znamenko * self.beta) ** i + self.gamma_funkce(self.mink[i]) - self.gamma_funkce(self.maxk[i])),
+                n=20)
             delta.append(vzdalenost)
-        self.delta=delta
+        self.delta = delta
 
 
 class Rozvoj(object):
-    '''Třída pro rozvoj libovolného čísla v intervalu <l,l+1), nutno znát kladnou/zápornou (znaménko) bázi beta, bod, l, a počet cifer'''
+    """Třída pro rozvoj libovolného čísla v intervalu <l,l+1), nutno znát kladnou/zápornou (znaménko)
+     bázi beta, bod, l, a počet cifer"""
 
     def __init__(self, baze, bod, levy_kraj, znamenko=1, symbolicke=False, pocet_cifer=30):
-        """funkce, která se spustí automaticky s vytvořením instance Rozvoj, uloží si jednotlivé hodnoty a spočte rozvoj bodu s jeho periodou"""
+        """funkce, která se spustí automaticky s vytvořením instance Rozvoj, uloží si jednotlivé hodnoty a spočte
+        rozvoj bodu s jeho periodou"""
         self.baze = baze
         self.znamenko = znamenko
         self.levy_kraj = levy_kraj
