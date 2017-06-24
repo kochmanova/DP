@@ -56,15 +56,5 @@ class SpatneHodnoty(unittest.TestCase):
             rozvoj.Soustava('x**2-x-1',-1,'-x')
             rozvoj.Soustava('x**2-x-1',-1,'0')
 
-    # def test_rozvoje_mimo(self):
-    #     with self.assertRaises(ValueError):
-    #         rozvoj.Rozvoj()
-
-    # def test_levy_invariance(self):
-    #     with self.assertRaises(ValueError):
-    #         rozvoj.Soustava('x**2-x-1',-1,)
-
-
-
 if __name__ == '__main__':
     unittest.main()
