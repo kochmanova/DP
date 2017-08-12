@@ -7,7 +7,7 @@ if __name__ == "__main__":
     levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
             '(1-x)/2']
     # cyklus = zacatek
-    for i in [2]:
+    for i in [3]:
         start_cyklu = time.time()
         print("Vytvářím základní soustavu znamenko {} a okraj {}".format(Zn[i], levy[i]))
         tribonacci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
