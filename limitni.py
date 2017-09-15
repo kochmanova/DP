@@ -54,38 +54,39 @@ class Limitni_rozvoj(object):
             i += 1
         self.rozvoj_bodu = rozvoj
 
-        def limitni_posloupnost(self, pocet_cifer=10):
-            """posloupnost, která spočte rozvoj bodu, který se blíží k pravému kraji
 
-            :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
-            """
-            periody_posl = list()
-            rozvoje_posl = list()
-            print(self.levy_kraj)
-            for lim in range(7, 17):  # [2, ..., 9]
-                perioda = False
-                transformace = list()
-                rozvoj = list()
-                print(type(self.levy_kraj))
-                bod = self.levy_kraj + 1 - sp.nsimplify(1 / 10 ** lim, tolerance=None)
-                print(type(bod))
-                print(bod)
-                transformace.append(bod)
-                i = 1
-                periody_posl.append(0)
-                while (not perioda) and (i < pocet_cifer):
-                    print("Počítáme {0:.0f}. cifru".format(i))
-                    cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-                    rozvoj.append(sp.floor(cifra))
-                    nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-                    transformace.append((nova_transformace))
-                    for j in range(len(transformace)):
-                        if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
-                            perioda = True
-                            periody_posl[lim - 7] = i - j
-                    i += 1
-                rozvoje_posl.append(rozvoj)
-                #            self.rozvoj_bodu = rozvoj
-            print(rozvoje_posl)
-            print("Periody: ")
-            print(periody_posl)
+    def limitni_posloupnost(self, pocet_cifer=10):
+        """posloupnost, která spočte rozvoj bodu, který se blíží k pravému kraji
+
+        :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
+        """
+        periody_posl = list()
+        rozvoje_posl = list()
+        print(self.levy_kraj)
+        for lim in range(7, 17):  # [2, ..., 9]
+            perioda = False
+            transformace = list()
+            rozvoj = list()
+            print(type(self.levy_kraj))
+            bod = self.levy_kraj + 1 - sp.nsimplify(1 / 10 ** lim, tolerance=None)
+            print(type(bod))
+            print(bod)
+            transformace.append(bod)
+            i = 1
+            periody_posl.append(0)
+            while (not perioda) and (i < pocet_cifer):
+                print("Počítáme {0:.0f}. cifru".format(i))
+                cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
+                rozvoj.append(sp.floor(cifra))
+                nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
+                transformace.append((nova_transformace))
+                for j in range(len(transformace)):
+                    if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
+                        perioda = True
+                        periody_posl[lim - 7] = i - j
+                i += 1
+            rozvoje_posl.append(rozvoj)
+            #            self.rozvoj_bodu = rozvoj
+        print(rozvoje_posl)
+        print("Periody: ")
+        print(periody_posl)

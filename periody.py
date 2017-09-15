@@ -1,6 +1,8 @@
 import numpy as np
 import sympy as sp
 
+import rozvoj
+
 from itertools import product
 from sympy.abc import beta,a,b,c,d,e,f,g,h,i,j,x
 
@@ -80,7 +82,9 @@ class Perioda(object):
         self.vycisleny = vycisleny
         self.baze = baze
 
-    def dosazeni(self,hodnoty):
+    # Bylo by hezké mít funkci, která dosadí všechny hodnoty krom bety abychom viděli, jak vypadá levý kraj vyjádřen s pomocí bety
+
+    def dosazeni(self,hodnoty, fce):
         symboly=[a,b,c,d,e,f,g,h,i,j]
         #pomocne = self.k+self.p
         vyraz=self.vycisleny
@@ -88,26 +92,50 @@ class Perioda(object):
         while len(pom_hodnoty) > 0: #pomocne > 0:
             vyraz=vyraz.subs(symboly.pop(0),pom_hodnoty.pop(0))
         #print(vyraz)
-        levy_kraj = sp.N(vyraz, n=20)
+        levy_kraj = sp.N(vyraz, n=1000)
         if levy_kraj <= 0 and levy_kraj >= -1:
+            retezec = list(hodnoty)
+            #print(vyraz)
+            prosel = self.zpetne_overeni(retezec, vyraz, fce)
             # dodatečná podmínka pro tuto konkrétní bázi
-            if levy_kraj <= -1/self.baze or levy_kraj > 1/self.baze-1:
-                self.hodnoty.append(list(hodnoty))
-                self.levy_kraj.append(vyraz)
-                #levy_kraj = sp.N(vyraz,n=20)
-                print(hodnoty)
-                print(levy_kraj) # mít to ve formatu je problém s nulou...nevim proč
+            #if prosel and (levy_kraj > -1/self.baze and levy_kraj <= 1/self.baze-1):
+            # TU PODMÍNKU JSEM POKANHALA
+            #    print("Daný řetězec neleží v L_beta, tedy má Z_b jen s 0.")
+                # self.hodnoty.append(list(hodnoty))
+                # self.levy_kraj.append(vyraz)
+                # levy_kraj = sp.N(vyraz,n=20)
+                # print(hodnoty)
+                # print(levy_kraj) # mít to ve formatu je problém s nulou...nevim proč
 
-    def dosazeni_vse(self):
+    def dosazeni_vse(self, fce):
         A=[-1,0,1]
         delka = self.k + self.p
         hodnoty=list(product(A,repeat=delka))
+        # já to tak chci yeld!!!!
         #print(hodnoty)
         print("Celkem máme {0:.0f} řetezců".format(len(hodnoty)))
         #self.hodnoty=hodnoty
         for retezec in hodnoty:
             #print(retezec)
-            self.dosazeni(retezec)
+            self.dosazeni(retezec, fce)
+
+    def zpetne_overeni(self, hodnoty, levy, fce): # hodnoty jsou list!!
+        hledany_rozvoj = rozvoj.Soustava(fce, self.znamenko, levy)
+        #print(levy)
+        #print(hodnoty)
+        #print(hledany_rozvoj.rozvoj_leveho_kraje.rozvoj_bodu)
+        if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje.rozvoj_bodu :
+            if self.p == hledany_rozvoj.rozvoj_leveho_kraje.perioda:
+                self.hodnoty.append(hodnoty)
+                self.levy_kraj.append(levy)
+                print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
+                print(hodnoty)
+                #print(self.p)
+                print(levy)
+                return True
+        return False
+
+
 
 
 

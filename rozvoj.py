@@ -29,8 +29,8 @@ class Soustava(object):
         self.znamenko = znamenko
         self.spocitej_bazi_beta()
         self.vycisleni_leveho_kraje(levy_kraj)
-        #self.nalezeni_rozvoje_leveho_kraje()
-        #self.nalezeni_rozvoje_praveho_kraje()
+        self.nalezeni_rozvoje_leveho_kraje(100)
+        self.nalezeni_rozvoje_praveho_kraje(100)
 
     def spocitej_bazi_beta(self):
         """tato funkce je zavolaná v __init__, pro danou rovnici spočte bázi, se kterou budeme počítat a uloží si ji
@@ -57,14 +57,15 @@ class Soustava(object):
         :type levy_kraj: str
         """
         symbolicky_levy_kraj = sp.sympify(levy_kraj)
-        kraj = sp.N(symbolicky_levy_kraj.subs({x: self.beta}))
+        kraj = sp.N(symbolicky_levy_kraj.subs({x: self.beta}),n=1000)
         symbolicky_levy_kraj = symbolicky_levy_kraj.subs({x: self.beta})
         if (kraj > 0) or (kraj < -1):
+            print(kraj==0)
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
         if (self.znamenko == -1) and ((-kraj / self.beta - EPS > (kraj + 1)) or -(kraj + 1) / self.beta + EPS < kraj):
             raise ValueError("Nejsou splněny základní požadavky, interval není invariantní vůči posunutí.")
         self.levy_kraj = symbolicky_levy_kraj
-        #self.pravy_kraj = symbolicky_levy_kraj + 1 - EPS
+        self.pravy_kraj = symbolicky_levy_kraj + 1 - EPS
 
     def nalezeni_rozvoje_leveho_kraje(self, pocet_cifer=30):
         """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj levého kraje a jeho periodu
@@ -73,7 +74,7 @@ class Soustava(object):
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj levého kraje, defaultně nastaven na 30
         """
         self.rozvoj_leveho_kraje = Rozvoj(self.beta, self.levy_kraj, self.levy_kraj, self.znamenko, False, pocet_cifer)
-        self.rozvoj_leveho_kraje.nalezeni_rozvoje(pocet_cifer)
+        self.rozvoj_leveho_kraje.nalezeni_rozvoje_nepresneho(pocet_cifer)
 
     def nalezeni_rozvoje_praveho_kraje(self, pocet_cifer=10):
         """tato funkce vytvoří instanci třídy Rozvoj, v rámci níž spočte rozvoj pravého kraje a jeho periodu
@@ -86,8 +87,12 @@ class Soustava(object):
         #self.rozvoj_praveho_kraje.limitni_rozvoj(pocet_cifer)
 
         # s použitím limitní posloupnosti
-        self.rozvoj_praveho_kraje = Rozvoj(self.beta,0, self.levy_kraj, self.znamenko, False, pocet_cifer)
-        self.rozvoj_praveho_kraje.limitni_rozvoj(pocet_cifer)
+        #self.rozvoj_praveho_kraje = Rozvoj(self.beta,0, self.levy_kraj, self.znamenko, False, pocet_cifer)
+        #self.rozvoj_praveho_kraje.limitni_rozvoj(pocet_cifer)
+
+        # s použitím stejné funkce jako u levého kraje
+        self.rozvoj_praveho_kraje = Rozvoj(self.beta,self.pravy_kraj,self.levy_kraj,self.znamenko, False, pocet_cifer)
+        self.rozvoj_praveho_kraje.nalezeni_rozvoje_nepresneho(pocet_cifer)
 
     def prilep_periodu(self, retezec, perioda, delka_retezce):
         """pomocná funkce, která k retezci v případě periody přilepí periodu tolikrát, aby délka řetězce byla rovna
@@ -281,7 +286,7 @@ class Rozvoj(object):
         self.levy_kraj = levy_kraj
         if symbolicke:
             symbolicky_bod = sp.sympify(bod)
-            self.bod = sp.N(symbolicky_bod.subs({x: self.baze}), n=40)  # přesnost
+            self.bod = symbolicky_bod.subs({x: self.baze})  # přesnost
         else:
             self.bod = bod
         self.perioda = None
@@ -292,7 +297,7 @@ class Rozvoj(object):
 
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
         """
-        print("Začínáme hledat rozvoj levého kraje")
+        print("Začínáme hledat rozvoj kraje")
         perioda = False
         transformace = list()
         rozvoj = list()
@@ -323,40 +328,41 @@ class Rozvoj(object):
             print("Cyklus trval {0:.2f} s".format(cyklus))
         self.rozvoj_bodu = rozvoj
 
-    def limitni_rozvoj(self, pocet_cifer=10):
-        """pomocná limitní funkce, která by pro pravý kraj měla spočítat rozvoj v dané bázi na pocet_cifer
+
+    def nalezeni_rozvoje_nepresneho(self, pocet_cifer=30):
+        """pomocná funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer
 
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
         """
-        periody_posl = list()
-        rozvoje_posl = list()
-        print(self.levy_kraj)
-        for lim in range(7,17): # [2, ..., 9]
-            perioda = False
-            transformace = list()
-            rozvoj = list()
-            print(type(self.levy_kraj))
-            bod = self.levy_kraj + 1 - sp.nsimplify(1/10**lim, tolerance=None)
-            print(type(bod))
-            print(bod)
-            transformace.append(bod)
-            i = 1
-            periody_posl.append(0)
-            while (not perioda) and (i < pocet_cifer):
-                print("Počítáme {0:.0f}. cifru".format(i))
-                cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-                rozvoj.append(sp.floor(cifra))
-                nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-                transformace.append((nova_transformace))
-                for j in range(len(transformace)):
-                    if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
-                        perioda = True
-                        periody_posl[lim-7]=i - j
-                i += 1
-            rozvoje_posl.append(rozvoj)
-#            self.rozvoj_bodu = rozvoj
-        print(rozvoje_posl)
-        print("Periody: ")
-        print(periody_posl)
+        #print("Začínáme hledat rozvoj kraje")
+        perioda = False
+        transformace = list()
+        rozvoj = list()
+        transformace.append(self.bod)
+        i = 1
+        #start = time.time()
+        while (not perioda) and (i < pocet_cifer):
+            #start = time.time()
+            #print("Počítáme {0:.0f}. cifru".format(i))
+            cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
+            rozvoj.append(sp.floor(cifra))
+            #rozvoj.append(sp.floor(sp.N(cifra, n=100)))
+            nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
+            transformace.append(sp.N(nova_transformace, n=1000))
+            #transformace.append(nova_transformace)
+
+            #print(cifra)
+            #print(rozvoj[i - 1])
+            #print(nova_transformace)
+            #print("Transformace = {0:.3f}" .format(nova_transformace))
+
+            for j in range(len(transformace)):
+                if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
+                    perioda = True
+                    self.perioda = i - j
+            i += 1
+            #cyklus= time.time() - start
+            #print("Cyklus trval {0:.2f} s".format(cyklus))
+        self.rozvoj_bodu = rozvoj
 
 
