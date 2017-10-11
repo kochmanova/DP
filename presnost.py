@@ -3,6 +3,8 @@ import sympy as sp
 
 from sympy.abc import beta,a,b,c,d,e,f,g,h,i,j,x
 
+'''Toto celé slouží jen pro určení, nebo nějaké odhadnutí přesnosti zadávání krajů pro spočtení rozvoje určité délky'''
+
 class presnost(object):
     """pro zadanou fci, levý kraj a sgn báze vypočte bázi, rozvoj levého a pravého kraje
     s možností spočítat mink, maxk a jejich vzdálenosti"""

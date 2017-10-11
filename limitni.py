@@ -1,6 +1,6 @@
 import numpy as np
 import sympy as sp
-import time
+
 
 from sympy.abc import x
 
@@ -19,8 +19,9 @@ class Limitni_rozvoj(object):
         self.levy_kraj = levy_kraj
         self.perioda = None
         self.rozvoj_bodu = None
+        self.pocet_cifer = pocet_cifer
 
-    def limitni_rozvoj(self, pocet_cifer=10):
+    def limitni_rozvoj(self):
         """pomocná limitní funkce, která by pro pravý kraj měla spočítat limitní rozvoj v dané bázi na pocet_cifer
 
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
@@ -28,23 +29,35 @@ class Limitni_rozvoj(object):
         perioda = False
         transformace = list()
         rozvoj = list()
-        transformace.append(self.levy_kraj +x)
-        print(transformace[0])
+        #symbol='-'
+
+        #změna
+        #transformace.append(self.levy_kraj + x)
+        transformace.append(self.levy_kraj+1)
+
         print("Levý kraj :")
         print(self.levy_kraj)
         print("Báze: ")
         print(self.baze)
-        print("Následuje while cyklus")
         i = 1
-        while (not perioda) and (i < pocet_cifer):
-            cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-            print("Toto je cifra {0:.0f}. ".format(i))
-            print(cifra)
-            #limita = sp.limit(cifra,x, self.levy_kraj+1, dir="-")
-            pomocne = sp.floor(cifra)
-            print(pomocne)
-            rozvoj.append(sp.limit(pomocne, x, self.levy_kraj+1, dir="-"))
-            # rozvoj.append(sp.floor(sp.N(cifra.subs({x: self.baze}), n=30)))
+        cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
+        pomoc = self.znamenko * self.baze * x -self.levy_kraj
+        while (not perioda) and (i < self.pocet_cifer):
+            print("Počítáme {0:.0f}.cifru ".format(i))
+
+            #změna
+            #cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
+            #pomocne = sp.floor(cifra)
+
+            #změna
+            #rozvoj.append(sp.limit(pomocne, x, self.levy_kraj+1, dir="-"))
+            if (self.znamenko<0) and (i % 2 == 0):
+                rozvoj.append(sp.limit(cifra,x,transformace[i-1],dir='+'))
+                #print("+")
+            else:
+                #print((sp.limit(pomoc,x,transformace[i-1],dir='-')))
+                rozvoj.append(sp.limit(cifra,x,transformace[i-1],dir='-'))
+
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append((nova_transformace))
             for j in range(len(transformace)):
@@ -53,9 +66,16 @@ class Limitni_rozvoj(object):
                     self.perioda = i - j
             i += 1
         self.rozvoj_bodu = rozvoj
+        #print(sp.limit(sp.floor(x),x,1,dir='-'))
+        #print(sp.limit(sp.floor(self.baze*(self.baze**2-self.baze-1)*x),x,1,dir='-'))
+
+    #def pomoc(self):
+    #    cifra =sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
+    #    print(sp.series(cifra,x,self.baze**2-self.baze-1))
 
 
-    def limitni_posloupnost(self, pocet_cifer=10):
+
+    def limitni_posloupnost(self):
         """posloupnost, která spočte rozvoj bodu, který se blíží k pravému kraji
 
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
@@ -74,7 +94,7 @@ class Limitni_rozvoj(object):
             transformace.append(bod)
             i = 1
             periody_posl.append(0)
-            while (not perioda) and (i < pocet_cifer):
+            while (not perioda) and (i < self.pocet_cifer):
                 print("Počítáme {0:.0f}. cifru".format(i))
                 cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
                 rozvoj.append(sp.floor(cifra))
