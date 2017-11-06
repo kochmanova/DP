@@ -35,6 +35,7 @@ class Limitni_rozvoj(object):
         #změna
         #transformace.append(self.levy_kraj + x)
         transformace.append(self.levy_kraj+1)
+        print(transformace[0])
 
         print("Levý kraj :")
         print(self.levy_kraj)
@@ -42,7 +43,7 @@ class Limitni_rozvoj(object):
         print(self.baze)
         i = 1
         dolni_cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
-        cifra = self.znamenko * self.baze * x -self.levy_kraj
+        cifra = self.znamenko * self.baze * x - self.levy_kraj
         while (not perioda) and (i < self.pocet_cifer):
             print("Počítáme {0:.0f}.cifru ".format(i))
 

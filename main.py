@@ -29,10 +29,10 @@ if __name__ == "__main__":
 
     Z=[1]
     lev=['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
-    for i in [2,4]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
+    for i in [2]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
         zacatek = time.time()
         fibonaci = rozvoj.Soustava('x**2-x-1', znamenko=Z[0], levy_kraj=lev[i])
-        pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Zn[i], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
+        pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Z[0], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
         pravy.limitni_rozvoj()
         print("Limitní rozvoj pravého kraje: ")
         print(pravy.rozvoj_bodu)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     # print("Celé to trvalo {0:.2f} s".format(konec))
     #
     #
-    # ### pro nalezení periodických rozvojů levého kraje
+    ### pro nalezení periodických rozvojů levého kraje
     # start= time.time()
     # fibonacci = periody.Rozvoj_periodicky('x**2-x-1',1)
     # kp=periody.Perioda(0,3,1)

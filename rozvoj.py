@@ -348,7 +348,7 @@ class Rozvoj(object):
             rozvoj.append(sp.floor(cifra))
             #rozvoj.append(sp.floor(sp.N(cifra, n=100)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append(sp.N(nova_transformace, n=1000))
+            transformace.append(sp.N(nova_transformace, n=10000))
             #transformace.append(nova_transformace)
 
             #print(cifra)
