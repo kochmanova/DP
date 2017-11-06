@@ -14,36 +14,40 @@ if __name__ == "__main__":
     levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
             '(1-x)/2']
 
-    # for i in [0]: #číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
-    #     zacatek = time.time()
-    #     tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
-    #     pravy = limitni.Limitni_rozvoj(tribonaci.beta,tribonaci.levy_kraj,Zn[i],8) # ta 8 představuje na kolik cifer chci udělat rozvoj
-    #     pravy.limitni_rozvoj()
-    #     print("Limitní rozvoj pravého kraje: ")
-    #     print(pravy.rozvoj_bodu)
-    #     print("S periodou delky {}".format(pravy.perioda))
-    #     konec = time.time() - zacatek
-    #     print("Cyklus trval {0:.2f} s".format(konec))
-
-    print("Nyni se podíváme na fibonacciho koren: ")
-
-    Z=[1]
-    lev=['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
-    for i in [2]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
+    for i in [2]: #číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
         zacatek = time.time()
-        fibonaci = rozvoj.Soustava('x**2-x-1', znamenko=Z[0], levy_kraj=lev[i])
-        pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Z[0], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
+        tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
+        pravy = limitni.Limitni_rozvoj(tribonaci.beta,tribonaci.levy_kraj,Zn[i],8) # ta 8 představuje na kolik cifer chci udělat rozvoj
         pravy.limitni_rozvoj()
         print("Limitní rozvoj pravého kraje: ")
         print(pravy.rozvoj_bodu)
         print("S periodou delky {}".format(pravy.perioda))
 
         print("No a nepřesne, pravý kraj:")
-        print(fibonaci.rozvoj_praveho_kraje.rozvoj_bodu)
-        print("S periodou delky {}".format(fibonaci.rozvoj_praveho_kraje.perioda))
-
+        print(tribonaci.rozvoj_praveho_kraje.rozvoj_bodu)
+        print("S periodou delky {}".format(tribonaci.rozvoj_praveho_kraje.perioda))
         konec = time.time() - zacatek
         print("Cyklus trval {0:.2f} s".format(konec))
+
+    # print("Nyni se podíváme na fibonacciho koren: ")
+
+    Z=[1]
+    lev=['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
+    # for i in [2,4]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
+    #     zacatek = time.time()
+    #     fibonaci = rozvoj.Soustava('x**2-x-1', znamenko=Z[0], levy_kraj=lev[i])
+    #     pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Z[0], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
+    #     pravy.limitni_rozvoj()
+    #     print("Limitní rozvoj pravého kraje: ")
+    #     print(pravy.rozvoj_bodu)
+    #     print("S periodou delky {}".format(pravy.perioda))
+    #
+    #     print("No a nepřesne, pravý kraj:")
+    #     print(fibonaci.rozvoj_praveho_kraje.rozvoj_bodu)
+    #     print("S periodou delky {}".format(fibonaci.rozvoj_praveho_kraje.perioda))
+    #
+    #     konec = time.time() - zacatek
+    #     print("Cyklus trval {0:.2f} s".format(konec))
 
 
 

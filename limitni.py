@@ -35,7 +35,6 @@ class Limitni_rozvoj(object):
         #změna
         #transformace.append(self.levy_kraj + x)
         transformace.append(self.levy_kraj+1)
-        print(transformace[0])
 
         print("Levý kraj :")
         print(self.levy_kraj)
@@ -48,12 +47,13 @@ class Limitni_rozvoj(object):
             print("Počítáme {0:.0f}.cifru ".format(i))
 
             cifra_dosazena = cifra.subs(x,transformace[i-1])
+            #print(cifra_dosazena)
             #print(latex(cifra_dosazena))
             zjednoduseni = sp.simplify(cifra_dosazena)
             #print(zjednoduseni)
             if sp.sympify(zjednoduseni).is_Integer:
                 rozvoj.append(zjednoduseni-1)
-                print(i)
+                print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
             else:
 
                 if (self.znamenko<0) and (i % 2 == 0):
