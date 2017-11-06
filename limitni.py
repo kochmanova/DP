@@ -3,6 +3,7 @@ import sympy as sp
 
 
 from sympy.abc import x
+from sympy import latex
 
 EPS = 9e-17
 MALO = 2e-8
@@ -40,23 +41,29 @@ class Limitni_rozvoj(object):
         print("Báze: ")
         print(self.baze)
         i = 1
-        cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
-        pomoc = self.znamenko * self.baze * x -self.levy_kraj
+        dolni_cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
+        cifra = self.znamenko * self.baze * x -self.levy_kraj
         while (not perioda) and (i < self.pocet_cifer):
             print("Počítáme {0:.0f}.cifru ".format(i))
 
-            #změna
-            #cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-            #pomocne = sp.floor(cifra)
-
-            #změna
-            #rozvoj.append(sp.limit(pomocne, x, self.levy_kraj+1, dir="-"))
-            if (self.znamenko<0) and (i % 2 == 0):
-                rozvoj.append(sp.limit(cifra,x,transformace[i-1],dir='+'))
-                #print("+")
+            cifra_dosazena = cifra.subs(x,transformace[i-1])
+            #print(latex(cifra_dosazena))
+            zjednoduseni = sp.simplify(cifra_dosazena)
+            #print(zjednoduseni)
+            if sp.sympify(zjednoduseni).is_Integer:
+                rozvoj.append(zjednoduseni-1)
+                print(i)
             else:
-                #print((sp.limit(pomoc,x,transformace[i-1],dir='-')))
-                rozvoj.append(sp.limit(cifra,x,transformace[i-1],dir='-'))
+
+                if (self.znamenko<0) and (i % 2 == 0):
+                    rozvoj.append(sp.limit(dolni_cifra,x,transformace[i-1],dir='+'))
+                else:
+                    rozvoj.append(sp.limit(dolni_cifra,x,transformace[i-1],dir='-'))
+            #
+            # if (self.znamenko < 0) and (i % 2 == 0):
+            #     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
+            # else:
+            #     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='-'))
 
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append((nova_transformace))

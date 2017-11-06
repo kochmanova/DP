@@ -132,6 +132,9 @@ class Perioda(object):
                 print(hodnoty)
                 #print(self.p)
                 print(levy)
+                print("Tento retezec ma pak rozvoj praveho kraje a periodu: ")
+                print(hledany_rozvoj.rozvoj_praveho_kraje.rozvoj_bodu)
+                print(hledany_rozvoj.rozvoj_praveho_kraje.perioda)
                 return True
         return False
 

@@ -29,8 +29,8 @@ class Soustava(object):
         self.znamenko = znamenko
         self.spocitej_bazi_beta()
         self.vycisleni_leveho_kraje(levy_kraj)
-        #self.nalezeni_rozvoje_leveho_kraje(100)
-        #self.nalezeni_rozvoje_praveho_kraje(100)
+        self.nalezeni_rozvoje_leveho_kraje(100)
+        self.nalezeni_rozvoje_praveho_kraje(100)
 
     def spocitej_bazi_beta(self):
         """tato funkce je zavolaná v __init__, pro danou rovnici spočte bázi, se kterou budeme počítat a uloží si ji
