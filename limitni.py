@@ -52,8 +52,12 @@ class Limitni_rozvoj(object):
             zjednoduseni = sp.simplify(cifra_dosazena)
             #print(zjednoduseni)
             if sp.sympify(zjednoduseni).is_Integer:
-                rozvoj.append(zjednoduseni-1)
-                print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
+                if (self.znamenko<0) and (i % 2 ==1):
+                    rozvoj.append(zjednoduseni)
+                    print("Na {0:.0f}.pozici jsme nalezli integer, ale jdeme zprava".format(i))
+                else:
+                    rozvoj.append(zjednoduseni-1)
+                    print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
             else:
 
                 if (self.znamenko<0) and (i % 2 == 0):
