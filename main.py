@@ -1,153 +1,200 @@
-import rozvoj
-import time
-import periody
-import math
+from tkinter import *
 import limitni
-import sympy as sp
+import rozvoj
+import periody
+import time
 import latex_export
 
-from sympy.abc import a
+root = Tk()
+#root.resizable(width=500, height=200)
+# theLabel = Label(frame1, text = "Toto je program pro vytváření (+-beta,ell)-rozvojů")
+# theLabel.pack(fill=X)
 
-if __name__ == "__main__":
-    start = time.time()
+# Nultý řádek
+nadpis=Label(root, text = "Toto je program pro vytváření (+-beta,ell)-rozvojů")
+nadpis.grid(row=0, columnspan=4)
 
-    Zn = [1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-    levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
-            '(1-x)/2']
-
-    #ff = latex_export.Soubor("/home/mysska/Plocha/DP/vystup/vystup2.tex")
-
-    #f = open("/home/mysska/Plocha/DP/vystup/vystup2.tex","w")
-
-    for i in [3]:#,1,2,5,9,10,11]: #číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
-        zacatek = time.time()
-        tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
-
-        print(tribonaci.rozvoj_leveho_kraje.rozvoj_bodu)
-
-        # ff.vypis_rovnice("x**3-x**2-x-1", Zn[i])
-        # ff.vypis_baze(tribonaci.beta, levy[i], tribonaci.levy_kraj)
-        # rozvoj_bodu = tribonaci.rozvoj_leveho_kraje.rozvoj_bodu
-        # ff.vypis_levy_kraj(rozvoj_bodu,tribonaci.rozvoj_leveho_kraje.perioda)
-
-        print("S periodou {}".format(tribonaci.rozvoj_leveho_kraje.perioda))
-
-        pravy = limitni.Limitni_rozvoj(tribonaci.beta,tribonaci.levy_kraj,Zn[i],8) # ta 8 představuje na kolik cifer chci udělat rozvoj
-        pravy.limitni_rozvoj()
-        print("Limitní rozvoj pravého kraje: ")
-        print(pravy.rozvoj_bodu)
-        # upr=time.time()-zacatek
-        print("S periodou delky {}".format(pravy.perioda))
-        # print("Cyklus trval {0:.2f} s".format(upr))
-
-        #ff.vypis_pravy_kraj(pravy.rozvoj_bodu,pravy.perioda)
-
-        pravy.limitni_rozvoj_bezlimit()
-        print("Limitni rozvoj bez limit: ")
-        print(pravy.rozvoj_bodu)
-        #upr2=time.time()-upr
-        print("S periodou delky {} ".format(pravy.perioda))
-        #print("Cyklus trval {0:.2f} s\n".format(upr2))
-
-        print("No a nepřesne, pravý kraj:")
-        print(tribonaci.rozvoj_praveho_kraje.rozvoj_bodu)
-        print("S periodou delky {}".format(tribonaci.rozvoj_praveho_kraje.perioda))
-        konec = time.time() - zacatek
-        print("Cyklus trval {0:.2f} s\n".format(konec))
-
-    # print("Nyni se podíváme na fibonacciho koren: ")
-    finis=time.time()-start
-    print("Celé to trvalo {0:.2f} s".format(finis))
-    #ff.ukonceni_souboru()
-
-    Z=[1]
-    lev=['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
-    # for i in [2,4]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
-    #     zacatek = time.time()
-    #     fibonaci = rozvoj.Soustava('x**2-x-1', znamenko=Z[0], levy_kraj=lev[i])
-    #     pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Z[0], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
-    #     pravy.limitni_rozvoj()
-    #     print("Limitní rozvoj pravého kraje: ")
-    #     print(pravy.rozvoj_bodu)
-    #     print("S periodou delky {}".format(pravy.perioda))
-    #
-    #     print("No a nepřesne, pravý kraj:")
-    #     print(fibonaci.rozvoj_praveho_kraje.rozvoj_bodu)
-    #     print("S periodou delky {}".format(fibonaci.rozvoj_praveho_kraje.perioda))
-    #
-    #     TU JSI NĚCO POKANȞALA A TERAZ TI TO NEFACHA!!!!
-    #
-    #     konec = time.time() - zacatek
-    #     print("Cyklus trval {0:.2f} s".format(konec))
+# První řádek
+rovnice = Entry(root)
+rovnice.insert(10,"x**3-x**2-x-1")
+rovnice.grid(row=1,column=1)
+rovnice_L = Label(root, text = "Rovnice: ")
+rovnice_L.grid(row=1, column=0, sticky=E)
 
 
 
 
-    # print("Jsem tu.")
-    # vyraz = a+5
-    # print(vyraz)
-    # dosazeni = vyraz.subs(a, 5)
-    # print(dosazeni)
+# Druhý řádek
+levy = Entry(root)
+levy.grid(row=2,column=1)
+levy_L=Label(root, text="levý kraj: (místo bety použijte x)")
+levy_L.grid(row=2,column=0, sticky=E)
+levy_rozvoj=Label(root)
+levy_rozvoj.grid(row=2, column=2)
+levy_perioda=Label(root)
+levy_perioda.grid(row=2, column=3)
+
+# Třetí řádek
+pravy = Label(root, text="Limitní rozvoj pravého kraje: ")
+pravy.grid(row=3, column=0, sticky=E)
+pravy_rozvoj=Label(root)
+pravy_rozvoj.grid(row=3, column=2)
+pravy_perioda=Label(root)
+pravy_perioda.grid(row=3, column=3)
+
+# Čtvrtý řádek
+# tlačítko na pozici 2
+znamenko_hodnota=IntVar()
+znamenko = Checkbutton(root, text = "Záporná báze", onvalue=-1, offvalue=1, variable=znamenko_hodnota)
+znamenko.grid(row=4, column=0, sticky=W)
+
+#Pátý řádek
+def zmen_hodnota_k():
+    if mink_hodnota.get():
+        hodnota_k.configure(state='normal')
+    else:
+        hodnota_k.configure(state='disabled')
+
+
+mink_hodnota=IntVar()
+minmax_pocitat = Checkbutton(root, text="Spočítat mink a maxk", variable=mink_hodnota, command = zmen_hodnota_k)
+minmax_pocitat.grid(row=5, column=0, sticky=W)
+minmax_L=Label(root, text="Hodnota k: ")
+minmax_L.grid(row=5, column=1, sticky=E)
+hodnota_k= Entry(root, state='disabled')
+hodnota_k.grid(row=5, column=2)
+
+#Šestý řádek
+def zmen_levy_kraj():
+    if perioda_hodnota_check.get():
+        levy.configure(state='disabled')
+        minmax_pocitat.configure(state='disabled')
+        predperioda_hodnota.configure(state='normal')
+        perioda_hodnota.configure(state='normal')
+        if mink_hodnota.get():
+            hodnota_k.configure(state='disabled')
+            #minmax_pocitat.invoke()
+
+    else:
+        levy.configure(state='normal')
+        minmax_pocitat.configure(state='normal')
+        predperioda_hodnota.configure(state='disabled')
+        perioda_hodnota.configure(state='disabled')
+        if mink_hodnota.get():
+            hodnota_k.configure(state='normal')
+
+perioda_hodnota_check=IntVar()
+periodu_spocitat = Checkbutton(root, text="Nalézt periody", variable=perioda_hodnota_check, command=zmen_levy_kraj)
+periodu_spocitat.grid(row=6, column=0, sticky=W)
+
+predperioda_L=Label(root, text="Předperiodu délky: ")
+predperioda_hodnota = Entry(root, state='disabled')
+predperioda_L.grid(row=6, column=1, sticky=E)
+predperioda_hodnota.grid(row=6, column=2)
+
+
+
+#Sedmý řádek
+perioda_L=Label(root, text="Periodu délky: ")
+perioda_hodnota = Entry(root, state='disabled')
+perioda_L.grid(row=7, column=1, sticky=E)
+perioda_hodnota.grid(row=7, column=2)
+
+
+# Osmý řádek
+def zmen_vystup():
+    if vystup_hodnota.get():
+        vystup_nazev.configure(state='normal')
+    else:
+        vystup_nazev.configure(state='disabled')
+
+
+vystup_hodnota=IntVar()
+vystup = Checkbutton(root, text = "Výstup do LaTeXu", variable=vystup_hodnota, command = zmen_vystup)
+vystup.grid(row=8, column=0, sticky=W)
+vystup_L= Label(root, text="Název souboru: ")
+vystup_L.grid(row=8, column=1, sticky=E)
+vystup_nazev= Entry(root, state='disabled')
+vystup_nazev.grid(row=8,column=2)
 
 
 
 
-    # # cyklus = zacatek
-    # for i in [0]: #range(12):
-    #     start_cyklu = time.time()
-    #     print("Vytvářím základní soustavu znamenko {} a okraj {}".format(Zn[i], levy[i]))
-    #     tribonacci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
-    #     print(tribonacci.beta)
-    #     print("Rozvoj leveho kraje: ")
-    #     print(tribonacci.rozvoj_leveho_kraje.rozvoj_bodu)
-    #     print(tribonacci.rozvoj_leveho_kraje.perioda)
-    #     print("Snaha o rozvoj praveho kraje:")
-    #     print(tribonacci.rozvoj_praveho_kraje.rozvoj_bodu)
-    #     print(tribonacci.rozvoj_praveho_kraje.perioda)
-    #     # print("Následuje po řádcích mink, maxk, vzdálenosti:")
-    #     # tribonacci.vytvoreni_mink_maxk(15)
-    #     # print(tribonacci.mink)
-    #     # print(tribonacci.maxk)
-    #     # tribonacci.spocteni_vzdalenosti(15)
-    #     # print(tribonacci.delta)
-    #     cyklus = time.time() - start_cyklu
-    #     print("Cyklus trval {0:.2f} s".format(cyklus))
-    #
-    # #print(tribonacci.levy_kraj)
-    # #j=2
-    # #tribonacci_rozvoj=rozvoj.Rozvoj(tribonacci.beta,tribonacci.levy_kraj+1,tribonacci.levy_kraj,Zn[j],True,30)
-    # #print("Máme bázi {}, {} bázi a levý kraj je {}".format(tribonacci.beta, tribonacci.znamenko,tribonacci.levy_kraj))
-    # #tribonacci_rozvoj.limitni_rozvoj_pk()
-    # #print("Rozvoj praveho kraje limitni:")
-    # #print(tribonacci_rozvoj.rozvoj_pk)
-    # #print("Perioda: ")
-    # #print(tribonacci_rozvoj.perioda_pk)
-    #
-    # konec = time.time() - zacatek
-    # print("Celé to trvalo {0:.2f} s".format(konec))
-    #
-    #
-    ### pro nalezení periodických rozvojů levého kraje
-    # start= time.time()
-    # fibonacci = periody.Rozvoj_periodicky('x**2-x-1',1)
-    # kp=periody.Perioda(0,3,1)
-    # kp.cely_vyraz() # získám vyraz
-    # kp.vycisleny_vyraz(fibonacci.beta)
-    # kp.dosazeni_vse('x**2-x-1')
-    # #print(len(kp.hodnoty))
-    # konec = time.time() - start
-    # print("Celé to trvalo {0:.2f} s".format(konec))
-    #
-    # #### pro určení přesnosti
-    # # fibonacci = presnost.presnost('x**3-x**2-x-1',1)
-    # # for i in range(1,5):
-    # #     print("Pro {0:.0f} cifer je nután přesnost na ".format(i))
-    # #     fibonacci.kladna(i)
-    # # for i in range(10,110,10):
-    # #     print("Pro {0:.0f} cifer je nután přesnost na ".format(i))
-    # #     fibonacci.kladna(i)
-    # #
-    # # fibonacci.kladna(500)
-    # # fibonacci.kladna(1000)
-    #
-    # #print((-(1/2 + math.sqrt(5)/2)**2/(-1 + (1/2 + math.sqrt(5)/2)**3) + (1/2 + math.sqrt(5)/2)/(-1 + (1/2 + math.sqrt(5)/2)**3)) == (-(1/2 + math.sqrt(5)/2)/2+1/2))
+
+
+status = Label(root)
+status.grid(row=9, sticky=W)
+
+def ziskat_vstup():
+    # TOHLE nefunguje, ten status Počítám
+    #status.config(text="Počítám...")
+    start=time.time()
+    #print(rovnice.get())
+    fce=rovnice.get()
+    zn=znamenko_hodnota.get()
+    if zn==0:
+        zn=1
+    levy_kraj = levy.get()
+
+    pocitame_periody = perioda_hodnota_check.get()
+    if pocitame_periody:
+        k=int(predperioda_hodnota.get())
+        p=int(perioda_hodnota.get())
+        print("Počítáme periody s před {} a periodou {}".format(k,p))
+        rozvoj_period=periody.Rozvoj_periodicky(fce, zn)
+        kp=periody.Perioda(k,p,zn)
+        kp.cely_vyraz()
+        kp.vycisleny_vyraz(rozvoj_period.beta)
+        kp.dosazeni_vse(fce)
+        # TODO výpis do Latexu
+
+    else:
+        pocitame=rozvoj.Soustava(fce,zn,levy_kraj)
+        levy_rozvoj.config(text=pocitame.rozvoj_leveho_kraje.rozvoj_bodu)
+        levy_perioda.config(text="s periodou {}".format(pocitame.rozvoj_leveho_kraje.perioda))
+        limita = limitni.Limitni_rozvoj(pocitame.beta,pocitame.levy_kraj,zn,8)
+        limita.limitni_rozvoj()
+        pravy_rozvoj.config(text=limita.rozvoj_bodu)
+        pravy_perioda.config(text="S periodou {}".format(limita.perioda))
+
+        if mink_hodnota.get():
+            k=int(hodnota_k.get())+1
+            pocitame.vytvoreni_mink_maxk(k)
+            print(pocitame.mink)
+            print(pocitame.maxk)
+            pocitame.spocteni_vzdalenosti(k)
+
+
+
+        # výstup do Latexu
+        if vystup_hodnota.get():
+            soubor = "/home/mysska/Plocha/DP/vystup/" + vystup_nazev.get() + ".tex"
+            file = latex_export.Soubor(soubor)
+            file.vypis_rovnice(fce, zn)
+            file.vypis_baze(pocitame.beta, levy_kraj, pocitame.levy_kraj)
+            file.vypis_levy_kraj(pocitame.rozvoj_leveho_kraje.rozvoj_bodu, pocitame.rozvoj_leveho_kraje.perioda)
+            file.vypis_pravy_kraj(limita.rozvoj_bodu, limita.perioda)
+            #file.ukonceni_souboru()
+
+            if mink_hodnota.get():
+                file.vypis_minmax(pocitame.mink, pocitame.maxk, pocitame.delta)
+
+            file.ukonceni_souboru()
+
+    konec=time.time()-start
+
+
+
+
+    status.config(text="Dopočítáno. Celé to trvalo {0:.2f} s".format(konec))
+
+
+tlacitko = Button(root, text="Spočítat", command=ziskat_vstup)
+#bottom1.bind("<Button-1>",vypis()
+tlacitko.grid(row=4,column=2)
+
+
+
+
+
+root.mainloop()
