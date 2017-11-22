@@ -2,3 +2,4 @@ mpmath==0.19
 numpy==1.13.1
 product==0.1.1.1
 sympy==1.1.1
+tkinter==8.5
