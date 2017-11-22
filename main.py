@@ -157,15 +157,6 @@ def ziskat_vstup():
         pravy_rozvoj.config(text=limita.rozvoj_bodu)
         pravy_perioda.config(text="S periodou {}".format(limita.perioda))
 
-        if mink_hodnota.get():
-            k=int(hodnota_k.get())+1
-            pocitame.vytvoreni_mink_maxk(k)
-            print(pocitame.mink)
-            print(pocitame.maxk)
-            pocitame.spocteni_vzdalenosti(k)
-
-
-
         # výstup do Latexu
         if vystup_hodnota.get():
             soubor = "/home/mysska/Plocha/DP/vystup/" + vystup_nazev.get() + ".tex"
@@ -176,9 +167,17 @@ def ziskat_vstup():
             file.vypis_pravy_kraj(limita.rozvoj_bodu, limita.perioda)
             #file.ukonceni_souboru()
 
-            if mink_hodnota.get():
+        if mink_hodnota.get():
+            k = int(hodnota_k.get()) + 1
+            pocitame.vytvoreni_mink_maxk(k)
+            print(pocitame.mink)
+            print(pocitame.maxk)
+            pocitame.spocteni_vzdalenosti(k)
+
+            if vystup_hodnota.get():
                 file.vypis_minmax(pocitame.mink, pocitame.maxk, pocitame.delta)
 
+        if vystup_hodnota.get():
             file.ukonceni_souboru()
 
     konec=time.time()-start
