@@ -38,9 +38,26 @@ class Soubor(object):
         self.list_s_periodou(list, perioda)
         self.f.write(" \n\n")
 
+    def vypis_minmax(self,mink, maxk, gamma):
+        hl = open("/home/mysska/Plocha/DP/vystup/tabulka.tex", "r")
+        radky = hl.readlines()
+        self.f.writelines(radky)
+
+        for i in range(1,len(gamma)):
+            self.f.write("{}".format(i))
+            self.f.write(" & ")
+            self.list_na_retezec(mink[i])
+            self.f.write(" & ")
+            self.list_na_retezec(maxk[i])
+            self.f.write(" & {0:.5f} \\\\ ".format(gamma[i]))
+            #TU TO NEFACHA
+
+        self.f.write(" \end{tabular}\end{center}\end{table} ")
+
+
     def list_s_periodou(self,list,perioda):
         self.f.write("$")
-        #print(len(list))
+        print((list))
         if perioda==None:
             self.list_na_retezec(list)
         elif len(list)==perioda:
@@ -53,10 +70,12 @@ class Soubor(object):
             for i in list:
                 if j==zav:
                     self.f.write("(")
-                if i == 0 or i == 1:
-                    self.f.write("{}".format(i))
+                if i < 0:
+                    self.f.write("\overline {} ".format(i))
+ #                   self.f.write("{}".format(i))
                 else:
-                    self.f.write("\overline{1}")
+                    self.f.write("{}".format(i))
+#                    self.f.write("\overline{1}")
                 j+=1
             self.f.write(")^\omega")
         self.f.write("$\n")
@@ -64,11 +83,14 @@ class Soubor(object):
     def list_na_retezec(self,list):
         #self.f.write("$$")
         #print(len(list))
+        #if len(list)>2:
+        #    print(list[2])
         for i in list:
-            if i == 0 or i == 1:
-                self.f.write("{}".format(i))
+            if i < 0:
+                self.f.write("\overline {}".format(i))
+                #                   self.f.write("{}".format(i))
             else:
-                self.f.write("\overline{1}")
+                self.f.write("{}".format(i))
         #self.f.write("$$\n")
 
     def uprava_znaku(self,znaky):
