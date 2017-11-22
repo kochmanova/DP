@@ -44,7 +44,7 @@ class Limitni_rozvoj(object):
         dolni_cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
         cifra = self.znamenko * self.baze * x - self.levy_kraj
         while (not perioda) and (i < self.pocet_cifer):
-            print("Počítáme {0:.0f}.cifru ".format(i))
+            #print("Počítáme {0:.0f}.cifru ".format(i))
 
             cifra_dosazena = cifra.subs(x,transformace[i-1])
             #print(cifra_dosazena)
@@ -122,3 +122,53 @@ class Limitni_rozvoj(object):
         print(rozvoje_posl)
         print("Periody: ")
         print(periody_posl)
+
+
+    def limitni_rozvoj_bezlimit(self):
+        """pomocná limitní funkce, která by pro pravý kraj měla spočítat limitní rozvoj v dané bázi na pocet_cifer
+
+        :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj pravého kraje, defaultně nastaven na 30
+        """
+        perioda = False
+        transformace = list()
+        rozvoj = list()
+        # symbol='-'
+        transformace.append(self.levy_kraj + 1)
+
+        #print("Levý kraj :")
+        #print(self.levy_kraj)
+        #print("Báze: ")
+        #print(self.baze)
+        i = 1
+        dolni_cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
+        cifra = self.znamenko * self.baze * x - self.levy_kraj
+        while (not perioda) and (i < self.pocet_cifer):
+            #print("Počítáme {0:.0f}.cifru ".format(i))
+
+            cifra_dosazena = cifra.subs(x, transformace[i - 1])
+            zjednoduseni = sp.simplify(cifra_dosazena)
+            if sp.sympify(zjednoduseni).is_Integer:
+                if (self.znamenko < 0) and (i % 2 == 1):
+                    rozvoj.append(zjednoduseni)
+                else:
+                    rozvoj.append(zjednoduseni - 1)
+                    print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
+            else:
+
+#                 if (self.znamenko < 0) and (i % 2 == 0):
+#                     rozvoj.append(dolni_cifra.subs(x,transformace[i-1]))
+# #                     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
+#                 else:
+#                     cifra_upr = sp.floor(cifra-1)
+#                     rozvoj.append(cifra_upr.subs(x,transformace[i-1]))
+                rozvoj.append(dolni_cifra.subs(x,transformace[i-1]))
+#                    rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='-'))
+
+            nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
+            transformace.append((nova_transformace))
+            for j in range(len(transformace)):
+                if (abs(sp.N((transformace[j] - transformace[i]).subs({x: self.levy_kraj + 1}))) < MALO) and (j != i):
+                    perioda = True
+                    self.perioda = i - j
+            i += 1
+        self.rozvoj_bodu = rozvoj

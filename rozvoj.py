@@ -74,6 +74,7 @@ class Soustava(object):
         :param pocet_cifer: počet míst, na který chceme vyčíslit rozvoj levého kraje, defaultně nastaven na 30
         """
         self.rozvoj_leveho_kraje = Rozvoj(self.beta, self.levy_kraj, self.levy_kraj, self.znamenko, False, pocet_cifer)
+#        self.rozvoj_leveho_kraje.nalezeni_rozvoje(pocet_cifer)
         self.rozvoj_leveho_kraje.nalezeni_rozvoje_nepresneho(pocet_cifer)
 
     def nalezeni_rozvoje_praveho_kraje(self, pocet_cifer=10):
@@ -92,6 +93,7 @@ class Soustava(object):
 
         # s použitím stejné funkce jako u levého kraje
         self.rozvoj_praveho_kraje = Rozvoj(self.beta,self.pravy_kraj,self.levy_kraj,self.znamenko, False, pocet_cifer)
+#        self.rozvoj_praveho_kraje.nalezeni_rozvoje(pocet_cifer)
         self.rozvoj_praveho_kraje.nalezeni_rozvoje_nepresneho(pocet_cifer)
 
     def prilep_periodu(self, retezec, perioda, delka_retezce):
@@ -348,7 +350,7 @@ class Rozvoj(object):
             rozvoj.append(sp.floor(cifra))
             #rozvoj.append(sp.floor(sp.N(cifra, n=100)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append(sp.N(nova_transformace, n=10000))
+            transformace.append(sp.N(nova_transformace, n=1000))
             #transformace.append(nova_transformace)
 
             #print(cifra)
