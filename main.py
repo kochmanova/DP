@@ -1,153 +1,54 @@
 import rozvoj
 import time
-import periody
-import math
-import limitni
-import sympy as sp
-import latex_export
 
-from sympy.abc import a
-
-if __name__ == "__main__":
-    start = time.time()
-
+if __name__=="__main__":
     Zn = [1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
             '(1-x)/2']
-
-    #ff = latex_export.Soubor("/home/mysska/Plocha/DP/vystup/vystup2.tex")
-
-    #f = open("/home/mysska/Plocha/DP/vystup/vystup2.tex","w")
-
-    for i in [3]:#,1,2,5,9,10,11]: #číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
-        zacatek = time.time()
-        tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
-
-        print(tribonaci.rozvoj_leveho_kraje.rozvoj_bodu)
-
-        # ff.vypis_rovnice("x**3-x**2-x-1", Zn[i])
-        # ff.vypis_baze(tribonaci.beta, levy[i], tribonaci.levy_kraj)
-        # rozvoj_bodu = tribonaci.rozvoj_leveho_kraje.rozvoj_bodu
-        # ff.vypis_levy_kraj(rozvoj_bodu,tribonaci.rozvoj_leveho_kraje.perioda)
-
-        print("S periodou {}".format(tribonaci.rozvoj_leveho_kraje.perioda))
-
-        pravy = limitni.Limitni_rozvoj(tribonaci.beta,tribonaci.levy_kraj,Zn[i],8) # ta 8 představuje na kolik cifer chci udělat rozvoj
-        pravy.limitni_rozvoj()
-        print("Limitní rozvoj pravého kraje: ")
-        print(pravy.rozvoj_bodu)
-        # upr=time.time()-zacatek
-        print("S periodou delky {}".format(pravy.perioda))
-        # print("Cyklus trval {0:.2f} s".format(upr))
-
-        #ff.vypis_pravy_kraj(pravy.rozvoj_bodu,pravy.perioda)
-
-        pravy.limitni_rozvoj_bezlimit()
-        print("Limitni rozvoj bez limit: ")
-        print(pravy.rozvoj_bodu)
-        #upr2=time.time()-upr
-        print("S periodou delky {} ".format(pravy.perioda))
-        #print("Cyklus trval {0:.2f} s\n".format(upr2))
-
-        print("No a nepřesne, pravý kraj:")
-        print(tribonaci.rozvoj_praveho_kraje.rozvoj_bodu)
-        print("S periodou delky {}".format(tribonaci.rozvoj_praveho_kraje.perioda))
-        konec = time.time() - zacatek
-        print("Cyklus trval {0:.2f} s\n".format(konec))
-
-    # print("Nyni se podíváme na fibonacciho koren: ")
-    finis=time.time()-start
-    print("Celé to trvalo {0:.2f} s".format(finis))
-    #ff.ukonceni_souboru()
-
-    Z=[1]
-    lev=['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
-    # for i in [2,4]:  # číslo v hranatých závorkách představuje pro jaký levý kraj se bude počítat rozvoj pravého kraje z pole levy
+    #
+    # for i in [0]:
+    #
+    #     tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], symbol_levy_kraj=levy[i])
+    #
+    #     print("LEVÝ KRAJ")
     #     zacatek = time.time()
-    #     fibonaci = rozvoj.Soustava('x**2-x-1', znamenko=Z[0], levy_kraj=lev[i])
-    #     pravy = limitni.Limitni_rozvoj(fibonaci.beta, fibonaci.levy_kraj, Z[0], 10)  # ta 8 představuje na kolik cifer chci udělat rozvoj
-    #     pravy.limitni_rozvoj()
-    #     print("Limitní rozvoj pravého kraje: ")
-    #     print(pravy.rozvoj_bodu)
-    #     print("S periodou delky {}".format(pravy.perioda))
+    #     tribonaci.spocitej_rozvoj_leveho_kraje(True,10)
+    #     konec=time.time()-zacatek
+    #     zacatek=time.time()
+    #     print("Celé to trvalo {0:.2f}".format(konec))
+    #     tribonaci.spocitej_rozvoj_leveho_kraje(False,10)
+    #     konec = time.time()-zacatek
+    #     print("Celé to trvalo {0:.2f}".format(konec))
     #
-    #     print("No a nepřesne, pravý kraj:")
-    #     print(fibonaci.rozvoj_praveho_kraje.rozvoj_bodu)
-    #     print("S periodou delky {}".format(fibonaci.rozvoj_praveho_kraje.perioda))
-    #
-    #     TU JSI NĚCO POKANȞALA A TERAZ TI TO NEFACHA!!!!
-    #
+    #     print("PRAVÝ KRAJ")
+    #     zacatek = time.time()
+    #     tribonaci.spocitej_rozvoj_praveho_kraje(True,10)
     #     konec = time.time() - zacatek
-    #     print("Cyklus trval {0:.2f} s".format(konec))
+    #     zacatek = time.time()
+    #     print("Celé to trvalo {0:.2f}".format(konec))
+    #     tribonaci.spocitej_rozvoj_praveho_kraje(False,10)
+    #     konec = time.time() - zacatek
+    #     print("Celé to trvalo {0:.2f}".format(konec))
+    #     print("###################################################################################################")
 
+    # zac = time.time()
+    # tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj='0')
+    # period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, 1, 2,4, False)
+    # konec=time.time()-zac
+    # print("Cele to trvalo {0:.2f} sekund".format(konec))
 
+    levyk = '-1/(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3)) - 1/(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2 - (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)'
+    hodnota = [-1,-1,-1,1,0,0]
 
+    tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=levyk)
+    # zac = time.time()
+    # tribonaci.spocitej_rozvoj_leveho_kraje(True, 5)
+    kon = time.time()
+    # print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
+    tribonaci.spocitej_rozvoj_leveho_kraje(False, 10)
+    pom = time.time()-kon
+    print("Cele to trvalo {0:.2f} s".format(pom))
 
-    # print("Jsem tu.")
-    # vyraz = a+5
-    # print(vyraz)
-    # dosazeni = vyraz.subs(a, 5)
-    # print(dosazeni)
-
-
-
-
-    # # cyklus = zacatek
-    # for i in [0]: #range(12):
-    #     start_cyklu = time.time()
-    #     print("Vytvářím základní soustavu znamenko {} a okraj {}".format(Zn[i], levy[i]))
-    #     tribonacci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=Zn[i], levy_kraj=levy[i])
-    #     print(tribonacci.beta)
-    #     print("Rozvoj leveho kraje: ")
-    #     print(tribonacci.rozvoj_leveho_kraje.rozvoj_bodu)
-    #     print(tribonacci.rozvoj_leveho_kraje.perioda)
-    #     print("Snaha o rozvoj praveho kraje:")
-    #     print(tribonacci.rozvoj_praveho_kraje.rozvoj_bodu)
-    #     print(tribonacci.rozvoj_praveho_kraje.perioda)
-    #     # print("Následuje po řádcích mink, maxk, vzdálenosti:")
-    #     # tribonacci.vytvoreni_mink_maxk(15)
-    #     # print(tribonacci.mink)
-    #     # print(tribonacci.maxk)
-    #     # tribonacci.spocteni_vzdalenosti(15)
-    #     # print(tribonacci.delta)
-    #     cyklus = time.time() - start_cyklu
-    #     print("Cyklus trval {0:.2f} s".format(cyklus))
-    #
-    # #print(tribonacci.levy_kraj)
-    # #j=2
-    # #tribonacci_rozvoj=rozvoj.Rozvoj(tribonacci.beta,tribonacci.levy_kraj+1,tribonacci.levy_kraj,Zn[j],True,30)
-    # #print("Máme bázi {}, {} bázi a levý kraj je {}".format(tribonacci.beta, tribonacci.znamenko,tribonacci.levy_kraj))
-    # #tribonacci_rozvoj.limitni_rozvoj_pk()
-    # #print("Rozvoj praveho kraje limitni:")
-    # #print(tribonacci_rozvoj.rozvoj_pk)
-    # #print("Perioda: ")
-    # #print(tribonacci_rozvoj.perioda_pk)
-    #
-    # konec = time.time() - zacatek
-    # print("Celé to trvalo {0:.2f} s".format(konec))
-    #
-    #
-    ### pro nalezení periodických rozvojů levého kraje
-    # start= time.time()
-    # fibonacci = periody.Rozvoj_periodicky('x**2-x-1',1)
-    # kp=periody.Perioda(0,3,1)
-    # kp.cely_vyraz() # získám vyraz
-    # kp.vycisleny_vyraz(fibonacci.beta)
-    # kp.dosazeni_vse('x**2-x-1')
-    # #print(len(kp.hodnoty))
-    # konec = time.time() - start
-    # print("Celé to trvalo {0:.2f} s".format(konec))
-    #
-    # #### pro určení přesnosti
-    # # fibonacci = presnost.presnost('x**3-x**2-x-1',1)
-    # # for i in range(1,5):
-    # #     print("Pro {0:.0f} cifer je nután přesnost na ".format(i))
-    # #     fibonacci.kladna(i)
-    # # for i in range(10,110,10):
-    # #     print("Pro {0:.0f} cifer je nután přesnost na ".format(i))
-    # #     fibonacci.kladna(i)
-    # #
-    # # fibonacci.kladna(500)
-    # # fibonacci.kladna(1000)
-    #
-    # #print((-(1/2 + math.sqrt(5)/2)**2/(-1 + (1/2 + math.sqrt(5)/2)**3) + (1/2 + math.sqrt(5)/2)/(-1 + (1/2 + math.sqrt(5)/2)**3)) == (-(1/2 + math.sqrt(5)/2)/2+1/2))
+    #period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, 1, 2,4, False)
+    #print("Jdu na to")
+    #period.zpetne_overeni(hodnota,levyk)
