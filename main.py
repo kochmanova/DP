@@ -36,7 +36,7 @@ if __name__=="__main__":
     # # Kód pro ověření funkčnosti Periody(2,4) a (0,3)
     zac = time.time()
     tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj='0')
-    period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, znamenko=1, k=0,p=3, presnost=False)
+    period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, znamenko=1, k=2,p=4, presnost=False)
     period.dosazeni_vse()
     #period = rozvoj.Perioda()
     konec=time.time()-zac
