@@ -33,10 +33,10 @@ if __name__=="__main__":
     #     print("Celé to trvalo {0:.2f}".format(konec))
     #     print("###################################################################################################")
 
-    # # Kód pro ověření funkčnosti Periody(2,4) a (0,3)
+    # Kód pro ověření funkčnosti Periody(2,4) a (0,3) - funguje
     zac = time.time()
     tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj='0')
-    period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, znamenko=1, k=2,p=4, presnost=False)
+    period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, znamenko=1, k=0,p=1, presnost=False)
     period.dosazeni_vse()
     #period = rozvoj.Perioda()
     konec=time.time()-zac
@@ -51,10 +51,13 @@ if __name__=="__main__":
     levyk = '-(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**3) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**3)'
     hodnota=[-1,0,1]
 
+    levyk2= '-(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/((-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)*(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2) + 1/((-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)*(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)'
 
-    # tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=simplify(levyk))
+
+    #
+    # tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=levyk)
     # zac = time.time()
-    # tribonaci.spocitej_rozvoj_leveho_kraje(False, 5)
+    # tribonaci.spocitej_rozvoj_leveho_kraje(False, 5) # True funguje
     # kon = time.time()
     # print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
     # tribonaci.spocitej_rozvoj_leveho_kraje(False, 5)

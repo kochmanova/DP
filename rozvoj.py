@@ -102,12 +102,17 @@ class Soustava(object):
         perioda = None
         transformace = list()
         rozvoj = list()
-        transformace.append(sp.N(bod, n=presnost))
+        transformace.append(sp.N(bod, n=presnost, chop=True))
+        # print(bod) #- přesný výraz
+        # print(sp.N(bod, n=presnost)) #- -0.e-1377
+        # print(sp.N(bod, n=presnost, chop=True)) #- 0
         i = 1
         while (not periodicke) and (i <= pocet_cifer):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
+            #c = self.znamenko * self.baze*transformace[i-1]-self.levy_kraj
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
+            #print("Došli jsme sem")
             pom = sp.simplify(cifra)
             rozvoj.append(pom)
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
