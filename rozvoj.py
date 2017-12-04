@@ -427,6 +427,10 @@ class Perioda(object):
         self.mocnina = 1
         self.hodnoty = list()
         self.leve_kraje = list()
+        self.leve_kraje_symbolicky = list()
+        self.prave_kraje = list()
+        self.prave_kraje_perioda = list()
+        self.prave_kraje_pomoc = list()
         self.presne = presnost
         self.vycisleny_vyraz = None
 
@@ -526,6 +530,8 @@ class Perioda(object):
             if self.p == hledany_rozvoj.perioda_leveho_kraje:
                 self.hodnoty.append(hodnoty)
                 self.leve_kraje.append(levy)
+                symbolicke = self.vycisleni_vyrazu_abc(self.vyraz, hodnoty)
+                self.leve_kraje_symbolicky.append(symbolicke)
                 print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
                 print(hodnoty)
                 # print(self.p)
@@ -533,12 +539,15 @@ class Perioda(object):
                 print(sp.simplify(levy))
                 pomoc = Soustava(self.fce, self.znamenko, sp.simplify(levy))
                 print("Tento retezec ma pak po ZJEDNODUSENI rozvoj praveho kraje:")
-                pomoc.spocitej_rozvoj_praveho_kraje(False, 2 * self.p + self.k)
+                pomoc.spocitej_rozvoj_praveho_kraje(False, 8)
                 print(pomoc.rozvoj_praveho_kraje)
                 print(pomoc.perioda_praveho_kraje)
+                self.prave_kraje_pomoc.append(pomoc.rozvoj_praveho_kraje) ######
                 print("Tento retezec ma pak rozvoj praveho kraje a periodu: ")
-                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(False, 2 * self.p + self.k)
+                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(False, 8)
                 print(hledany_rozvoj.rozvoj_praveho_kraje)
                 print(hledany_rozvoj.perioda_praveho_kraje)
+                self.prave_kraje.append(hledany_rozvoj.rozvoj_praveho_kraje)
+                self.prave_kraje_perioda.append(hledany_rozvoj.perioda_praveho_kraje)
                 # return True
                 # return False

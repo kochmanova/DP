@@ -28,7 +28,7 @@ class Soubor(object):
         self.f.write("\n \end{document}")
         self.f.close()
 
-    def vypis_levy_kraj(self,list, perioda):
+    def vypis_rozvoj_leveho(self, list, perioda):
         self.f.write("Rozvoj levého kraje: ")
         self.list_s_periodou(list,perioda)
         self.f.write(" \n\n")
@@ -57,7 +57,7 @@ class Soubor(object):
 
     def list_s_periodou(self,list,perioda):
         self.f.write("$")
-        print((list))
+        #print((list))
         if perioda==None:
             self.list_na_retezec(list)
         elif len(list)==perioda:
@@ -87,7 +87,7 @@ class Soubor(object):
         #    print(list[2])
         for i in list:
             if i < 0:
-                self.f.write("\overline {}".format(i))
+                self.f.write("\overline {} ".format(-i))
                 #                   self.f.write("{}".format(i))
             else:
                 self.f.write("{}".format(i))
@@ -117,7 +117,7 @@ class Soubor(object):
         self.uprava_znaku(rovnice)
         self.f.write("$.\n\n")
 
-    def vypis_baze(self,baze,levy, levy_kraj):
+    def vypis_baze(self,baze):
         self.f.write("Báze $")
         self.uprava_znaku("beta")
         self.f.write("=")
@@ -125,7 +125,29 @@ class Soubor(object):
         #self.f.write(latex(simplify(baze)))
         self.f.write(latex(baze))
         self.f.write("\doteq {}".format(N(baze,n=3)))
+
+    def vypis_levy(self,levy,levy_kraj):
         self.f.write("$ a levý kraj $\ell = ")
         self.zmena_znaku(levy)
         self.f.write("\doteq {}".format(N(levy_kraj,n=3)))
         self.f.write("$.\n\n")
+
+    def vypis_perioda(self,k,p, vyraz, moznosti):
+        self.f.write("Počítáme rozvoje , které mají {} dlouhou předperiodu a {} délku periody. ".format(k,p))
+        self.f.write("Levý kraj má pak hodnotu $$\ell=")
+        self.f.write(latex(vyraz))
+        self.f.write("$$")
+        self.f.write("Celkem jsme prošli {} možností.\n\n".format(moznosti))
+
+    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda, prave_pomoc):
+        for i in range(len(hodnoty)):
+            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
+            self.f.write(latex(leve_kraje_symbolicke[i]))
+            #self.f.write(" = ")
+            #self.f.write(latex(leve_kraje[i]))
+            self.f.write("\doteq {} $$ \n\n".format(N(leve_kraje[i],n=3)))
+            self.vypis_rozvoj_leveho(hodnoty[i],p)
+            self.vypis_pravy_kraj(prave_kraje[i],perioda[i])
+            self.vypis_pravy_kraj(prave_pomoc[i], None)
+            #self.f.write("$$d(\ell) = [ % s]" % " ".join(map(str, hodnoty[i])))
+            #self.f.write("$$\n\n")

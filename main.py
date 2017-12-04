@@ -1,5 +1,6 @@
 import rozvoj
 import time
+import latex_export
 
 from sympy import latex, simplify
 
@@ -35,10 +36,24 @@ if __name__=="__main__":
 
     # Kód pro ověření funkčnosti Periody(2,4) a (0,3) - funguje
     zac = time.time()
-    tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj='0')
-    period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, znamenko=1, k=0,p=1, presnost=False)
+    rovnice = 'x**3-x**2-x-1'
+    znamenko = 1
+    k=0
+    p=2
+    tribonaci = rozvoj.Soustava(rovnice, znamenko,symbol_levy_kraj='0')
+    period = rozvoj.Perioda(rovnice, tribonaci.baze, znamenko, k,p, presnost=False)
     period.dosazeni_vse()
     #period = rozvoj.Perioda()
+    mezicas = time.time()-zac
+    print("Výpočet trval {0:.2f} sekund".format(mezicas))
+    soubor = "/home/mysska/Plocha/DP/vystup/pokus_period.tex"
+    file = latex_export.Soubor(soubor)
+    file.vypis_rovnice(rovnice,znamenko)
+    file.vypis_perioda(k,p,period.vyraz,3**(k+p))
+    #file.vypis_periody_cele(period.hodnoty,period.leve_kraje,period.leve_kraje_symbolicky,p)
+    file.vypis_periody_nalezene(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda, period.prave_kraje_pomoc)
+
+    file.ukonceni_souboru()
     konec=time.time()-zac
     print("Cele to trvalo {0:.2f} sekund".format(konec))
 
