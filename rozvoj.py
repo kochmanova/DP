@@ -431,6 +431,7 @@ class Perioda(object):
         self.prave_kraje = list()
         self.prave_kraje_perioda = list()
         self.prave_kraje_pomoc = list()
+        self.pomoc_perioda = list()
         self.presne = presnost
         self.vycisleny_vyraz = None
 
@@ -523,8 +524,6 @@ class Perioda(object):
         print("Nyni delame rozvoj tohohle:  [%s]" % ",".join(map(str, hodnoty)))
         print(levy)
         # print(sp.simplify(levy))
-        if hodnoty == [-1, -1, -1, 1, 0, 0]:
-            print("ahoj")
         hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, 2 * self.p + self.k)
         if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
             if self.p == hledany_rozvoj.perioda_leveho_kraje:
@@ -543,6 +542,7 @@ class Perioda(object):
                 print(pomoc.rozvoj_praveho_kraje)
                 print(pomoc.perioda_praveho_kraje)
                 self.prave_kraje_pomoc.append(pomoc.rozvoj_praveho_kraje) ######
+                self.pomoc_perioda.append(pomoc.perioda_praveho_kraje)  ####
                 print("Tento retezec ma pak rozvoj praveho kraje a periodu: ")
                 hledany_rozvoj.spocitej_rozvoj_praveho_kraje(False, 8)
                 print(hledany_rozvoj.rozvoj_praveho_kraje)

@@ -16,8 +16,13 @@ class Soubor(object):
         f = open(self.nazev,"w")
         self.f = f
 
+    # UDĚLAT, ABY PO ZÁPISU SE SOUBOR SÁM BZEPEČNĚ UZAVŘEL A PŘI DALŠÍM ZÁPISU SE ZAS OTEVŘEL.
+
+    # hlavičku a tabulku dát do RESOURCE
+
+    # PROFILY - zjistit, jak to udělat, aby se na dvou počítačích a ty adresáře...
     def napis_hlavicku(self):
-        hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex","r")
+        hl = open("/home/mysska/Plocha/DP/vystup/hlavicka.tex","r")
         radky = hl.readlines()
         #for i in radky:
         self.f.writelines(radky)
@@ -39,7 +44,7 @@ class Soubor(object):
         self.f.write(" \n\n")
 
     def vypis_minmax(self,mink, maxk, gamma):
-        hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
+        hl = open("/home/mysska/Plocha/DP/vystup/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
@@ -139,7 +144,7 @@ class Soubor(object):
         self.f.write("$$")
         self.f.write("Celkem jsme prošli {} možností.\n\n".format(moznosti))
 
-    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
+    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho, prave_pom, pom_perioda):
         self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
 #            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
@@ -150,4 +155,8 @@ class Soubor(object):
             self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i],n=3)))
             self.vypis_rozvoj_leveho(hodnoty[i],p)
             self.vypis_pravy_kraj(prave_kraje[i],perioda_praveho[i])
+            self.vypis_pravy_kraj(prave_pom[i],pom_perioda[i])
         self.f.write("\end{itemize}")
+
+    def vypis_cas(self, cas):
+        self.f.write("Celé to trvalo {0:.2f} sekund. ".format(cas))
