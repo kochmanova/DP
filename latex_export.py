@@ -17,7 +17,7 @@ class Soubor(object):
         self.f = f
 
     def napis_hlavicku(self):
-        hl = open("/home/mysska/Plocha/DP/vystup/hlavicka.tex","r")
+        hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex","r")
         radky = hl.readlines()
         #for i in radky:
         self.f.writelines(radky)
@@ -39,7 +39,7 @@ class Soubor(object):
         self.f.write(" \n\n")
 
     def vypis_minmax(self,mink, maxk, gamma):
-        hl = open("/home/mysska/Plocha/DP/vystup/tabulka.tex", "r")
+        hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
@@ -134,20 +134,20 @@ class Soubor(object):
 
     def vypis_perioda(self,k,p, vyraz, moznosti):
         self.f.write("Počítáme rozvoje , které mají {} dlouhou předperiodu a {} délku periody. ".format(k,p))
-        self.f.write("Levý kraj má pak hodnotu $$\ell=")
+        self.f.write("Levý kraj je pak ve tvaru $$\ell=")
         self.f.write(latex(vyraz))
         self.f.write("$$")
         self.f.write("Celkem jsme prošli {} možností.\n\n".format(moznosti))
 
-    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda, prave_pomoc):
+    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
+        self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
-            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
+#            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
+            self.f.write("\item $\ell = ")
             self.f.write(latex(leve_kraje_symbolicke[i]))
             #self.f.write(" = ")
             #self.f.write(latex(leve_kraje[i]))
-            self.f.write("\doteq {} $$ \n\n".format(N(leve_kraje[i],n=3)))
+            self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i],n=3)))
             self.vypis_rozvoj_leveho(hodnoty[i],p)
-            self.vypis_pravy_kraj(prave_kraje[i],perioda[i])
-            self.vypis_pravy_kraj(prave_pomoc[i], None)
-            #self.f.write("$$d(\ell) = [ % s]" % " ".join(map(str, hodnoty[i])))
-            #self.f.write("$$\n\n")
+            self.vypis_pravy_kraj(prave_kraje[i],perioda_praveho[i])
+        self.f.write("\end{itemize}")

@@ -46,12 +46,12 @@ if __name__=="__main__":
     #period = rozvoj.Perioda()
     mezicas = time.time()-zac
     print("Výpočet trval {0:.2f} sekund".format(mezicas))
-    soubor = "/home/mysska/Plocha/DP/vystup/pokus_period.tex"
+    soubor = "/home/mysska/Plocha/diplomka/vystup/pokus_period.tex"
     file = latex_export.Soubor(soubor)
     file.vypis_rovnice(rovnice,znamenko)
     file.vypis_perioda(k,p,period.vyraz,3**(k+p))
     #file.vypis_periody_cele(period.hodnoty,period.leve_kraje,period.leve_kraje_symbolicky,p)
-    file.vypis_periody_nalezene(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda, period.prave_kraje_pomoc)
+    file.vypis_periody_nalezene(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda)
 
     file.ukonceni_souboru()
     konec=time.time()-zac
