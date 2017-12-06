@@ -76,7 +76,7 @@ class Soubor(object):
                 if j==zav:
                     self.f.write("(")
                 if i < 0:
-                    self.f.write("\overline {} ".format(i))
+                    self.f.write("\overline {} ".format(-i))
  #                   self.f.write("{}".format(i))
                 else:
                     self.f.write("{}".format(i))
@@ -144,7 +144,7 @@ class Soubor(object):
         self.f.write("$$")
         self.f.write("Celkem jsme prošli {} možností.\n\n".format(moznosti))
 
-    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho, prave_pom, pom_perioda):
+    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
         self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
 #            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
@@ -155,7 +155,7 @@ class Soubor(object):
             self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i],n=3)))
             self.vypis_rozvoj_leveho(hodnoty[i],p)
             self.vypis_pravy_kraj(prave_kraje[i],perioda_praveho[i])
-            self.vypis_pravy_kraj(prave_pom[i],pom_perioda[i])
+            #self.vypis_pravy_kraj(prave_pom[i],pom_perioda[i])
         self.f.write("\end{itemize}")
 
     def vypis_cas(self, cas):

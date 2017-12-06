@@ -1,10 +1,8 @@
 import sympy as sp
-
-from sympy.abc import x, a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w, beta
 from sympy import latex
 from time import time
 from numpy import isreal, complex
-from itertools import product
+from sympy.abc import x
 
 EPS = 9e-17
 presnost = 684  # max 684, 700 nejde zatím
@@ -12,12 +10,17 @@ MALO = 2e-8
 
 
 class Soustava(object):
-    """ pro zadanou fci, levý kraj a znaménko báze vypočte bázi a zda námi zvolený levý kraj splňuje základní požadavky.
-    Dále může spočítat rozvoj levého a pravého kraje s možností spočítat mink, maxk a jejich vzdálenosti"""
+    """
+    Pro zadanou fci, levý kraj a znaménko báze vypočte bázi a zda námi zvolený levý kraj splňuje základní požadavky.
+    Dále může spočítat rozvoj levého a pravého kraje s možností spočítat mink, maxk a jejich vzdálenosti.
+    """
 
     def __init__(self, fce='x**3-x**2-x-1', znamenko=1, symbol_levy_kraj='-x/3'):
-        """ funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží
-         rovnici (proměnná fce), znaménko, bázi a symbolický levý kraj """
+        """
+        Funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží
+        rovnici (proměnná fce), znaménko, bázi a symbolický levý kraj
+        """
+
         self.baze = None
         self.levy_kraj = None
         self.fce = fce
@@ -38,9 +41,12 @@ class Soustava(object):
         self.spocitej_hodnotu_leveho_kraje(symbol_levy_kraj)
 
     def spocitej_hodnotu_baze(self):
-        """ Tato funkce se zavolá sama, jakmile vytvoříme instanci třídy Soustava. Pro danou rovnici spočte bázi,
-        se kterou budeme počítat a ověří, že splňuje základní požadavky, tedy beta in R a |beta|>1. """
+        """
+        Tato funkce se zavolá sama, jakmile vytvoříme instanci třídy Soustava. Pro danou rovnici spočte bázi,
+        se kterou budeme počítat a ověří, že splňuje základní požadavky, tedy beta in R a |beta|>1.
+        """
 
+        # TODO existuje funkce, která se jmenuje podobně a možná dělá jen tu konkrétní věc a to chci -> podívat
         reseni_rovnice = sp.solve(self.fce, x)
         realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))]
         if len(realne_koreny) < 1:
@@ -52,13 +58,16 @@ class Soustava(object):
         self.baze = baze[0]
 
     def spocitej_hodnotu_leveho_kraje(self, symbol_levy_kraj):
-        """ Tato funkce se zavolá sama, jakmile vytvoříme instanci třídy Soustava. Funkce, která pro levý kraj,
-        jak symbolický vyjádřený pomocí bety(=x), tak hodnotu, zjistí, zda splňuje námi požadované podmínky."""
+        """
+        Tato funkce se zavolá sama, jakmile vytvoříme instanci třídy Soustava. Funkce, která pro levý kraj,
+        jak symbolický vyjádřený pomocí bety(=x), tak hodnotu, zjistí, zda splňuje námi požadované podmínky.
+        """
+        # TODO ohledně té podmínky a její správnosti
 
         symbolicky_levy_kraj = sp.sympify(symbol_levy_kraj)
         symbolicky_levy_kraj = symbolicky_levy_kraj.subs({x: self.baze})
         priblizny_kraj = sp.N(symbolicky_levy_kraj, n=presnost)
-        print(priblizny_kraj)
+        # print(priblizny_kraj) # výpis hodnoty levého kraje
         if (priblizny_kraj > 0) or (priblizny_kraj < -1):
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
         if (self.znamenko == -1) and ((-priblizny_kraj / self.baze - EPS > (priblizny_kraj + 1)) or -(
@@ -68,7 +77,14 @@ class Soustava(object):
         self.levy_kraj = symbolicky_levy_kraj
 
     def nalezeni_presneho_rozvoje(self, bod, pocet_cifer=30):
-        """ Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer míst."""
+        """
+        Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer míst a vrátí je.
+
+        :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
+        :returns rozvoj (list) bodu
+        :returns perioda (int/None)
+        """
+        # TODO podmínka pro bod - ValueError
 
         periodicke = False
         perioda = None
@@ -80,7 +96,8 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-            rozvoj.append(sp.simplify(sp.floor(cifra)))
+            # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
+            rozvoj.append(sp.cancel(sp.floor(cifra)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(nova_transformace)
             for j in range(len(transformace)):
@@ -93,28 +110,28 @@ class Soustava(object):
         return rozvoj, perioda
 
     def nalezeni_priblizneho_rozvoje(self, bod, pocet_cifer=30):
-        """ Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer. Tato funkce nepracuje
+        """
+        Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer. Tato funkce nepracuje
         s přesnými hodnotami (ukládá hodnoty vyjádřené na max. 684 desetinných míst), dochází zde k zaokrouhlování,
-        což může vést k chybám, avšak oproti přesnému rozvoji je výpočet výrazně rychlejší."""
+        což může vést k chybám, avšak oproti přesnému rozvoji je výpočet výrazně rychlejší.
+
+        :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
+        :returns rozvoj (list) bodu
+        :returns perioda (int/None)
+        """
+        # TODO podmínka pro bod - ValueError
 
         periodicke = False
-        # print("Pocitame LEVY: {}".format(self.levy_kraj))
         perioda = None
         transformace = list()
         rozvoj = list()
         transformace.append(sp.N(bod, n=presnost, chop=True))
-        # print(bod) #- přesný výraz
-        # print(sp.N(bod, n=presnost)) #- -0.e-1377
-        # print(sp.N(bod, n=presnost, chop=True)) #- 0
         i = 1
         while (not periodicke) and (i <= pocet_cifer):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
-            #c = self.znamenko * self.baze*transformace[i-1]-self.levy_kraj
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
-            #print("Došli jsme sem")
-            pom = sp.simplify(cifra)
-            rozvoj.append(pom)
+            rozvoj.append(sp.cancel(cifra))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(sp.N(nova_transformace, n=presnost))
             for j in range(len(transformace)):
@@ -127,7 +144,12 @@ class Soustava(object):
         return rozvoj, perioda
 
     def nalezeni_limitniho_rozvoje(self, pocet_cifer=30):
-        """ Funkce, která pro pravý kraj spočte limitní rozvoj v dané bázi na pocet_cifer."""
+        """
+        Funkce, která pro pravý kraj spočte limitní rozvoj v dané bázi na pocet_cifer.
+
+        :returns rozvoj (list)
+        :returns perioda (int/None)
+        """
 
         periodicke = False
         perioda = None
@@ -141,14 +163,14 @@ class Soustava(object):
             # start = time.time()
             print("Počítáme {0:.0f}.cifru ".format(i))
             cifra_dosazena = cifra.subs(x, transformace[i - 1])
-            zjednoduseni = sp.simplify(cifra_dosazena)
+            # zjednoduseni = sp.simplify(cifra_dosazena) # tu je to zlý -> opraveno ?
+            zjednoduseni = sp.cancel(cifra_dosazena)
 
             if sp.sympify(zjednoduseni).is_Integer:
                 if (self.znamenko < 0) and (i % 2 == 1):
                     rozvoj.append(zjednoduseni)
                 else:
                     rozvoj.append(zjednoduseni - 1)
-                    # print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
             else:
                 if (self.znamenko < 0) and (i % 2 == 0):
                     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
@@ -167,8 +189,14 @@ class Soustava(object):
         return rozvoj, perioda
 
     def nalezeni_limitniho_rozvoj_bez_limit(self, pocet_cifer=30):
-        """ Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje bez použití limit v dané bázi
-        na pocet_cifer. TODO zjistit, zda je časově rychlejší oproti pravému kraji"""
+        """
+        Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje bez použití limit v dané bázi
+        na pocet_cifer.
+
+        :returns rozvoj (list)
+        :returns perioda (int/None)
+        """
+        # TODO zjistit, zda je časově rychlejší oproti pravému kraji
 
         periodicke = False
         perioda = None
@@ -182,7 +210,8 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}.cifru ".format(i))
             cifra_dosazena = cifra.subs(x, transformace[i - 1])
-            zjednoduseni = sp.simplify(cifra_dosazena)
+            # zjednoduseni = sp.simplify(cifra_dosazena) # Tu je to zlý
+            zjednoduseni = sp.cancel(cifra_dosazena)
             if sp.sympify(zjednoduseni).is_Integer:
                 if (self.znamenko < 0) and (i % 2 == 1):
                     rozvoj.append(zjednoduseni)
@@ -190,14 +219,13 @@ class Soustava(object):
                     rozvoj.append(zjednoduseni - 1)
                     # print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
             else:
-
                 #                 if (self.znamenko < 0) and (i % 2 == 0):
                 #                     rozvoj.append(dolni_cifra.subs(x,transformace[i-1]))
                 # #                     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
                 #                 else:
                 #                     cifra_upr = sp.floor(cifra-1)
                 #                     rozvoj.append(cifra_upr.subs(x,transformace[i-1]))
-                rozvoj.append(dolni_cifra.subs(x, transformace[i - 1]))
+                rozvoj.append(sp.cancel(dolni_cifra.subs(x, transformace[i - 1])))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append((nova_transformace))
             for j in range(len(transformace)):
@@ -211,9 +239,12 @@ class Soustava(object):
         return rozvoj, perioda
 
     def spocitej_rozvoj_leveho_kraje(self, presne=True, pocet_cifer=30):
-        """ Funkce, která zavolá funkci pro nalezení rozvoje levého kraje přesně, resp. nepřesně podle parametru presne,
-        na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží. V případě, že perioda nebyla nalezena, bude
-        tato proměnná obsahovat hodnotu None."""
+        """
+        Funkce, která zavolá funkci pro nalezení rozvoje levého kraje přesně, resp. nepřesně podle parametru presne,
+        na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že perioda nebyla nalezena,
+        bude tato proměnná obsahovat hodnotu None.
+        """
+
         if presne:
             self.rozvoj_leveho_kraje, self.perioda_leveho_kraje = self.nalezeni_presneho_rozvoje(self.levy_kraj,
                                                                                                  pocet_cifer)
@@ -224,9 +255,12 @@ class Soustava(object):
         print("S periodou délky {}".format(self.perioda_leveho_kraje))
 
     def spocitej_rozvoj_praveho_kraje(self, presne=True, pocet_cifer=30):
-        """ Funkce, která zavolá funkci pro nalezení limitního rozvoje pravého kraje pomocí limity, resp. bez limity
-        podle parametru presne, na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží. V případě, že perioda
-        nebyla nalezena, bude tato proměnná obsahovat hodnotu None."""
+        """
+        Funkce, která zavolá funkci pro nalezení limitního rozvoje pravého kraje pomocí limity, resp. bez limity
+        podle parametru presne, na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že
+        perioda nebyla nalezena, bude tato proměnná obsahovat hodnotu None.
+        """
+
         if presne:
             self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoje(pocet_cifer)
         else:
@@ -236,8 +270,9 @@ class Soustava(object):
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
 
     def prilep_periodu(self, retezec, perioda, delka_retezce):
-        """ Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla rovna
-        delka_retezce v případě, že retezec nemá periodu, se zřetězí na požadovanou délku pomocí nul.
+        """
+        Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla
+        rovna delka_retezce; v případě, že retezec není periodický, se zřetězí na požadovanou délku pomocí nul.
         V případě, že původní retezec je delší než delka_retezce, je retezec zkrácen na požadovanou délku.
 
         :param retezec (list): počáteční řetězec, který chceme prodloužit
@@ -245,6 +280,7 @@ class Soustava(object):
         :param delka_retezce: požadovaná délka prodlouženého řetězce
         :returns: list - prodloužený nebo zkrácený řetězec na požadovanou délku
         """
+
         delka = len(retezec)
         if (perioda is None):
             pridam_nuly = [0] * (delka_retezce - delka)
@@ -259,7 +295,8 @@ class Soustava(object):
         return retezec
 
     def porovnej_retezce(self, prvni_retezec, druhy_retezec, perioda_prvniho, perioda_druheho):
-        """Funkce, která porovná dva řetězce i různé délky.
+        """
+        Funkce, která porovná dva řetězce i různé délky.
 
         :param prvni_retezec (list): první řetezec, který porovnáváme
         :param druhy_retezec (list): řetězec, se kterým porovnáváme prvni_retezec
@@ -268,11 +305,14 @@ class Soustava(object):
 
         :returns: -1: prvni_retezec < druhy_retezec
         :returns: 1: prvni_retezec > druhy_retezec
-        :returns: 0: prvni_retezec = druhy_retezec"""
+        :returns: 0: prvni_retezec = druhy_retezec
+        """
 
         if (perioda_prvniho is not None) and (perioda_druheho is not None):
             raise ValueError("V současnosti neumíme a neporovnáváme dva řetězce s periodou!")
-        # Nyní zjistíme, který z řetězců je periodický
+
+        # TODO Budeme umět
+
         pracovni_retezec_1 = prvni_retezec.copy()
         pracovni_retezec_2 = druhy_retezec.copy()
         if perioda_prvniho is not None:
@@ -294,12 +334,14 @@ class Soustava(object):
         return 0  # retezce se rovnaji
 
     def je_retezec_zleva_pripustny(self, retezec, perioda_retezce):
-        """ Funkce, která zjistí, zda je retezec a libovolný jeho sufix >= rozvoj_leveho_kraje.rozvoj_bodu
+        """
+        Funkce, která zjistí, zda je retezec a libovolný jeho sufix >=lex/alt rozvoj_leveho_kraje.rozvoj_bodu
 
         :type retezec: list
         :param perioda_retezce: délka periody řetězce (int), pokud nemá periodu, hodnota je None
         :returns: bool
         """
+
         pracovni_retezec = retezec.copy()
         while len(pracovni_retezec) > 0:
             if self.porovnej_retezce(self.rozvoj_leveho_kraje, pracovni_retezec,
@@ -309,12 +351,14 @@ class Soustava(object):
         return True
 
     def je_retezec_zprava_pripustny(self, retezec, perioda_retezce):
-        """funkce, která zjistí, zda je retezec a libovolný jeho sufix < rozvoj_praveho_kraje.rozvoj_bodu
+        """
+        Funkce, která zjistí, zda je retezec a libovolný jeho sufix <lex/alt rozvoj_praveho_kraje.rozvoj_bodu
 
         :type retezec: list
         :param perioda_retezce: délka periody řetězce (int), pokud nemá periodu, hodnota je None
         :returns: bool
         """
+
         pracovni_retezec = retezec.copy()
         while len(pracovni_retezec) > 0:
             if self.porovnej_retezce(pracovni_retezec, self.rozvoj_praveho_kraje, perioda_retezce,
@@ -324,12 +368,14 @@ class Soustava(object):
         return True
 
     def je_retezec_pripustny(self, retezec, perioda_retezce):
-        """funkce, která zjistí, zda je retezec připustný
+        """
+        Funkce, která zjistí, zda je retezec připustný.
 
-        :type retezec: list
-        :param perioda_retezce: délka periody řetězce (int), pokud nemá periodu, hodnota je None
+        :param retezec (list)
+        :param perioda_retezce (int): délka periody řetězce, pokud nemá periodu, hodnota je None
         :returns: bool
         """
+
         if self.je_retezec_zprava_pripustny(retezec, perioda_retezce) \
                 and self.je_retezec_zleva_pripustny(retezec, perioda_retezce):
             return True
@@ -337,10 +383,12 @@ class Soustava(object):
             return False
 
     def spocitej_mink_maxk(self, k):
-        """tato funkce pro zadané k nalézne řetězce mink a maxk až do délky řetězce k
+        """
+        Funkce pro zadané k nalézne řetězce mink a maxk až do délky řetězce k.
 
         :param k: maximální délka řetězců mink a maxk, kterou chceme vytvořit
         """
+
         mink = list()
         maxk = list()
         min0 = []
@@ -389,11 +437,12 @@ class Soustava(object):
         self.maxk = maxk
 
     def gamma_funkce(self, retezec):
-        """Tato funkce zadaný konečný řetězec převede do desítkové soustavy
-
-        :param retezec: řetězec, který chceme převést
-        :type retezec: list
         """
+        Tato funkce zadaný konečný řetězec převede do desítkové soustavy
+
+        :param retezec (list): řetězec, který chceme převést
+        """
+
         gamma = 0
         obraceny_retezec = retezec[::-1]  # přetočíme pro jednodušší počty
         for i in range(len(retezec)):
@@ -401,10 +450,12 @@ class Soustava(object):
         return sp.N(gamma, n=20)
 
     def spocitej_vzdalenosti(self, k):
-        """Tato funkce pro zadaná mink a maxk spočte jednotlivé vzdálenosti podle vzorce vzdálenost = abs()
+        """
+        Tato funkce pro zadaná mink a maxk spočte jednotlivé vzdálenosti podle vzorce TODO č.vzorce
 
         :param k:  maximální délka řetězců mink a maxk, pro kterou chceme spočítat vzdálenosti
         """
+
         delta = list()
         for i in range(k):
             vzdalenost = sp.N(abs(
@@ -412,142 +463,3 @@ class Soustava(object):
                 n=20)
             delta.append(vzdalenost)
         self.delta = delta
-
-
-class Perioda(object):
-    def __init__(self, fce, baze, znamenko, k, p, presnost=True):
-        """funkce, která se spustí automaticky s vytvořením instance Rozvoj, uloží si jednotlivé hodnoty a spočte
-        rozvoj bodu s jeho periodou"""
-        self.baze = baze
-        self.fce = fce
-        self.znamenko = znamenko
-        self.k = k
-        self.p = p
-        self.symboly = [a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w]
-        self.mocnina = 1
-        self.hodnoty = list()
-        self.leve_kraje = list()
-        self.leve_kraje_symbolicky = list()
-        self.prave_kraje = list()
-        self.prave_kraje_perioda = list()
-        self.prave_kraje_pomoc = list()
-        self.pomoc_perioda = list()
-        self.presne = presnost
-        self.vycisleny_vyraz = None
-
-        self.vyjadreni_celeho_vyrazu()
-        self.vycisleni_vyrazu_beta()
-        # self.dosazeni_vse()
-
-    def vyjadreni_predperiody(self):
-        vyraz = 0
-        if self.k > 0:
-            pomocna = self.k
-            while pomocna > 0:
-                vyraz = vyraz + self.symboly.pop(0) / beta ** self.mocnina
-                self.mocnina = self.mocnina + 1
-                pomocna = pomocna - 1
-        self.vyraz_pred = vyraz
-
-    def vyjadreni_periody(self):
-        vyraz = 0
-        pomocna = self.p
-        while pomocna > 0:
-            vyraz = vyraz + self.symboly.pop(0) / beta ** (self.mocnina - self.p) * 1 / (beta ** self.p - 1)
-            self.mocnina = self.mocnina + 1
-            pomocna -= 1
-        self.vyraz_perioda = vyraz
-
-    def vyjadreni_celeho_vyrazu(self):
-        self.vyjadreni_predperiody()
-        self.vyjadreni_periody()
-        self.vyraz = self.vyraz_pred + self.vyraz_perioda
-        print(self.vyraz)
-
-    def vycisleni_vyrazu_beta(self):
-        vycisleny = self.vyraz.subs(beta, self.baze)
-        # print(vycisleny)
-        self.vycisleny_vyraz = vycisleny
-
-    # Bylo by hezké mít funkci, která dosadí všechny hodnoty krom bety abychom viděli, jak vypadá levý kraj vyjádřen s pomocí bety
-    def vycisleni_vyrazu_abc(self, vyraz, hodnoty):
-        pom_vyraz = vyraz
-        symboly = [a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w]
-        pom_hodnoty = list(hodnoty)
-        while len(pom_hodnoty) > 0:
-            pom_vyraz = pom_vyraz.subs(symboly.pop(0), pom_hodnoty.pop(0))
-        return pom_vyraz
-
-    def dosazeni_overeni_leveho_kraje(self, hodnoty):
-        levy_kraj = self.vycisleni_vyrazu_abc(self.vycisleny_vyraz, hodnoty)
-        # symboly=[a,b,c,d,e,f,g,h,i,j]
-        # pomocne = self.k+self.p
-        # vyraz=self.vycisleny_vyraz
-        # pom_hodnoty = list(hodnoty)
-        # while len(pom_hodnoty) > 0: #pomocne > 0:
-        #    vyraz=vyraz.subs(symboly.pop(0),pom_hodnoty.pop(0))
-        # print(vyraz)
-        priblizny_levy_kraj = sp.N(levy_kraj, n=1000)
-        if priblizny_levy_kraj <= 0 and priblizny_levy_kraj >= -1:
-            rozvoj_leveho_kraje = list(hodnoty)
-            # print(vyraz)
-            self.zpetne_overeni(rozvoj_leveho_kraje, levy_kraj)
-            # dodatečná podmínka pro tuto konkrétní bázi
-            # if prosel and (levy_kraj > -1/self.baze and levy_kraj <= 1/self.baze-1):
-            # TU PODMÍNKU JSEM POKANHALA
-            #    print("Daný řetězec neleží v L_beta, tedy má Z_b jen s 0.")
-            # self.hodnoty.append(list(hodnoty))
-            # self.levy_kraj.append(vyraz)
-            # levy_kraj = sp.N(vyraz,n=20)
-            # print(hodnoty)
-            # print(levy_kraj) # mít to ve formatu je problém s nulou...nevim proč
-
-    def dosazeni_vse(self, abeceda=[-1, 0, 1]):
-        # abeceda=[-1,0,1]
-        delka = self.k + self.p
-        hodnoty = list(product(abeceda, repeat=delka))
-        # já to tak chci yeld!!!!
-        # print(hodnoty)
-        print("Celkem máme {0:.0f} řetezců".format(len(hodnoty)))
-        # self.hodnoty=hodnoty
-        i=0
-        for retezec in hodnoty:
-            print(i)
-            self.dosazeni_overeni_leveho_kraje(retezec)
-            i+=1
-
-    def zpetne_overeni(self, hodnoty, levy):  # hodnoty jsou list!!
-        hledany_rozvoj = Soustava(self.fce, self.znamenko, levy)
-        # print(levy)
-        # print(hodnoty)
-        # print(hledany_rozvoj.rozvoj_leveho_kraje.rozvoj_bodu)
-        print("Nyni delame rozvoj tohohle:  [%s]" % ",".join(map(str, hodnoty)))
-        print(levy)
-        # print(sp.simplify(levy))
-        hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, 2 * self.p + self.k)
-        if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
-            if self.p == hledany_rozvoj.perioda_leveho_kraje:
-                self.hodnoty.append(hodnoty)
-                self.leve_kraje.append(levy)
-                symbolicke = self.vycisleni_vyrazu_abc(self.vyraz, hodnoty)
-                self.leve_kraje_symbolicky.append(symbolicke)
-                print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
-                print(hodnoty)
-                # print(self.p)
-                print(levy)
-                print(sp.simplify(levy))
-                pomoc = Soustava(self.fce, self.znamenko, sp.simplify(levy))
-                print("Tento retezec ma pak po ZJEDNODUSENI rozvoj praveho kraje:")
-                pomoc.spocitej_rozvoj_praveho_kraje(False, 8)
-                print(pomoc.rozvoj_praveho_kraje)
-                print(pomoc.perioda_praveho_kraje)
-                self.prave_kraje_pomoc.append(pomoc.rozvoj_praveho_kraje) ######
-                self.pomoc_perioda.append(pomoc.perioda_praveho_kraje)  ####
-                print("Tento retezec ma pak rozvoj praveho kraje a periodu: ")
-                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(False, 8)
-                print(hledany_rozvoj.rozvoj_praveho_kraje)
-                print(hledany_rozvoj.perioda_praveho_kraje)
-                self.prave_kraje.append(hledany_rozvoj.rozvoj_praveho_kraje)
-                self.prave_kraje_perioda.append(hledany_rozvoj.perioda_praveho_kraje)
-                # return True
-                # return False
