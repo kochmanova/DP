@@ -10,7 +10,7 @@ EPS = 9e-17
 # TODO periody nějak nefungují pro záporné
 
 class Perioda(object):
-    def __init__(self, fce, baze, znamenko, k, p, presnost=True):
+    def __init__(self, fce, baze, znamenko, k, p, presnost=True, A=[-1,0,1]):
         """
         Funkce, která se spustí automaticky s vytvořením instance Perioda, uloží si jednotlivé hodnoty a spočte
         vyjádření celého výrazu pro předperiodu délky k a periodu p.
@@ -35,6 +35,7 @@ class Perioda(object):
         self.prave_kraje_perioda = list()
         self.presne = presnost
         self.vycisleny_vyraz = None
+        self.A = A
 
         self.vyjadreni_celeho_vyrazu()
         self.vycisleni_vyrazu_beta()
@@ -49,7 +50,7 @@ class Perioda(object):
         if self.k > 0:
             pomocna = self.k
             while pomocna > 0:
-                vyraz = vyraz + self.symboly.pop(0) / beta ** self.mocnina
+                vyraz = vyraz + self.symboly.pop(0) / (self.znamenko*beta) ** self.mocnina
                 self.mocnina = self.mocnina + 1
                 pomocna = pomocna - 1
         self.vyraz_pred = vyraz
@@ -62,7 +63,7 @@ class Perioda(object):
         vyraz = 0
         pomocna = self.p
         while pomocna > 0:
-            vyraz = vyraz + self.symboly.pop(0) / beta ** (self.mocnina - self.p) * 1 / (beta ** self.p - 1)
+            vyraz = vyraz + self.symboly.pop(0) / (self.znamenko*beta) ** (self.mocnina - self.p) * 1 / ((self.znamenko*beta) ** self.p - 1)
             self.mocnina = self.mocnina + 1
             pomocna -= 1
         self.vyraz_perioda = vyraz
@@ -114,13 +115,15 @@ class Perioda(object):
         levy_kraj = self.vycisleni_vyrazu_abc(self.vycisleny_vyraz, hodnoty)
         priblizny_levy_kraj = sp.N(levy_kraj, n=presnost)
         if priblizny_levy_kraj <= 0 and priblizny_levy_kraj >= -1:
-            if (self.znamenko == -1) and ((-priblizny_levy_kraj/self.baze - EPS > priblizny_levy_kraj +1) or
+            if (self.znamenko == -1) and ((-priblizny_levy_kraj/self.baze - EPS > (priblizny_levy_kraj +1)) or
                                               (-(priblizny_levy_kraj+1)/self.baze+ EPS< priblizny_levy_kraj)):
+                #print("Jsem tu")
                 pass
-            #rozvoj_leveho_kraje = list(hodnoty)
-            self.zpetne_overeni(list(hodnoty), levy_kraj)
+            else:
+                #rozvoj_leveho_kraje = list(hodnoty)
+                self.zpetne_overeni(list(hodnoty), levy_kraj)
 
-    def dosazeni_vse(self, A=[-1, 0, 1]):
+    def dosazeni_vse(self):
         """
         Funkce, která vygeneruje všechny možné kombinace konečných slov nad abecedou A s délkou k+p. Tyto slova pak
         ověří, po dosazení do vzorce pro levý kraj, spňují základní podmínky pro levý kraj. Pokud ano, je tato vzniklá
@@ -128,9 +131,9 @@ class Perioda(object):
         """
 
         delka = self.k + self.p
-        hodnoty = list(product(A, repeat=delka))
+        hodnoty = list(product(self.A, repeat=delka))
         # upravit, abychom hodnoty dostávali po jednom, jednodušší pro paměť
-        print("Celkem máme {0:.0f} řetezců".format(len(A)**delka))
+        print("Celkem máme {0:.0f} řetezců".format(len(self.A)**delka))
         i = 0
         for retezec in hodnoty:
             print("{}. případ dosazení, teď počítáme rozvoj: {}".format(i, list(retezec)))

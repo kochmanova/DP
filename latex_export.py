@@ -1,162 +1,208 @@
 from sympy import latex, sympify, N
 from sympy.abc import x, beta
 
-class Soubor(object):
 
+class Soubor(object):
     def __init__(self, nazev):
+        """
+        Funkce, která se spustí automaticky s vytvořením instance Soubor, uloží si název souboru, který vytvoří a vloží
+        do něj hlavičku LaTeXu.
+        :param nazev: název souboru
+        """
+        self.f = None
         self.nazev = nazev
         self.otevri_soubor()
-        #print("Soubor se otevrel")
         self.napis_hlavicku()
-        #print("Soubor ma hlavicku")
-        #self.ukonceni_souboru()
-        #print("Soubor se zavrel")
+        # self.ukonceni_souboru()
 
     def otevri_soubor(self):
-        f = open(self.nazev,"w")
+        """
+        Metoda pro otevření souboru.
+        """
+        f = open(self.nazev, "w")
         self.f = f
 
-    # UDĚLAT, ABY PO ZÁPISU SE SOUBOR SÁM BZEPEČNĚ UZAVŘEL A PŘI DALŠÍM ZÁPISU SE ZAS OTEVŘEL.
+    # TODO hlavičku a tabulku dát do RESOURCE
+    # TODO PROFILY - zjistit, jak to udělat, aby se na dvou počítačích a ty adresáře...
 
-    # hlavičku a tabulku dát do RESOURCE
-
-    # PROFILY - zjistit, jak to udělat, aby se na dvou počítačích a ty adresáře...
     def napis_hlavicku(self):
-        hl = open("/home/mysska/Plocha/DP/vystup/hlavicka.tex","r")
+        """
+        Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého zapisuje.
+        """
+        hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex", "r")
         radky = hl.readlines()
-        #for i in radky:
         self.f.writelines(radky)
-            #print(radky[i])
         hl.close()
 
     def ukonceni_souboru(self):
+        """
+        Jednoduchá funkce, která bezpečně zavře soubor, do kterého zapisovala a předtím jej doplní o syntax pro ukončení
+        souboru v LaTeXu, aby šel tento soubor bez problémů zkonvertovat na pdf.
+        """
         self.f.write("\n \end{document}")
         self.f.close()
 
     def vypis_rozvoj_leveho(self, list, perioda):
+        """
+        Funkce, pro vypsání rozvoje levého kraje do souboru.
+        :param list (list): rozvoj levého kraje
+        :param perioda (int/None): délka periody
+        """
         self.f.write("Rozvoj levého kraje: ")
-        self.list_s_periodou(list,perioda)
+        self.prevod_list_s_periodou(list, perioda)
         self.f.write(" \n\n")
 
     def vypis_pravy_kraj(self, list, perioda):
+        """
+        Funkce, pro vypsání rozvoje levého kraje do souboru.
+        :param list (list): rozvoj levého kraje
+        :param perioda (int/None): délka periody
+        """
         self.f.write("Limitní rozvoj pravého kraje: ")
-        self.list_s_periodou(list, perioda)
+        self.prevod_list_s_periodou(list, perioda)
         self.f.write(" \n\n")
 
-    def vypis_minmax(self,mink, maxk, gamma):
-        hl = open("/home/mysska/Plocha/DP/vystup/tabulka.tex", "r")
+    def vypis_minmax(self, mink, maxk, gamma):
+        """
+        Funkce pro vypsání řetězců min(k), max(k), a jejich vzdáleností do souboru v podobě tabulky.
+        :param mink, maxk (list listů): TODO..., gamma (list): spočtené vzdálenosti mezi řetězci min(k) a max(k)
+        """
+        hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
-        for i in range(1,len(gamma)):
+        for i in range(1, len(gamma)):
             self.f.write("{}".format(i))
             self.f.write(" & ")
-            self.list_na_retezec(mink[i])
+            self.prevod_list_na_retezec(mink[i])
             self.f.write(" & ")
-            self.list_na_retezec(maxk[i])
+            self.prevod_list_na_retezec(maxk[i])
             self.f.write(" & {0:.5f} \\\\ ".format(gamma[i]))
-            #TU TO NEFACHA
 
         self.f.write(" \end{tabular}\end{center}\end{table} ")
 
-
-    def list_s_periodou(self,list,perioda):
+    def prevod_list_s_periodou(self, list, perioda):
+        """
+        Funkce pro vypsání rozvoje bodu s periodou do souboru.
+        :param list (list): rozvoj bodu
+        :param perioda (int/None): délka periody
+        """
         self.f.write("$")
-        #print((list))
-        if perioda==None:
-            self.list_na_retezec(list)
-        elif len(list)==perioda:
+        if perioda == None:
+            self.prevod_list_na_retezec(list)
+        elif len(list) == perioda:
             self.f.write("(")
-            self.list_na_retezec(list)
+            self.prevod_list_na_retezec(list)
             self.f.write(")^\omega")
         else:
-            j=0
-            zav=len(list)-perioda
+            j = 0
+            zav = len(list) - perioda
             for i in list:
-                if j==zav:
+                if j == zav:
                     self.f.write("(")
                 if i < 0:
                     self.f.write("\overline {} ".format(-i))
- #                   self.f.write("{}".format(i))
                 else:
                     self.f.write("{}".format(i))
-#                    self.f.write("\overline{1}")
-                j+=1
+                j += 1
             self.f.write(")^\omega")
+
         self.f.write("$\n")
 
-    def list_na_retezec(self,list):
-        #self.f.write("$$")
-        #print(len(list))
-        #if len(list)>2:
-        #    print(list[2])
+    def prevod_list_na_retezec(self, list):
+        """
+        Funkce pro vypsání rozvoje bodu bez periody do souboru. (Pozor: nevypíše rozvoj v matematickém modu)
+        :param list (list): rozvoj bodu
+        """
         for i in list:
             if i < 0:
                 self.f.write("\overline {} ".format(-i))
-                #                   self.f.write("{}".format(i))
             else:
                 self.f.write("{}".format(i))
-        #self.f.write("$$\n")
 
-    def uprava_znaku(self,znaky):
-        prevod = sympify(znaky)
-        #self.f.write("$")
+    def prevod_vyrazu_na_latex(self, vyraz):
+        """
+        Metoda, která výraz převede do LaTeX formy. (Pozor: nevypíše výraz v matematickém modu)
+        :param vyraz: převáděný výraz
+        """
+        prevod = sympify(vyraz)
         self.f.write(latex(prevod))
-        #self.f.write("$")
 
-    def zmena_znaku(self,znaky):
-        prevod = sympify(znaky)
-        prevod = prevod.subs(x,beta)
-        #self.f.write("$")
+    def prevod_x_na_beta(self, vyraz):
+        """
+        Metoda, která ve výrazu zasubstitutuje proměnnou x za betu a výraz převede do LaTeX formy.
+        Využíváno pro výpis hodnoty levého kraje vyjádřeného pomocí báze beta. (Pozor: nevypíše výraz v matematickém modu)
+        :param vyraz: převáděný výraz
+        """
+        prevod = sympify(vyraz)
+        prevod = prevod.subs(x, beta)
         self.f.write(latex(prevod))
-        #self.f.write("$")
 
-
-    def vypis_rovnice(self,rovnice,zn):
+    def vypis_rovnice(self, rovnice, baze, zn):
+        """
+        Metoda, která vypíše základní informace o soustavě, tj. kladná/záporná báze, její hodnota a rovnice.
+        :param rovnice (string), baze (SymPy), znamenko
+        """
         self.f.write("Vytvořili jsme soustavu ")
-        if zn<0:
+        if zn < 0:
             self.f.write("se zápornou bází ")
         else:
             self.f.write("s kladnou bází ")
         self.f.write("z rovnice $")
-        self.uprava_znaku(rovnice)
-        self.f.write("$.\n\n")
-
-    def vypis_baze(self,baze):
-        self.f.write("Báze $")
-        self.uprava_znaku("beta")
-        self.f.write("=")
-        #self.f.write(latex("beta="))
-        #self.f.write(latex(simplify(baze)))
+        self.prevod_vyrazu_na_latex(rovnice)
+        self.f.write("$. \\\\ Báze $\\beta = ")
         self.f.write(latex(baze))
-        self.f.write("\doteq {}".format(N(baze,n=3)))
+        self.f.write("\doteq {}$. ".format(N(baze, n=3)))
 
-    def vypis_levy(self,levy,levy_kraj):
-        self.f.write("$ a levý kraj $\ell = ")
-        self.zmena_znaku(levy)
-        self.f.write("\doteq {}".format(N(levy_kraj,n=3)))
-        self.f.write("$.\n\n")
+    # def vypis_baze(self, baze):
+    #     self.f.write("Báze $")
+    #     self.prevod_vyrazu_na_latex("beta")
+    #     self.f.write("=")
+    #     self.f.write(latex(baze))
+    #     self.f.write("\doteq {}".format(N(baze, n=3)))
 
-    def vypis_perioda(self,k,p, vyraz, moznosti):
-        self.f.write("Počítáme rozvoje , které mají {} dlouhou předperiodu a {} délku periody. ".format(k,p))
+    def vypis_levy(self, levy_symbol, levy_kraj):
+        """
+        Metoda, která vypíše informace o levém kraji, jeho vyjádření pomocí báze i jeho přibližnou hodnotu
+        """
+        self.f.write("Levý kraj $\ell = ")
+        self.prevod_x_na_beta(levy_symbol)
+        self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3)))
+        #self.f.write("$.\n\n")
+
+    def vypis_perioda(self, perioda):
+        """
+        Funkce, která vypíše vše při výpočtu period.
+        :param perioda: instance třídy Perioda
+        """
+        self.f.write("Počítáme rozvoje, které mají {} dlouhou předperiodu a {} délku periody. ".format(perioda.k, perioda.p))
         self.f.write("Levý kraj je pak ve tvaru $$\ell=")
-        self.f.write(latex(vyraz))
+        self.f.write(latex(perioda.vyraz))
         self.f.write("$$")
-        self.f.write("Celkem jsme prošli {} možností.\n\n".format(moznosti))
+        self.f.write("Celkem jsme prošli {} možností.\n\n".format(len(perioda.A) ** (perioda.k + perioda.p)))
+        if len(perioda.hodnoty)>0:
+            self.nalezene_periody(perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p, perioda.prave_kraje, perioda.prave_kraje_perioda)
+        else:
+            self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
 
-    def vypis_periody_nalezene(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
+    def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
+        """
+        Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
+        rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
+        :param leve_kraje: hodnota levého kraje, leve_kraje_symbolicke: hodnota levého kraje vyjádřena pomocí báze,
+        hodnoty: rozvoje levých krajů s periodou p, prave_kraje: rozvoje pravých krajů s periodami perioda_praveho
+        """
         self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
-#            self.f.write("Nalezli jsme řetězec, který to splňuje. Tento řetězec má $$\ell = ")
             self.f.write("\item $\ell = ")
             self.f.write(latex(leve_kraje_symbolicke[i]))
-            #self.f.write(" = ")
-            #self.f.write(latex(leve_kraje[i]))
-            self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i],n=3)))
-            self.vypis_rozvoj_leveho(hodnoty[i],p)
-            self.vypis_pravy_kraj(prave_kraje[i],perioda_praveho[i])
-            #self.vypis_pravy_kraj(prave_pom[i],pom_perioda[i])
+            self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i], n=3)))
+            self.vypis_rozvoj_leveho(hodnoty[i], p)
+            self.vypis_pravy_kraj(prave_kraje[i], perioda_praveho[i])
         self.f.write("\end{itemize}")
 
     def vypis_cas(self, cas):
+        """
+        Metoda pro výpis času stráveného nad danným výpočtem.
+        """
         self.f.write("Celé to trvalo {0:.2f} sekund. ".format(cas))

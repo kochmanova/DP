@@ -38,20 +38,21 @@ if __name__=="__main__":
     # Kód pro ověření funkčnosti Periody(2,4) a (0,3) - funguje
     zac = time.time()
     rovnice = 'x**3-x**2-x-1'
-    znamenko = 1
-    k=2
-    p=3
-    tribonaci = Soustava.Soustava(rovnice, znamenko, symbol_levy_kraj='0')
+    znamenko = -1
+    k=0
+    p=1
+    tribonaci = Soustava.Soustava(rovnice, znamenko, symbol_levy_kraj='-1/x')
     period = Perioda.Perioda(rovnice, tribonaci.baze, znamenko, k, p, presnost=False)
     period.dosazeni_vse()
-    nazev = "periody{}_{}".format(k,p)
+    nazev = "periody_zap{}_{}".format(k,p)
     #period = rozvoj.Perioda()
-    soubor = "/home/mysska/Plocha/DP/vystup/" + nazev + ".tex"
+    soubor = "/home/mysska/Plocha/diplomka/vystup/" + nazev + ".tex"
     file = latex_export.Soubor(soubor)
-    file.vypis_rovnice(rovnice,znamenko)
-    file.vypis_perioda(k,p,period.vyraz,3**(k+p))
+    file.vypis_rovnice(rovnice,tribonaci.baze,znamenko)
+    file.vypis_perioda(period)
+    #file.vypis_perioda(k,p,period.vyraz,3**(k+p))
     #file.vypis_periody_cele(period.hodnoty,period.leve_kraje,period.leve_kraje_symbolicky,p)
-    file.vypis_periody_nalezene(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda)
+    #file.nalezene_periody(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda)
     konec = time.time() - zac
     file.vypis_cas(konec)
     file.ukonceni_souboru()
