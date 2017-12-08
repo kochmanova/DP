@@ -45,6 +45,7 @@ class Soubor(object):
     def vypis_rozvoj_leveho(self, list, perioda):
         """
         Funkce, pro vypsání rozvoje levého kraje do souboru.
+        :param perioda:
         :param list (list): rozvoj levého kraje
         :param perioda (int/None): délka periody
         """
@@ -52,14 +53,14 @@ class Soubor(object):
         self.prevod_list_s_periodou(list, perioda)
         self.f.write(" \n\n")
 
-    def vypis_pravy_kraj(self, list, perioda):
+    def vypis_pravy_kraj(self, retezec: list, perioda: int):
         """
         Funkce, pro vypsání rozvoje levého kraje do souboru.
-        :param list (list): rozvoj levého kraje
-        :param perioda (int/None): délka periody
+        :param retezec: rozvoj levého kraje
+        :param perioda: délka periody
         """
         self.f.write("Limitní rozvoj pravého kraje: ")
-        self.prevod_list_s_periodou(list, perioda)
+        self.prevod_list_s_periodou(retezec, perioda)
         self.f.write(" \n\n")
 
     def vypis_minmax(self, mink, maxk, gamma):
