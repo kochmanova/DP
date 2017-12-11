@@ -41,22 +41,25 @@ if __name__=="__main__":
     znamenko = -1
     k=0
     p=1
-    tribonaci = Soustava.Soustava(rovnice, znamenko, symbol_levy_kraj='-1/x')
-    period = Perioda.Perioda(rovnice, tribonaci.baze, znamenko, k, p, presnost=False)
-    period.dosazeni_vse()
-    nazev = "periody_zap{}_{}".format(k,p)
-    #period = rozvoj.Perioda()
-    soubor = "/home/mysska/Plocha/diplomka/vystup/" + nazev + ".tex"
-    file = latex_export.Soubor(soubor)
-    file.vypis_rovnice(rovnice,tribonaci.baze,znamenko)
-    file.vypis_perioda(period)
-    #file.vypis_perioda(k,p,period.vyraz,3**(k+p))
-    #file.vypis_periody_cele(period.hodnoty,period.leve_kraje,period.leve_kraje_symbolicky,p)
-    #file.nalezene_periody(period.leve_kraje, period.leve_kraje_symbolicky, period.hodnoty, p, period.prave_kraje, period.prave_kraje_perioda)
-    konec = time.time() - zac
-    file.vypis_cas(konec)
-    file.ukonceni_souboru()
-    print("Cele to trvalo {0:.2f} sekund".format(konec))
+    # tribonaci = Soustava.Soustava(rovnice, znamenko, symbol_levy_kraj='-1/x')
+    # # tribonaci.spocitej_rozvoj_leveho_kraje(False,10)
+    # # tribonaci.spocitej_rozvoj_praveho_kraje(False,10)
+    # # tribonaci.spocitej_mink_maxk(5)
+    #
+    #
+    # period = Perioda.Perioda(rovnice, tribonaci.baze, znamenko, k, p, presnost=False)
+    # period.dosazeni_vse()
+    #
+    # nazev = "periody_zap{}_{}".format(k,p)
+    # soubor = "/home/mysska/Plocha/DP/vystup/" + nazev + ".tex"
+    # file = latex_export.Soubor(soubor)
+    # # file.vypis_rovnice(rovnice,tribonaci.baze,znamenko)
+    #
+    # file.vypis_perioda(period)
+    # konec = time.time() - zac
+    # file.vypis_cas(konec)
+    # file.ukonceni_souboru()
+    # print("Cele to trvalo {0:.2f} sekund".format(konec))
 
     ###########################################################################
 
@@ -68,35 +71,34 @@ if __name__=="__main__":
     hodnota=[-1,0,1]
 
     levyk2= '-(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/((-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)*(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2) + 1/((-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)*(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**4)'
-
+    #print("\n\n")
 
     #
-    # tribonaci = rozvoj.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=levyk)
-    # zac = time.time()
-    # tribonaci.spocitej_rozvoj_leveho_kraje(False, 5) # True funguje
-    # kon = time.time()
-    # print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
-    # tribonaci.spocitej_rozvoj_leveho_kraje(False, 5)
-    # pom = time.time()-kon
-    # print("Cele to trvalo {0:.2f} s".format(pom))
+    tribonaci = Soustava.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=levy[0])
+    zac = time.time()
+    tribonaci.spocitej_rozvoj_leveho_kraje(False, 5) # True funguje
+    tribonaci.spocitej_rozvoj_praveho_kraje(False, 5)
+    tribonaci.spocitej_mink_maxk(5)
+    kon = time.time()
+    print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
+    #tribonaci.spocitej_rozvoj_leveho_kraje(True, 5)
+    #pom = time.time()-kon
+    #print("Cele to trvalo {0:.2f} s".format(pom))
+    if tribonaci.znamenko<0:
+        nazev = "rozvoj_zap_{}".format(int(time.time()))
+    else:
+        nazev = "rozvoj_kladna_{}".format(int(time.time()))
+    soubor = "/home/mysska/Plocha/DP/vystup/" + nazev + ".tex"
+    file = latex_export.Soubor(soubor)
+
+    file.vypis_rozvoj_vse(tribonaci)
+
+    file.vypis_cas(time.time()-zac)
+    file.ukonceni_souboru()
+
 
     # period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, 1, 0,3, False)
     # print("Jdu na to")
     # period.zpetne_overeni(hodnota,levyk)
     # l = period.vycisleni_vyrazu_abc(period.vyraz, hodnota)
     # print(latex(l))
-
-    #########################################################################
-    ## Dříve POKAŇHANÉ, teraz fungující :D
-    # lev = ['0','-1/x','(1-x)/2','-x/2','-(1/2 + sqrt(5)/2)**2/(-1 + (1/2 + sqrt(5)/2)**3) + (1/2 + sqrt(5)/2)/(-1 + (1/2 + sqrt(5)/2)**3)']
-    # for i in [2,4]:
-    #     zac = time.time()
-    #     fibanaci = rozvoj.Soustava('x**2-x-1', znamenko=1, symbol_levy_kraj=lev[i])
-    #
-    #     fibanaci.spocitej_rozvoj_leveho_kraje(True,10)
-    #     fibanaci.spocitej_rozvoj_leveho_kraje(False,10)
-    #
-    #     fibanaci.spocitej_rozvoj_praveho_kraje(True,10)
-    #     fibanaci.spocitej_rozvoj_praveho_kraje(False,10)
-    #     kon = time.time() - zac
-    #     print("Celé to trvalo {0:.2f}".format(kon))

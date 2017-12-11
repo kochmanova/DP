@@ -27,6 +27,7 @@ class Soustava(object):
         if (znamenko != 1) and (znamenko != -1):
             raise ValueError("Báze může být kladná s hodnotou 1 nebo záporná s hodnotou -1.")
         self.znamenko = znamenko
+        self.symbol_levy_kraj = symbol_levy_kraj
 
         self.rozvoj_leveho_kraje = None
         self.perioda_leveho_kraje = None
@@ -280,19 +281,19 @@ class Soustava(object):
         :param delka_retezce: požadovaná délka prodlouženého řetězce
         :returns: list - prodloužený nebo zkrácený řetězec na požadovanou délku
         """
-
-        delka = len(retezec)
+        pom = retezec
+        delka = len(pom)
         if (perioda is None):
             pridam_nuly = [0] * (delka_retezce - delka)
-            retezec.extend(pridam_nuly)
+            pom.extend(pridam_nuly)
         else:
-            perioda_retezce = retezec[-perioda:]
+            perioda_retezce = pom[-perioda:]
             pridam_periodu = (delka_retezce - delka) // perioda + 1
             prodlouzeni = perioda_retezce * pridam_periodu
-            retezec.extend(prodlouzeni)
-            useknu = len(retezec) - delka_retezce
-            retezec = retezec[:-useknu]
-        return retezec
+            pom.extend(prodlouzeni)
+            useknu = len(pom) - delka_retezce
+            pom = pom[:-useknu]
+        return pom
 
     def porovnej_retezce(self, prvni_retezec, druhy_retezec, perioda_prvniho, perioda_druheho):
         """
@@ -396,10 +397,10 @@ class Soustava(object):
         mink.append(min0)
         maxk.append(max0)
         for i in range(1, k):
-            mini = self.prilep_periodu(self.rozvoj_leveho_kraje.rozvoj_bodu, self.rozvoj_leveho_kraje.vyjadreni_periody,
+            mini = self.prilep_periodu(self.rozvoj_leveho_kraje, self.perioda_leveho_kraje,
                                        i)
-            maxi = self.prilep_periodu(self.rozvoj_praveho_kraje.rozvoj_bodu,
-                                       self.rozvoj_praveho_kraje.vyjadreni_periody, i)
+            maxi = self.prilep_periodu(self.rozvoj_praveho_kraje,
+                                       self.perioda_praveho_kraje, i)
             mk = 0
             while mk <= i - 1:
                 min_prefix = mini[:i - mk - 1]  # neměnný prefix
@@ -435,6 +436,7 @@ class Soustava(object):
             maxk.append(maxi)
         self.mink = mink
         self.maxk = maxk
+        self.spocitej_vzdalenosti(k)
 
     def gamma_funkce(self, retezec):
         """
@@ -446,7 +448,7 @@ class Soustava(object):
         gamma = 0
         obraceny_retezec = retezec[::-1]  # přetočíme pro jednodušší počty
         for i in range(len(retezec)):
-            gamma += (self.znamenko * self.beta) ** i * obraceny_retezec[i]
+            gamma += (self.znamenko * self.baze) ** i * obraceny_retezec[i]
         return sp.N(gamma, n=20)
 
     def spocitej_vzdalenosti(self, k):
@@ -459,7 +461,7 @@ class Soustava(object):
         delta = list()
         for i in range(k):
             vzdalenost = sp.N(abs(
-                (self.znamenko * self.beta) ** i + self.gamma_funkce(self.mink[i]) - self.gamma_funkce(self.maxk[i])),
+                (self.znamenko * self.baze) ** i + self.gamma_funkce(self.mink[i]) - self.gamma_funkce(self.maxk[i])),
                 n=20)
             delta.append(vzdalenost)
-        self.delta = delta
+        self.vzdalenosti = delta
