@@ -29,7 +29,7 @@ class Soubor(object):
         """
         Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého zapisuje.
         """
-        hl = open("/home/mysska/Plocha/DP/vystup/hlavicka.tex", "r")
+        hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
         hl.close()
@@ -45,6 +45,7 @@ class Soubor(object):
     def vypis_rozvoj_leveho(self, list, perioda):
         """
         Funkce, pro vypsání rozvoje levého kraje do souboru.
+        :param perioda:
         :param list (list): rozvoj levého kraje
         :param perioda (int/None): délka periody
         """
@@ -52,14 +53,14 @@ class Soubor(object):
         self.prevod_list_s_periodou(list, perioda)
         self.f.write(" \n\n")
 
-    def vypis_rozvoj_praveho(self, list, perioda):
+    def vypis_rozvoj_praveho(self, retezec: list, perioda: int):
         """
         Funkce, pro vypsání rozvoje levého kraje do souboru.
-        :param list (list): rozvoj levého kraje
-        :param perioda (int/None): délka periody
+        :param retezec: rozvoj levého kraje
+        :param perioda: délka periody
         """
         self.f.write("Limitní rozvoj pravého kraje: ")
-        self.prevod_list_s_periodou(list, perioda)
+        self.prevod_list_s_periodou(retezec, perioda)
         self.f.write(" \n\n")
 
     def vypis_minmax(self, mink, maxk, gamma):
@@ -67,7 +68,7 @@ class Soubor(object):
         Funkce pro vypsání řetězců min(k), max(k), a jejich vzdáleností do souboru v podobě tabulky.
         :param mink, maxk (list listů): TODO..., gamma (list): spočtené vzdálenosti mezi řetězci min(k) a max(k)
         """
-        hl = open("/home/mysska/Plocha/DP/vystup/tabulka.tex", "r")
+        hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
