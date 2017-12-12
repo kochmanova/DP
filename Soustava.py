@@ -58,10 +58,11 @@ class Soustava(object):
                 "Bázi je nutno volit tak, aby měla alespoň jeden reálný kořen větší jak 1. Špatně zvolená rovnice.")
         self.baze = baze[0]
 
-    def spocitej_hodnotu_leveho_kraje(self, symbol_levy_kraj):
+    def spocitej_hodnotu_leveho_kraje(self, symbol_levy_kraj: str):
         """
         Tato funkce se zavolá sama, jakmile vytvoříme instanci třídy Soustava. Funkce, která pro levý kraj,
         jak symbolický vyjádřený pomocí bety(=x), tak hodnotu, zjistí, zda splňuje námi požadované podmínky.
+        :param symbol_levy_kraj:
         """
         # TODO ohledně té podmínky a její správnosti
 
@@ -82,10 +83,11 @@ class Soustava(object):
         Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer míst a vrátí je.
 
         :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list) bodu
         :returns perioda (int/None)
         """
-        # TODO podmínka pro bod - ValueError
+        # TODO podmínka pro bod - ValueError, bod je sympy/ int?
 
         periodicke = False
         perioda = None
@@ -117,6 +119,7 @@ class Soustava(object):
         což může vést k chybám, avšak oproti přesnému rozvoji je výpočet výrazně rychlejší.
 
         :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list) bodu
         :returns perioda (int/None)
         """
@@ -147,7 +150,7 @@ class Soustava(object):
     def nalezeni_limitniho_rozvoje(self, pocet_cifer=30):
         """
         Funkce, která pro pravý kraj spočte limitní rozvoj v dané bázi na pocet_cifer.
-
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list)
         :returns perioda (int/None)
         """
@@ -179,7 +182,7 @@ class Soustava(object):
                     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='-'))
 
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append((nova_transformace))
+            transformace.append(nova_transformace)
             for j in range(len(transformace)):
                 if (abs(sp.N((transformace[j] - transformace[i]).subs({x: self.levy_kraj + 1}))) < MALO) and (j != i):
                     periodicke = True
@@ -193,7 +196,7 @@ class Soustava(object):
         """
         Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje bez použití limit v dané bázi
         na pocet_cifer.
-
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list)
         :returns perioda (int/None)
         """
@@ -228,7 +231,7 @@ class Soustava(object):
                 #                     rozvoj.append(cifra_upr.subs(x,transformace[i-1]))
                 rozvoj.append(sp.cancel(dolni_cifra.subs(x, transformace[i - 1])))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append((nova_transformace))
+            transformace.append(nova_transformace)
             for j in range(len(transformace)):
                 if (abs(sp.N((transformace[j] - transformace[i]).subs({x: self.levy_kraj + 1}))) < MALO) and (
                             j != i):
@@ -244,6 +247,8 @@ class Soustava(object):
         Funkce, která zavolá funkci pro nalezení rozvoje levého kraje přesně, resp. nepřesně podle parametru presne,
         na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že perioda nebyla nalezena,
         bude tato proměnná obsahovat hodnotu None.
+        :param presne:
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         """
 
         if presne:
@@ -260,6 +265,8 @@ class Soustava(object):
         Funkce, která zavolá funkci pro nalezení limitního rozvoje pravého kraje pomocí limity, resp. bez limity
         podle parametru presne, na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že
         perioda nebyla nalezena, bude tato proměnná obsahovat hodnotu None.
+        :param presne:
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         """
 
         if presne:
@@ -270,20 +277,20 @@ class Soustava(object):
         print("Nalezli jsme rozvoj pravého kraje: [%s]" % ",".join(map(str, self.rozvoj_praveho_kraje)))
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
 
-    def prilep_periodu(self, retezec, perioda, delka_retezce):
+    def prilep_periodu(self, retezec: list, perioda: int, delka_retezce: int):
         """
         Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla
         rovna delka_retezce; v případě, že retezec není periodický, se zřetězí na požadovanou délku pomocí nul.
         V případě, že původní retezec je delší než delka_retezce, je retezec zkrácen na požadovanou délku.
 
-        :param retezec (list): počáteční řetězec, který chceme prodloužit
+        :param retezec: počáteční řetězec, který chceme prodloužit
         :param perioda: délka periody řetězce (int), pokud nemá periodu, hodnota je None a řetezec se doplní nulami
         :param delka_retezce: požadovaná délka prodlouženého řetězce
-        :returns: list - prodloužený nebo zkrácený řetězec na požadovanou délku
+        :returns list: prodloužený nebo zkrácený řetězec na požadovanou délku
         """
         pom = retezec
         delka = len(pom)
-        if (perioda is None):
+        if perioda is None:
             pridam_nuly = [0] * (delka_retezce - delka)
             pom.extend(pridam_nuly)
         else:
@@ -295,12 +302,12 @@ class Soustava(object):
             pom = pom[:-useknu]
         return pom
 
-    def porovnej_retezce(self, prvni_retezec, druhy_retezec, perioda_prvniho, perioda_druheho):
+    def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: int, perioda_druheho: int):
         """
         Funkce, která porovná dva řetězce i různé délky.
 
-        :param prvni_retezec (list): první řetezec, který porovnáváme
-        :param druhy_retezec (list): řetězec, se kterým porovnáváme prvni_retezec
+        :param prvni_retezec: první řetezec, který porovnáváme
+        :param druhy_retezec: řetězec, se kterým porovnáváme prvni_retezec
         :param perioda_prvniho: délka periody prvního řetězce (int), pokud nemá periodu, hodnota je None
         :param perioda_druheho: délka periody druhého řetězce (int), pokud nemá periodu, hodnota je None
 
@@ -327,18 +334,17 @@ class Soustava(object):
         elif len(pracovni_retezec_2) > len(pracovni_retezec_1):
             pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, len(pracovni_retezec_2))
         for i in range(len(pracovni_retezec_1)):
-            if (self.znamenko) ** (i + 1) * pracovni_retezec_1[i] < (self.znamenko) ** (i + 1) * pracovni_retezec_2[i]:
+            if self.znamenko ** (i + 1) * pracovni_retezec_1[i] < self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
                 return -1  # prvni retezec je MENSI jak druhy retezec
-            elif (self.znamenko) ** (i + 1) * pracovni_retezec_1[i] \
-                    > (self.znamenko) ** (i + 1) * pracovni_retezec_2[i]:
+            elif self.znamenko ** (i + 1) * pracovni_retezec_1[i] \
+                    > self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
                 return 1  # prvni retezec je VETSI jak druhy retezec
         return 0  # retezce se rovnaji
 
-    def je_retezec_zleva_pripustny(self, retezec, perioda_retezce):
+    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: int):
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix >=lex/alt rozvoj_leveho_kraje.rozvoj_bodu
-
-        :type retezec: list
+        :param retezec:
         :param perioda_retezce: délka periody řetězce (int), pokud nemá periodu, hodnota je None
         :returns: bool
         """
@@ -351,11 +357,10 @@ class Soustava(object):
             pracovni_retezec.pop(0)
         return True
 
-    def je_retezec_zprava_pripustny(self, retezec, perioda_retezce):
+    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: int):
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix <lex/alt rozvoj_praveho_kraje.rozvoj_bodu
-
-        :type retezec: list
+        :param retezec:
         :param perioda_retezce: délka periody řetězce (int), pokud nemá periodu, hodnota je None
         :returns: bool
         """
@@ -368,12 +373,12 @@ class Soustava(object):
             pracovni_retezec.pop(0)
         return True
 
-    def je_retezec_pripustny(self, retezec, perioda_retezce):
+    def je_retezec_pripustny(self, retezec: list, perioda_retezce: int):
         """
         Funkce, která zjistí, zda je retezec připustný.
 
-        :param retezec (list)
-        :param perioda_retezce (int): délka periody řetězce, pokud nemá periodu, hodnota je None
+        :param retezec:
+        :param perioda_retezce: délka periody řetězce, pokud nemá periodu, hodnota je None
         :returns: bool
         """
 
@@ -383,7 +388,7 @@ class Soustava(object):
         else:
             return False
 
-    def spocitej_mink_maxk(self, k):
+    def spocitej_mink_maxk(self, k: int):
         """
         Funkce pro zadané k nalézne řetězce mink a maxk až do délky řetězce k.
 
@@ -438,11 +443,11 @@ class Soustava(object):
         self.maxk = maxk
         self.spocitej_vzdalenosti(k)
 
-    def gamma_funkce(self, retezec):
+    def gamma_funkce(self, retezec: list):
         """
         Tato funkce zadaný konečný řetězec převede do desítkové soustavy
 
-        :param retezec (list): řetězec, který chceme převést
+        :param retezec: řetězec, který chceme převést
         """
 
         gamma = 0
@@ -451,7 +456,7 @@ class Soustava(object):
             gamma += (self.znamenko * self.baze) ** i * obraceny_retezec[i]
         return sp.N(gamma, n=20)
 
-    def spocitej_vzdalenosti(self, k):
+    def spocitej_vzdalenosti(self, k: int):
         """
         Tato funkce pro zadaná mink a maxk spočte jednotlivé vzdálenosti podle vzorce TODO č.vzorce
 
