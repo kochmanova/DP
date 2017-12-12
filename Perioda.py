@@ -1,16 +1,18 @@
 import sympy as sp
 from itertools import product
 
-from sympy.abc import a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w, beta
+from sympy.abc import a, b, c, d, e, f, g, h, l, m, n, o, q, r, s, t, u, v, w, beta
 import Soustava
 
 presnost = 684
 EPS = 9e-17
 
+
 # TODO periody nějak nefungují pro záporné
 
+
 class Perioda(object):
-    def __init__(self, fce, baze, znamenko, k, p, presnost=True, A=[-1,0,1]):
+    def __init__(self, fce, baze, znamenko, k, p, presne=True, abeceda=(-1, 0, 1)):
         """
         Funkce, která se spustí automaticky s vytvořením instance Perioda, uloží si jednotlivé hodnoty a spočte
         vyjádření celého výrazu pro předperiodu délky k a periodu p.
@@ -26,16 +28,19 @@ class Perioda(object):
             raise ValueError(
                 "Protože hledáme periodické rozvoje levého kraje, je potřeba nastavit hodnotu periody větší jak nula.")
         self.p = p
-        self.symboly = [a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w]
+        self.symboly = [a, b, c, d, e, f, g, h, l, m, n, o, q, r, s, t, u, v, w]
         self.mocnina = 1
         self.hodnoty = list()
         self.leve_kraje = list()
         self.leve_kraje_symbolicky = list()
         self.prave_kraje = list()
         self.prave_kraje_perioda = list()
-        self.presne = presnost
+        self.presne = presne
         self.vycisleny_vyraz = None
-        self.A = A
+        self.vyraz_pred = None
+        self.vyraz_perioda = None
+        self.vyraz = None
+        self.A = abeceda
 
         self.vyjadreni_celeho_vyrazu()
         self.vycisleni_vyrazu_beta()
@@ -50,7 +55,7 @@ class Perioda(object):
         if self.k > 0:
             pomocna = self.k
             while pomocna > 0:
-                vyraz = vyraz + self.symboly.pop(0) / (self.znamenko*beta) ** self.mocnina
+                vyraz = vyraz + self.symboly.pop(0) / (self.znamenko * beta) ** self.mocnina
                 self.mocnina = self.mocnina + 1
                 pomocna = pomocna - 1
         self.vyraz_pred = vyraz
@@ -63,7 +68,8 @@ class Perioda(object):
         vyraz = 0
         pomocna = self.p
         while pomocna > 0:
-            vyraz = vyraz + self.symboly.pop(0) / (self.znamenko*beta) ** (self.mocnina - self.p) * 1 / ((self.znamenko*beta) ** self.p - 1)
+            vyraz = vyraz + self.symboly.pop(0) / (self.znamenko * beta) ** (self.mocnina - self.p) * 1 / \
+                            ((self.znamenko * beta) ** self.p - 1)
             self.mocnina = self.mocnina + 1
             pomocna -= 1
         self.vyraz_perioda = vyraz
@@ -87,40 +93,40 @@ class Perioda(object):
         vycisleny = self.vyraz.subs(beta, self.baze)
         self.vycisleny_vyraz = vycisleny
 
-    def vycisleni_vyrazu_abc(self, vyraz, hodnoty):
+    def vycisleni_vyrazu_abc(self, vyraz, hodnoty: tuple):
         """
         Funkce pro vyčíslení výrazu. Do proměnné vyraz dosadí za jednotlivé proměnné a, b, c, ... postupně jednotlivé
         cifry z listu hodnoty.
 
         :param vyraz: Symbolický výraz s proměnnými a, b, c, ...do kterého se dosadí jednotlivé hodnoty
-        :param hodnoty (list): Pole dosazovaných hodnot.
+        :param hodnoty: Pole dosazovaných hodnot.
         :return: pom_vyraz (): Vyčíslený výraz
         """
 
         pom_vyraz = vyraz
-        symboly = [a, b, c, d, e, f, g, h, k, l, m, n, o, p, q, r, s, t, u, v, w]
+        symboly = [a, b, c, d, e, f, g, h, l, m, n, o, q, r, s, t, u, v, w]
         pom_hodnoty = list(hodnoty)
         while len(pom_hodnoty) > 0:
             pom_vyraz = pom_vyraz.subs(symboly.pop(0), pom_hodnoty.pop(0))
         return pom_vyraz
 
-    def dosazeni_overeni_leveho_kraje(self, hodnoty):
+    def dosazeni_overeni_leveho_kraje(self, hodnoty: tuple):
         """
         Funkce pro ověření, zda vyčíslená hodnota levého kraje splňuje základní požadavky a ověření, že rozvoj tohoto
         kraje skutečně odpovídá námi odhadnutému rozvoji.
-        :param hodnoty (tuple): Odhadnutý rozvoj levého kraje
+        :param hodnoty: Odhadnutý rozvoj levého kraje
         :return:
         """
 
         levy_kraj = self.vycisleni_vyrazu_abc(self.vycisleny_vyraz, hodnoty)
         priblizny_levy_kraj = sp.N(levy_kraj, n=presnost)
         if priblizny_levy_kraj <= 0 and priblizny_levy_kraj >= -1:
-            if (self.znamenko == -1) and ((-priblizny_levy_kraj/self.baze - EPS > (priblizny_levy_kraj +1)) or
-                                              (-(priblizny_levy_kraj+1)/self.baze+ EPS< priblizny_levy_kraj)):
-                #print("Jsem tu")
+            if (self.znamenko == -1) and ((-priblizny_levy_kraj / self.baze - EPS > (priblizny_levy_kraj + 1)) or (
+                        -(priblizny_levy_kraj + 1) / self.baze + EPS < priblizny_levy_kraj)):
+                # print("Jsem tu")
                 pass
             else:
-                #rozvoj_leveho_kraje = list(hodnoty)
+                # rozvoj_leveho_kraje = list(hodnoty)
                 self.zpetne_overeni(list(hodnoty), levy_kraj)
 
     def dosazeni_vse(self):
@@ -133,31 +139,31 @@ class Perioda(object):
         delka = self.k + self.p
         hodnoty = list(product(self.A, repeat=delka))
         # upravit, abychom hodnoty dostávali po jednom, jednodušší pro paměť
-        print("Celkem máme {0:.0f} řetezců".format(len(self.A)**delka))
+        print("Celkem máme {0:.0f} řetezců".format(len(self.A) ** delka))
         i = 0
         for retezec in hodnoty:
             print("{}. případ dosazení, teď počítáme rozvoj: {}".format(i, list(retezec)))
-            #print("{}. případ dosazení, nyní děláme rozvoj tohohle: [%s]" % ",".format(i) .join(map(str, retezec)))
+            # print("{}. případ dosazení, nyní děláme rozvoj tohohle: [%s]" % ",".format(i) .join(map(str, retezec)))
             # print("Nyni delame rozvoj tohohle:  [%s]" % ",".join(map(str, hodnoty)))
             self.dosazeni_overeni_leveho_kraje(retezec)
             i += 1
 
-    def zpetne_overeni(self, hodnoty, levy):  # hodnoty jsou list!!
+    def zpetne_overeni(self, hodnoty: list, levy):
         """
         Funkce, která zadané konečné slovo (resp. navrhovaný rozvoj levého kraje) a jeho spočtená hodnota levého kraje
         ověří, zda se skutečně jedná o rozvoj tohoto levého kraje.
-        :param hodnoty (list): Navrhovaný rozvoj levého kraje nad danou abecenou
-        :param levy:spočtená hodnota levého kraje
+        :param hodnoty: Navrhovaný rozvoj levého kraje nad danou abecenou
+        :param levy: spočtená hodnota levého kraje
         """
 
         hledany_rozvoj = Soustava.Soustava(self.fce, self.znamenko, levy)
-        #print(levy)
+        # print(levy)
         hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, 2 * self.p + self.k)
         if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
             if self.p == hledany_rozvoj.perioda_leveho_kraje:
                 self.hodnoty.append(hodnoty)
                 self.leve_kraje.append(levy)
-                symbolicke = self.vycisleni_vyrazu_abc(self.vyraz, hodnoty)
+                symbolicke = self.vycisleni_vyrazu_abc(self.vyraz, tuple(hodnoty))
                 self.leve_kraje_symbolicky.append(symbolicke)
                 print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
                 print(hodnoty)
