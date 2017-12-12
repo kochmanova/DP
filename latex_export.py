@@ -3,7 +3,7 @@ from sympy.abc import x, beta
 
 
 class Soubor(object):
-    def __init__(self, nazev):
+    def __init__(self, nazev: str):
         """
         Funkce, která se spustí automaticky s vytvořením instance Soubor, uloží si název souboru, který vytvoří a vloží
         do něj hlavičku LaTeXu.
@@ -27,7 +27,8 @@ class Soubor(object):
 
     def napis_hlavicku(self):
         """
-        Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého zapisuje.
+        Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
+        zapisuje.
         """
         hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex", "r")
         radky = hl.readlines()
@@ -42,63 +43,64 @@ class Soubor(object):
         self.f.write("\n \end{document}")
         self.f.close()
 
-    def vypis_rozvoj_leveho(self, list, perioda):
-        """
-        Funkce, pro vypsání rozvoje levého kraje do souboru.
-        :param perioda:
-        :param list (list): rozvoj levého kraje
-        :param perioda (int/None): délka periody
-        """
-        self.f.write("Rozvoj levého kraje: ")
-        self.prevod_list_s_periodou(list, perioda)
-        self.f.write(" \n\n")
-
-    def vypis_rozvoj_praveho(self, retezec: list, perioda: int):
+    def vypis_rozvoj_leveho(self, retezec: list, perioda: int):
         """
         Funkce, pro vypsání rozvoje levého kraje do souboru.
         :param retezec: rozvoj levého kraje
         :param perioda: délka periody
         """
-        self.f.write("Limitní rozvoj pravého kraje: ")
-        self.prevod_list_s_periodou(retezec, perioda)
+        self.f.write("Rozvoj levého kraje: ")
+        self.prevod_rozvoj_s_periodou(retezec, perioda)
         self.f.write(" \n\n")
 
-    def vypis_minmax(self, mink, maxk, gamma):
+    def vypis_rozvoj_praveho(self, retezec: list, perioda: int):
+        """
+        Funkce, pro vypsání rozvoje levého kraje do souboru.
+        :param retezec: rozvoj pravého kraje
+        :param perioda: délka periody
+        """
+        self.f.write("Limitní rozvoj pravého kraje: ")
+        self.prevod_rozvoj_s_periodou(retezec, perioda)
+        self.f.write(" \n\n")
+
+    def vypis_minmax(self, mink: list, maxk: list, vzdalenosti: list):
         """
         Funkce pro vypsání řetězců min(k), max(k), a jejich vzdáleností do souboru v podobě tabulky.
-        :param mink, maxk (list listů): TODO..., gamma (list): spočtené vzdálenosti mezi řetězci min(k) a max(k)
+        :param mink:
+        :param maxk:
+        :param vzdalenosti:
         """
         hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
-        for i in range(1, len(gamma)):
+        for i in range(1, len(vzdalenosti)):
             self.f.write("{}".format(i))
             self.f.write(" & ")
-            self.prevod_list_na_retezec(mink[i])
+            self.prevod_rozvoj_na_retezec(mink[i])
             self.f.write(" & ")
-            self.prevod_list_na_retezec(maxk[i])
-            self.f.write(" & {0:.5f} \\\\ ".format(gamma[i]))
+            self.prevod_rozvoj_na_retezec(maxk[i])
+            self.f.write(" & {0:.5f} \\\\ ".format(vzdalenosti[i]))
 
         self.f.write(" \end{tabular}\end{center}\end{table} ")
 
-    def prevod_list_s_periodou(self, list, perioda):
+    def prevod_rozvoj_s_periodou(self, retezec: list, perioda: int):
         """
         Funkce pro vypsání rozvoje bodu s periodou do souboru.
-        :param list (list): rozvoj bodu
-        :param perioda (int/None): délka periody
+        :param retezec: rozvoj bodu
+        :param perioda: délka periody
         """
         self.f.write("$")
-        if perioda == None:
-            self.prevod_list_na_retezec(list)
-        elif len(list) == perioda:
+        if perioda is None:
+            self.prevod_rozvoj_na_retezec(retezec)
+        elif len(retezec) == perioda:
             self.f.write("(")
-            self.prevod_list_na_retezec(list)
+            self.prevod_rozvoj_na_retezec(retezec)
             self.f.write(")^\omega")
         else:
             j = 0
-            zav = len(list) - perioda
-            for i in list:
+            zav = len(retezec) - perioda
+            for i in retezec:
                 if j == zav:
                     self.f.write("(")
                 if i < 0:
@@ -110,29 +112,31 @@ class Soubor(object):
 
         self.f.write("$\n")
 
-    def prevod_list_na_retezec(self, list):
+    def prevod_rozvoj_na_retezec(self, rozvoj: list):
         """
         Funkce pro vypsání rozvoje bodu bez periody do souboru. (Pozor: nevypíše rozvoj v matematickém modu)
-        :param list (list): rozvoj bodu
+        :param rozvoj: rozvoj bodu
         """
-        for i in list:
+        for i in rozvoj:
             if i < 0:
                 self.f.write("\overline {} ".format(-i))
             else:
                 self.f.write("{}".format(i))
 
-    def prevod_vyrazu_na_latex(self, vyraz):
+    def prevod_vyrazu_na_latex(self, vyraz: str):
         """
         Metoda, která výraz převede do LaTeX formy. (Pozor: nevypíše výraz v matematickém modu)
         :param vyraz: převáděný výraz
         """
+        # TODO je vyraz str???
         prevod = sympify(vyraz)
         self.f.write(latex(prevod))
 
-    def prevod_x_na_beta(self, vyraz):
+    def prevod_x_na_beta(self, vyraz: str):
         """
         Metoda, která ve výrazu zasubstitutuje proměnnou x za betu a výraz převede do LaTeX formy.
-        Využíváno pro výpis hodnoty levého kraje vyjádřeného pomocí báze beta. (Pozor: nevypíše výraz v matematickém modu)
+        Využíváno pro výpis hodnoty levého kraje vyjádřeného pomocí báze beta. (Pozor: nevypíše výraz v matematickém
+        modu)
         :param vyraz: převáděný výraz
         """
         prevod = sympify(vyraz)
@@ -140,13 +144,16 @@ class Soubor(object):
         prevod = cancel(prevod)
         self.f.write(latex(prevod))
 
-    def vypis_rovnice(self, rovnice, baze, zn):
+    def vypis_rovnice(self, rovnice: str, baze, znamenko: int):
         """
         Metoda, která vypíše základní informace o soustavě, tj. kladná/záporná báze, její hodnota a rovnice.
-        :param rovnice (string), baze (SymPy), znamenko
+        :param rovnice:
+        :param baze:
+        :param znamenko:
         """
+        # TODO zjistit co je baze
         self.f.write("Vytvořili jsme soustavu ")
-        if zn < 0:
+        if znamenko < 0:
             self.f.write("se zápornou bází ")
         else:
             self.f.write("s kladnou bází ")
@@ -156,21 +163,17 @@ class Soubor(object):
         self.f.write(latex(baze))
         self.f.write("\doteq {}$. ".format(N(baze, n=3)))
 
-    # def vypis_baze(self, baze):
-    #     self.f.write("Báze $")
-    #     self.prevod_vyrazu_na_latex("beta")
-    #     self.f.write("=")
-    #     self.f.write(latex(baze))
-    #     self.f.write("\doteq {}".format(N(baze, n=3)))
-
-    def vypis_levy(self, levy_symbol, levy_kraj):
+    def vypis_levy(self, symbol_levy_kraj, levy_kraj):
         """
         Metoda, která vypíše informace o levém kraji, jeho vyjádření pomocí báze i jeho přibližnou hodnotu
+        :param symbol_levy_kraj:
+        :param levy_kraj
         """
+        # TODO
         self.f.write("Levý kraj $\ell = ")
-        self.prevod_x_na_beta(levy_symbol)
+        self.prevod_x_na_beta(symbol_levy_kraj)
         self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3, chop=True)))
-        #self.f.write("$.\n\n")
+        # self.f.write("$.\n\n")
 
     def vypis_perioda(self, perioda):
         """
@@ -178,29 +181,38 @@ class Soubor(object):
          levého kraje, které se pro danou periodu a předperiodu našli, jejich rozvoj, a následně i rozvoj pravého kraje.
         :param perioda: instance třídy Perioda
         """
+        # TODO perioda instance Perioda
         self.vypis_rovnice(perioda.fce, perioda.baze, perioda.znamenko)
-        self.f.write("Počítáme rozvoje, které mají {} dlouhou předperiodu a {} délku periody. ".format(perioda.k, perioda.p))
+        self.f.write(
+            "Počítáme rozvoje, které mají {} dlouhou předperiodu a {} délku periody. ".format(perioda.k, perioda.p))
         self.f.write("Levý kraj je pak ve tvaru $$\ell=")
         self.f.write(latex(perioda.vyraz))
         self.f.write("$$")
-        moznosti = len(perioda.A)**(perioda.k+perioda.p)
-        if moznosti<5:
+        moznosti = len(perioda.A) ** (perioda.k + perioda.p)
+        if moznosti < 5:
             self.f.write("Celkem jsme prošli {} možnosti.\n\n".format(len(perioda.A) ** (perioda.k + perioda.p)))
         else:
             self.f.write("Celkem jsme prošli {} možností.\n\n".format(len(perioda.A) ** (perioda.k + perioda.p)))
-        if len(perioda.hodnoty)>0:
-            self.nalezene_periody(perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p, perioda.prave_kraje, perioda.prave_kraje_perioda)
+        if len(perioda.hodnoty) > 0:
+            self.nalezene_periody(perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p,
+                                  perioda.prave_kraje, perioda.prave_kraje_perioda)
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
-        print("Výsledky byly úspěšně zapsány do souboru ",self.nazev)
+        print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
 
-    def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty, p, prave_kraje, perioda_praveho):
+    def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
+                         perioda_praveho: list):
         """
         Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
         rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
-        :param leve_kraje: hodnota levého kraje, leve_kraje_symbolicke: hodnota levého kraje vyjádřena pomocí báze,
-        hodnoty: rozvoje levých krajů s periodou p, prave_kraje: rozvoje pravých krajů s periodami perioda_praveho
+        :param leve_kraje: hodnota levého kraje
+        :param leve_kraje_symbolicke: hodnota levého kraje vyjádřena pomocí báze
+        :param hodnoty: rozvoje levých krajů s periodou p
+        :param p:
+        :param prave_kraje: rozvoje pravých krajů s periodami perioda_praveho
+        :param perioda_praveho:
         """
+        # TODO
         self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
             self.f.write("\item $\ell = ")
@@ -210,25 +222,27 @@ class Soubor(object):
             self.vypis_rozvoj_praveho(prave_kraje[i], perioda_praveho[i])
         self.f.write("\end{itemize}")
 
-    def vypis_cas(self, cas):
+    def vypis_cas(self, cas: int):
         """
         Metoda pro výpis času stráveného nad danným výpočtem.
+        :param cas: čas strávený nad výpočtem
         """
         self.f.write("Celé to trvalo {0:.2f} sekund. ".format(cas))
 
     def vypis_rozvoj_vse(self, soustava):
         """
-        Funkce, která vypíše vše při výpočtu rozvoje konkrétní soustavy; tj. rovnici, ze které vycházíme, bázi, znaménko,
-        hodnotu levého kraje, jeho rozvoj a následně i rozvoj pravého kraje. Pokud bylo spočteno mink, maxk, pak i jejich
-        hodnoty.
+        Funkce, která vypíše vše při výpočtu rozvoje konkrétní soustavy; tj. rovnici, ze které vycházíme, bázi,
+        znaménko, hodnotu levého kraje, jeho rozvoj a následně i rozvoj pravého kraje. Pokud bylo spočteno mink, maxk,
+        pak i jejich hodnoty.
         :param soustava: instance třídy Soustava
         """
+        # TODO
         self.vypis_rovnice(soustava.fce, soustava.baze, soustava.znamenko)
         self.vypis_levy(soustava.symbol_levy_kraj, soustava.levy_kraj)
-        if not(soustava.rozvoj_leveho_kraje==None):
+        if not (soustava.rozvoj_leveho_kraje == None):
             self.vypis_rozvoj_leveho(soustava.rozvoj_leveho_kraje, soustava.perioda_leveho_kraje)
-        if not(soustava.rozvoj_praveho_kraje==None):
+        if not (soustava.rozvoj_praveho_kraje == None):
             self.vypis_rozvoj_praveho(soustava.rozvoj_praveho_kraje, soustava.perioda_praveho_kraje)
-        if not(soustava.mink == None):
+        if not (soustava.mink == None):
             print(soustava.vzdalenosti)
             self.vypis_minmax(soustava.mink, soustava.maxk, soustava.vzdalenosti)
