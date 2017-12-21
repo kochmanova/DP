@@ -88,7 +88,7 @@ if __name__=="__main__":
         nazev = "rozvoj_zap_{}".format(int(time.time()))
     else:
         nazev = "rozvoj_kladna_{}".format(int(time.time()))
-    soubor = "/home/mysska/Plocha/DP/vystup/" + nazev + ".tex"
+    soubor = "vystup/" + nazev + ".tex"
     file = latex_export.Soubor(soubor)
 
     file.vypis_rozvoj_vse(tribonaci)

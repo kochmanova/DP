@@ -49,7 +49,8 @@ class Soustava(object):
 
         # TODO existuje funkce, která se jmenuje podobně a možná dělá jen tu konkrétní věc a to chci -> podívat
         reseni_rovnice = sp.solve(self.fce, x)
-        realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))]
+        #realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))] -> dělá to to samé?? :D SNAD ANO, zjistit
+        realne_koreny = [koren for koren in reseni_rovnice if sp.sympify(koren).is_real]
         if len(realne_koreny) < 1:
             raise ValueError("Špatně zvolená rovnice. Rovnice musí mít alespoň jeden reálný kořen.")
         baze = [i for i in realne_koreny if i > 1]

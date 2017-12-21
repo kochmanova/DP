@@ -30,7 +30,7 @@ class Soubor(object):
         Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
         zapisuje.
         """
-        hl = open("/home/mysska/Plocha/diplomka/vystup/hlavicka.tex", "r")
+        hl = open("resources/hlavicka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
         hl.close()
@@ -70,7 +70,7 @@ class Soubor(object):
         :param maxk:
         :param vzdalenosti:
         """
-        hl = open("/home/mysska/Plocha/diplomka/vystup/tabulka.tex", "r")
+        hl = open("resources/tabulka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
 
