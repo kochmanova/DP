@@ -8,9 +8,6 @@ presnost = 684
 EPS = 9e-17
 
 
-# TODO periody nějak nefungují pro záporné
-
-
 class Perioda(object):
     def __init__(self, fce, baze, znamenko, k, p, presne=True, abeceda=(-1, 0, 1)):
         """
@@ -44,7 +41,6 @@ class Perioda(object):
 
         self.vyjadreni_celeho_vyrazu()
         self.vycisleni_vyrazu_beta()
-        # self.dosazeni_vse()
 
     def vyjadreni_predperiody(self):
         """

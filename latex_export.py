@@ -22,9 +22,6 @@ class Soubor(object):
         f = open(self.nazev, "w")
         self.f = f
 
-    # TODO hlavičku a tabulku dát do RESOURCE
-    # TODO PROFILY - zjistit, jak to udělat, aby se na dvou počítačích a ty adresáře...
-
     def napis_hlavicku(self):
         """
         Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
@@ -63,7 +60,7 @@ class Soubor(object):
         self.prevod_rozvoj_s_periodou(retezec, perioda)
         self.f.write(" \n\n")
 
-    def vypis_minmax(self, mink: list, maxk: list, vzdalenosti: list):
+    def vypis_minmax(self, mink: list, maxk: list, vzdalenosti: list, vzdalenosti_symbol: list):
         """
         Funkce pro vypsání řetězců min(k), max(k), a jejich vzdáleností do souboru v podobě tabulky.
         :param mink:
@@ -76,11 +73,13 @@ class Soubor(object):
 
         for i in range(1, len(vzdalenosti)):
             self.f.write("{}".format(i))
-            self.f.write(" & ")
+            self.f.write(" & $")
             self.prevod_rozvoj_na_retezec(mink[i])
-            self.f.write(" & ")
+            self.f.write("$ & $")
             self.prevod_rozvoj_na_retezec(maxk[i])
-            self.f.write(" & {0:.5f} \\\\ ".format(vzdalenosti[i]))
+            self.f.write("$ & $")
+            self.prevod_x_na_beta(vzdalenosti_symbol[i])
+            self.f.write("$ & {0:.5f} \\\\ ".format(vzdalenosti[i]))
 
         self.f.write(" \end{tabular}\end{center}\end{table} ")
 
@@ -104,7 +103,7 @@ class Soubor(object):
                 if j == zav:
                     self.f.write("(")
                 if i < 0:
-                    self.f.write("\overline {} ".format(-i))
+                    self.f.write("\overline{}".format(-i))
                 else:
                     self.f.write("{}".format(i))
                 j += 1
@@ -119,7 +118,7 @@ class Soubor(object):
         """
         for i in rozvoj:
             if i < 0:
-                self.f.write("\overline {} ".format(-i))
+                self.f.write("\overline{}".format(-i))
             else:
                 self.f.write("{}".format(i))
 
@@ -245,4 +244,4 @@ class Soubor(object):
             self.vypis_rozvoj_praveho(soustava.rozvoj_praveho_kraje, soustava.perioda_praveho_kraje)
         if not (soustava.mink == None):
             print(soustava.vzdalenosti)
-            self.vypis_minmax(soustava.mink, soustava.maxk, soustava.vzdalenosti)
+            self.vypis_minmax(soustava.mink, soustava.maxk, soustava.vzdalenosti, soustava.vzdalenosti_symbolicky)

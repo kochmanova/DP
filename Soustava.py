@@ -37,9 +37,11 @@ class Soustava(object):
         self.mink = None
         self.maxk = None
         self.vzdalenosti = None
+        self.vzdalenosti_symbolicky = None
 
         self.spocitej_hodnotu_baze()
-        self.spocitej_hodnotu_leveho_kraje(symbol_levy_kraj)
+        if symbol_levy_kraj is not None:
+            self.spocitej_hodnotu_leveho_kraje(symbol_levy_kraj)
 
     def spocitej_hodnotu_baze(self):
         """
@@ -443,6 +445,7 @@ class Soustava(object):
         self.mink = mink
         self.maxk = maxk
         self.spocitej_vzdalenosti(k)
+        self.spocitej_vzdalenosti_symbolicky(k)
 
     def gamma_funkce(self, retezec: list):
         """
@@ -471,3 +474,30 @@ class Soustava(object):
                 n=20)
             delta.append(vzdalenost)
         self.vzdalenosti = delta
+
+    def gamma_funkce_symbolicky(self, retezec: list):
+        """
+        Tato funkce zadaný konečný řetězec převede do desítkové soustavy
+
+        :param retezec: řetězec, který chceme převést
+        """
+
+        gamma = 0
+        obraceny_retezec = retezec[::-1]  # přetočíme pro jednodušší počty
+        for i in range(len(retezec)):
+            gamma += (self.znamenko * x) ** i * obraceny_retezec[i]
+        return sp.N(gamma, n=20)
+
+    def spocitej_vzdalenosti_symbolicky(self, k: int):
+        """
+        Tato funkce pro zadaná mink a maxk spočte jednotlivé vzdálenosti podle vzorce TODO č.vzorce
+
+        :param k:  maximální délka řetězců mink a maxk, pro kterou chceme spočítat vzdálenosti
+        """
+
+        delta = list()
+        for i in range(k):
+            vzdalenost = abs(
+                (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(self.maxk[i]))
+            delta.append(vzdalenost)
+        self.vzdalenosti_symbolicky = delta

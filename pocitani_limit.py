@@ -1,0 +1,43 @@
+import Soustava
+import time
+import latex_export
+
+if __name__ == "__main__":
+
+    rovnice = 'x**3-x**2-x-1'
+    znamenko = 1
+    levy_kraj = '-x/3'
+    presnost_limit = False
+    pocet_cifer = 5
+    k = 5
+
+    # následuje část, kdy se volají jednotlivé metody, tedy dále není potřeba cokoliv upravovat
+
+    zacatek_vypoctu = time.time()
+    rozvoj = Soustava.Soustava(rovnice, znamenko, levy_kraj)
+
+    # nalezení rozvoje pro levý i limitní pravý kraj
+    rozvoj.spocitej_rozvoj_leveho_kraje(presnost_limit, pocet_cifer)
+    rozvoj.spocitej_rozvoj_praveho_kraje(presnost_limit, pocet_cifer)
+
+    # nalezení mink, maxk řetězců a jejich vzdáleností
+    rozvoj.spocitej_mink_maxk(k)
+
+    # export výsledků do LaTeXového souboru
+    cas = time.localtime()
+    if znamenko > 0:
+        nazev = "rozvoj_kladny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
+                                                                     cas.tm_min)
+    else:
+        nazev = "rozvoj_zaporny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
+                                                                      cas.tm_min)
+
+    soubor = "vystup/" + nazev + ".tex"
+    file = latex_export.Soubor(soubor)
+    file.vypis_rozvoj_vse(rozvoj)
+
+    konec_vypoctu = time.time() - zacatek_vypoctu
+    file.vypis_cas(konec_vypoctu)
+    file.ukonceni_souboru()
+
+    print("Cely vypocet trval {0:.2f} sekund".format(konec_vypoctu))
