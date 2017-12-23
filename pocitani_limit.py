@@ -2,14 +2,22 @@ import Soustava
 import time
 import latex_export
 
+from sympy import cancel
+
 if __name__ == "__main__":
 
     rovnice = 'x**3-x**2-x-1'
     znamenko = 1
-    levy_kraj = '-x/3'
-    presnost_limit = False
-    pocet_cifer = 5
-    k = 5
+    levy_kraj = '-1/(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3)) - 1/(1/3 + ' \
+                '4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2 - (1/3 + 4/(9*(sqrt(33)/9 ' \
+                '+ 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) +' \
+                ' (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 +' \
+                ' 19/27)**(1/3))**4)'
+    print(cancel(levy_kraj))
+    levy_kraj = cancel(levy_kraj)
+    presnost_limit = True
+    pocet_cifer = 30
+    k = 10
 
     # následuje část, kdy se volají jednotlivé metody, tedy dále není potřeba cokoliv upravovat
 
@@ -27,10 +35,10 @@ if __name__ == "__main__":
     cas = time.localtime()
     if znamenko > 0:
         nazev = "rozvoj_kladny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
-                                                                     cas.tm_min)
+                                                      cas.tm_min)
     else:
         nazev = "rozvoj_zaporny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
-                                                                      cas.tm_min)
+                                                       cas.tm_min)
 
     soubor = "vystup/" + nazev + ".tex"
     file = latex_export.Soubor(soubor)

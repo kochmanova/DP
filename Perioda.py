@@ -4,7 +4,7 @@ from itertools import product
 from sympy.abc import a, b, c, d, e, f, g, h, l, m, n, o, q, r, s, t, u, v, w, beta
 import Soustava
 
-presnost = 684
+presnost = 1000 #684
 EPS = 9e-17
 
 
@@ -116,14 +116,14 @@ class Perioda(object):
 
         levy_kraj = self.vycisleni_vyrazu_abc(self.vycisleny_vyraz, hodnoty)
         priblizny_levy_kraj = sp.N(levy_kraj, n=presnost)
-        if priblizny_levy_kraj <= 0 and priblizny_levy_kraj >= -1:
+        if priblizny_levy_kraj <= 0 and priblizny_levy_kraj > -1:
             if (self.znamenko == -1) and ((-priblizny_levy_kraj / self.baze - EPS > (priblizny_levy_kraj + 1)) or (
                         -(priblizny_levy_kraj + 1) / self.baze + EPS < priblizny_levy_kraj)):
                 # print("Jsem tu")
                 pass
             else:
                 # rozvoj_leveho_kraje = list(hodnoty)
-                self.zpetne_overeni(list(hodnoty), levy_kraj)
+                self.zpetne_overeni(hodnoty, levy_kraj)
 
     def dosazeni_vse(self):
         """
@@ -144,7 +144,10 @@ class Perioda(object):
             self.dosazeni_overeni_leveho_kraje(retezec)
             i += 1
 
-    def zpetne_overeni(self, hodnoty: list, levy):
+    def odstraneni_nepripustnych_retezcu(self):
+        pass
+
+    def zpetne_overeni(self, hodnoty: tuple, levy):
         """
         Funkce, která zadané konečné slovo (resp. navrhovaný rozvoj levého kraje) a jeho spočtená hodnota levého kraje
         ověří, zda se skutečně jedná o rozvoj tohoto levého kraje.
@@ -153,7 +156,7 @@ class Perioda(object):
         """
 
         hledany_rozvoj = Soustava.Soustava(self.fce, self.znamenko, levy)
-        # print(levy)
+        #print(levy)
         hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, 2 * self.p + self.k)
         if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
             if self.p == hledany_rozvoj.perioda_leveho_kraje:

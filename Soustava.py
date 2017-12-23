@@ -5,7 +5,7 @@ from numpy import isreal, complex
 from sympy.abc import x
 
 EPS = 9e-17
-presnost = 684  # max 684, 700 nejde zatím
+presnost = 1000#684  # max 684, 700 nejde zatím
 MALO = 2e-8
 
 
@@ -99,21 +99,31 @@ class Soustava(object):
         transformace.append(bod)
         i = 1
         while (not periodicke) and (i <= pocet_cifer):
-            # start = time()
-            print("Počítáme {0:.0f}. cifru".format(i))
+            #start = time()
+            #print("Počítáme {0:.0f}. cifru".format(i))
             cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
             # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
+            #mez = time()
+            #print("Nalezli jsme cifru čas {0:.2f}".format(mez-start))
             rozvoj.append(sp.cancel(sp.floor(cifra)))
+            #mm = time()
+            #print("Pripojili jsme cifru trvalo to {0:.2f}".format(mm-mez))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
+            #tr = time()
+            #print("nova transformace s časem {0:.2f}".format(tr-mm))
             transformace.append(nova_transformace)
+            #kk = time()
+            #print("Pripojeni s časem {0:.2f}".format(kk-tr))
             for j in range(len(transformace)):
                 if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
                     periodicke = True
                     perioda = i - j
             i += 1
+            #tada = time()
+            #print("Proběhl forcyklus s časem {0:.2f}".format(tada-kk))
             # cyklus = time() - start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
-        return rozvoj, perioda
+        return tuple(rozvoj), perioda
 
     def nalezeni_priblizneho_rozvoje(self, bod, pocet_cifer=30):
         """
@@ -140,7 +150,7 @@ class Soustava(object):
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
             rozvoj.append(sp.cancel(cifra))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append(sp.N(nova_transformace, n=presnost))
+            transformace.append(sp.N(nova_transformace, n=presnost, chop=True))
             for j in range(len(transformace)):
                 if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
                     periodicke = True
@@ -148,7 +158,7 @@ class Soustava(object):
             i += 1
             # cyklus = time() - start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
-        return rozvoj, perioda
+        return tuple(rozvoj), perioda
 
     def nalezeni_limitniho_rozvoje(self, pocet_cifer=30):
         """
@@ -193,7 +203,7 @@ class Soustava(object):
             i += 1
             # cyklus = time() - start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
-        return rozvoj, perioda
+        return tuple(rozvoj), perioda
 
     def nalezeni_limitniho_rozvoj_bez_limit(self, pocet_cifer=30):
         """
@@ -243,7 +253,7 @@ class Soustava(object):
             i += 1
             # cyklus = time()-start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
-        return rozvoj, perioda
+        return tuple(rozvoj), perioda
 
     def spocitej_rozvoj_leveho_kraje(self, presne=True, pocet_cifer=30):
         """
@@ -291,7 +301,7 @@ class Soustava(object):
         :param delka_retezce: požadovaná délka prodlouženého řetězce
         :returns list: prodloužený nebo zkrácený řetězec na požadovanou délku
         """
-        pom = retezec
+        pom = retezec # jak je to s retezec.copy()?
         delka = len(pom)
         if perioda is None:
             pridam_nuly = [0] * (delka_retezce - delka)
@@ -301,8 +311,8 @@ class Soustava(object):
             pridam_periodu = (delka_retezce - delka) // perioda + 1
             prodlouzeni = perioda_retezce * pridam_periodu
             pom.extend(prodlouzeni)
-            useknu = len(pom) - delka_retezce
-            pom = pom[:-useknu]
+        useknu = len(pom) - delka_retezce
+        pom = pom[:-useknu]
         return pom
 
     def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: int, perioda_druheho: int):
@@ -319,23 +329,33 @@ class Soustava(object):
         :returns: 0: prvni_retezec = druhy_retezec
         """
 
-        if (perioda_prvniho is not None) and (perioda_druheho is not None):
-            raise ValueError("V současnosti neumíme a neporovnáváme dva řetězce s periodou!")
+        #if (perioda_prvniho is not None) and (perioda_druheho is not None):
+        #    raise ValueError("V současnosti neumíme a neporovnáváme dva řetězce s periodou!")
 
         # TODO Budeme umět
 
         pracovni_retezec_1 = prvni_retezec.copy()
         pracovni_retezec_2 = druhy_retezec.copy()
-        if perioda_prvniho is not None:
-            pridam_nuly = [0] * perioda_prvniho
-            pracovni_retezec_2.extend(pridam_nuly)
-        if perioda_druheho is not None:
-            pridam_nuly = [0] * perioda_druheho
-            pracovni_retezec_1.extend(pridam_nuly)
-        if len(pracovni_retezec_1) > len(pracovni_retezec_2):
-            pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, len(pracovni_retezec_1))
-        elif len(pracovni_retezec_2) > len(pracovni_retezec_1):
-            pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, len(pracovni_retezec_2))
+        if perioda_prvniho is None and perioda_druheho is None:
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2))
+        elif perioda_prvniho is not None:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_prvniho
+        elif perioda_druheho is not None:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_druheho
+        else:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+max(perioda_prvniho,perioda_druheho)
+        #if perioda_prvniho is not None:
+        #    pridam_nuly = [0] * perioda_prvniho
+        #    pracovni_retezec_2.extend(pridam_nuly)
+        #if perioda_druheho is not None:
+        #    pridam_nuly = [0] * perioda_druheho
+        #    pracovni_retezec_1.extend(pridam_nuly)
+        #if len(pracovni_retezec_1) > len(pracovni_retezec_2):
+        #    pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, len(pracovni_retezec_1))
+        #elif len(pracovni_retezec_2) > len(pracovni_retezec_1):
+        #    pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, len(pracovni_retezec_2))
+        pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1,perioda_prvniho,delka_retezce)
+        pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2,perioda_druheho,delka_retezce)
         for i in range(len(pracovni_retezec_1)):
             if self.znamenko ** (i + 1) * pracovni_retezec_1[i] < self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
                 return -1  # prvni retezec je MENSI jak druhy retezec
@@ -354,7 +374,7 @@ class Soustava(object):
 
         pracovni_retezec = retezec.copy()
         while len(pracovni_retezec) > 0:
-            if self.porovnej_retezce(self.rozvoj_leveho_kraje, pracovni_retezec,
+            if self.porovnej_retezce(list(self.rozvoj_leveho_kraje), pracovni_retezec,
                                      self.perioda_leveho_kraje, perioda_retezce) > 0:
                 return False
             pracovni_retezec.pop(0)
@@ -370,7 +390,7 @@ class Soustava(object):
 
         pracovni_retezec = retezec.copy()
         while len(pracovni_retezec) > 0:
-            if self.porovnej_retezce(pracovni_retezec, self.rozvoj_praveho_kraje, perioda_retezce,
+            if self.porovnej_retezce(pracovni_retezec, list(self.rozvoj_praveho_kraje), perioda_retezce,
                                      self.perioda_praveho_kraje) >= 0:
                 return False
             pracovni_retezec.pop(0)
@@ -398,6 +418,8 @@ class Soustava(object):
         :param k: maximální délka řetězců mink a maxk, kterou chceme vytvořit
         """
 
+        rozvoj_levy = list(self.rozvoj_leveho_kraje)
+        rozvoj_pravy = list(self.rozvoj_praveho_kraje)
         mink = list()
         maxk = list()
         min0 = []
@@ -405,10 +427,12 @@ class Soustava(object):
         mink.append(min0)
         maxk.append(max0)
         for i in range(1, k):
-            mini = self.prilep_periodu(self.rozvoj_leveho_kraje, self.perioda_leveho_kraje,
+            mini = self.prilep_periodu(rozvoj_levy, self.perioda_leveho_kraje,
                                        i)
-            maxi = self.prilep_periodu(self.rozvoj_praveho_kraje,
+            maxi = self.prilep_periodu(rozvoj_pravy,
                                        self.perioda_praveho_kraje, i)
+            print(mini)
+            print(maxi)
             mk = 0
             while mk <= i - 1:
                 min_prefix = mini[:i - mk - 1]  # neměnný prefix
