@@ -74,31 +74,32 @@ if __name__=="__main__":
     #print("\n\n")
 
     #
-    tribonaci = Soustava.Soustava('x**3-x**2-x-1', znamenko=1,symbol_levy_kraj=levy[0])
-    zac = time.time()
-    tribonaci.spocitej_rozvoj_leveho_kraje(False, 5) # True funguje
-    tribonaci.spocitej_rozvoj_praveho_kraje(False, 5)
-    tribonaci.spocitej_mink_maxk(5)
-    kon = time.time()
-    print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
+    tribonaci = Soustava.Soustava('x**2-x-1', znamenko=1,symbol_levy_kraj='-1')
+    tribonaci.spocitej_rozvoj_leveho_kraje(False)
+    tribonaci.spocitej_rozvoj_leveho_kraje(True)
+
+    fibonacci = Soustava.Soustava('x**2-x-1', znamenko=1, symbol_levy_kraj='0')
+    fibonacci.spocitej_rozvoj_praveho_kraje(False)
+    fibonacci.spocitej_rozvoj_praveho_kraje(True)
+
+
+    #zac = time.time()
+    #tribonaci.spocitej_rozvoj_leveho_kraje(False, 5) # True funguje
+    #tribonaci.spocitej_rozvoj_praveho_kraje(False, 5)
+    #tribonaci.spocitej_mink_maxk(5)
+    #kon = time.time()
+    #print("Cele to trvalo presne {0:.2f} s".format(kon-zac))
     #tribonaci.spocitej_rozvoj_leveho_kraje(True, 5)
     #pom = time.time()-kon
     #print("Cele to trvalo {0:.2f} s".format(pom))
-    if tribonaci.znamenko<0:
-        nazev = "rozvoj_zap_{}".format(int(time.time()))
-    else:
-        nazev = "rozvoj_kladna_{}".format(int(time.time()))
-    soubor = "vystup/" + nazev + ".tex"
-    file = latex_export.Soubor(soubor)
+    #if tribonaci.znamenko<0:
+    #    nazev = "rozvoj_zap_{}".format(int(time.time()))
+    #else:
+    #    nazev = "rozvoj_kladna_{}".format(int(time.time()))
+    #soubor = "vystup/" + nazev + ".tex"
+    #file = latex_export.Soubor(soubor)
 
-    file.vypis_rozvoj_vse(tribonaci)
+#    file.vypis_rozvoj_vse(tribonaci)
 
-    file.vypis_cas(time.time()-zac)
-    file.ukonceni_souboru()
-
-
-    # period = rozvoj.Perioda('x**3-x**2-x-1', tribonaci.baze, 1, 0,3, False)
-    # print("Jdu na to")
-    # period.zpetne_overeni(hodnota,levyk)
-    # l = period.vycisleni_vyrazu_abc(period.vyraz, hodnota)
-    # print(latex(l))
+ #   file.vypis_cas(time.time()-zac)
+  #  file.ukonceni_souboru()

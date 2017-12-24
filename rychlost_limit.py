@@ -6,7 +6,11 @@ if __name__ == "__main__":
 
     rovnice = 'x**3-x**2-x-1'
     znamenko = 1
-    levy_kraj = '-x/3'
+    levy_kraj = '-1/(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3)) - 1/(1/3 + ' \
+                '4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2 - (1/3 + 4/(9*(sqrt(33)/9 ' \
+                '+ 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) +' \
+                ' (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 +' \
+                ' 19/27)**(1/3))**4)'
     pocet_cifer = 20
     k = 10
 
@@ -41,6 +45,9 @@ if __name__ == "__main__":
         konec = time.time()
         file.vypis_cas(konec - stred)
         file.f.write("\n\n")
+
+        if rozvoj.perioda_praveho_kraje is not None and rozvoj.perioda_leveho_kraje is not None:
+            break
 
     for i in range(5,25,5):
         # nalezení rozvoje pro levý i limitní pravý kraj

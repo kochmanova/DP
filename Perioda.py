@@ -116,7 +116,7 @@ class Perioda(object):
 
         levy_kraj = self.vycisleni_vyrazu_abc(self.vycisleny_vyraz, hodnoty)
         priblizny_levy_kraj = sp.N(levy_kraj, n=presnost)
-        if priblizny_levy_kraj <= 0 and priblizny_levy_kraj > -1:
+        if priblizny_levy_kraj < 0 and priblizny_levy_kraj > -1:
             if (self.znamenko == -1) and ((-priblizny_levy_kraj / self.baze - EPS > (priblizny_levy_kraj + 1)) or (
                         -(priblizny_levy_kraj + 1) / self.baze + EPS < priblizny_levy_kraj)):
                 # print("Jsem tu")
@@ -136,16 +136,36 @@ class Perioda(object):
         hodnoty = list(product(self.A, repeat=delka))
         # upravit, abychom hodnoty dostávali po jednom, jednodušší pro paměť
         print("Celkem máme {0:.0f} řetezců".format(len(self.A) ** delka))
+        procistene_retezce = self.odstraneni_retezcu(hodnoty)
+        print("Celkem máme {0:.0f} řetezců".format(len(procistene_retezce)))
         i = 0
-        for retezec in hodnoty:
+        for retezec in procistene_retezce:
             print("{}. případ dosazení, teď počítáme rozvoj: {}".format(i, list(retezec)))
             # print("{}. případ dosazení, nyní děláme rozvoj tohohle: [%s]" % ",".format(i) .join(map(str, retezec)))
             # print("Nyni delame rozvoj tohohle:  [%s]" % ",".join(map(str, hodnoty)))
             self.dosazeni_overeni_leveho_kraje(retezec)
             i += 1
 
-    def odstraneni_nepripustnych_retezcu(self):
-        pass
+    def odstraneni_retezcu(self, hodnoty:list):
+        pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='-1')
+        pomocny_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne)
+        levy_rozvoj = pomocny_rozvoj.rozvoj_leveho_kraje
+        leva_perioda = pomocny_rozvoj.perioda_leveho_kraje
+        pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='0')
+        pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(self.presne, 30)
+        pravy_rozvoj = pomocny_rozvoj.rozvoj_praveho_kraje
+        prava_perioda = pomocny_rozvoj.perioda_praveho_kraje
+
+        vyhodit = set()
+
+        for i in range(len(hodnoty)):
+            if not pomocny_rozvoj.lezi_retezec_mezi(hodnoty[i], self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
+                vyhodit.add(i)
+
+        print(vyhodit)
+
+        procisteny_retezec = [x for x in hodnoty if not x in vyhodit]
+        return procisteny_retezec
 
     def zpetne_overeni(self, hodnoty: tuple, levy):
         """

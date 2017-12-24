@@ -105,7 +105,7 @@ class Soustava(object):
             # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
             #mez = time()
             #print("Nalezli jsme cifru čas {0:.2f}".format(mez-start))
-            rozvoj.append(sp.cancel(sp.floor(cifra)))
+            rozvoj.append(int(sp.N(sp.cancel(sp.floor(cifra)),n=1,chop=True)))
             #mm = time()
             #print("Pripojili jsme cifru trvalo to {0:.2f}".format(mm-mez))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
@@ -148,7 +148,8 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
-            rozvoj.append(sp.cancel(cifra))
+            #rozvoj.append(int(sp.N(sp.cancel(cifra),n=1, chop=True)))
+            rozvoj.append(int(sp.N(cifra,n=1,chop=True)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(sp.N(nova_transformace, n=presnost, chop=True))
             for j in range(len(transformace)):
@@ -215,6 +216,7 @@ class Soustava(object):
         """
         # TODO zjistit, zda je časově rychlejší oproti pravému kraji
 
+        #print("Jsem tu")
         periodicke = False
         perioda = None
         transformace = list()
@@ -525,3 +527,13 @@ class Soustava(object):
                 (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(self.maxk[i]))
             delta.append(vzdalenost)
         self.vzdalenosti_symbolicky = delta
+
+    def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy:tuple, levy_perioda: int, pravy:tuple, pravy_perioda: int):
+        pom_retezec = list(retezec)
+        while len(pom_retezec)>0:
+            if self.porovnej_retezce(pom_retezec, list(levy), perioda_retezce, levy_perioda)<=0:
+                return False
+            if self.porovnej_retezce(pom_retezec, list(pravy), perioda_retezce, pravy_perioda)>=0:
+                return False
+            pom_retezec.pop(0)
+        return True
