@@ -168,7 +168,7 @@ class Soubor(object):
         :param symbol_levy_kraj:
         :param levy_kraj
         """
-        # TODO
+        # TODO popis parametru
         self.f.write("Levý kraj $\ell = ")
         self.prevod_x_na_beta(symbol_levy_kraj)
         self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3, chop=True)))
@@ -211,7 +211,7 @@ class Soubor(object):
         :param prave_kraje: rozvoje pravých krajů s periodami perioda_praveho
         :param perioda_praveho:
         """
-        # TODO
+        # TODO popis parametru
         self.f.write("\\begin{itemize} ")
         for i in range(len(hodnoty)):
             self.f.write("\item $\ell = ")
@@ -235,7 +235,7 @@ class Soubor(object):
         pak i jejich hodnoty.
         :param soustava: instance třídy Soustava
         """
-        # TODO
+        # TODO v def funkci soustava: instance?
         self.vypis_rovnice(soustava.fce, soustava.baze, soustava.znamenko)
         self.vypis_levy(soustava.symbol_levy_kraj, soustava.levy_kraj)
         if not (soustava.rozvoj_leveho_kraje == None):

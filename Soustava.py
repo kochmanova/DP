@@ -345,7 +345,7 @@ class Soustava(object):
         pom = pom[:-useknu]
         return pom
 
-    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: list):  # TODO TU JE CHYBA
+    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: list):
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix >=lex/alt rozvoj_leveho_kraje.rozvoj_bodu
         :param retezec:
@@ -362,7 +362,7 @@ class Soustava(object):
             pracovni_retezec.pop(0)
         return True
 
-    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: list):  # TODO TU je CHYBA!!!!!!
+    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: list):
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix <lex/alt rozvoj_praveho_kraje.rozvoj_bodu
         :param retezec:
