@@ -11,7 +11,13 @@ if __name__ == "__main__":
                 '+ 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) +' \
                 ' (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 +' \
                 ' 19/27)**(1/3))**4)'
-    pocet_cifer = 20
+    Zn = [1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    levy = ['0', '-1/2', '-x/(x+1)', '-x/3', '-0.6', '(x-3)/2', '-4*x/13', '(2-2*x)/3', '-0.55', '-1/x', '-0.5',
+            '(1-x)/2']
+    poc = 8 #0,1,2,3,4,5,6,7
+    znamenko = Zn[poc]
+    levy_kraj = levy[poc]
+    max_cifer = 25
     k = 10
 
     # následuje část, kdy se volají jednotlivé metody, tedy dále není potřeba cokoliv upravovat
@@ -31,7 +37,7 @@ if __name__ == "__main__":
     file.vypis_rovnice(rovnice,rozvoj.baze,znamenko)
     file.vypis_levy(levy_kraj,rozvoj.levy_kraj)
 
-    for i in range(5,25,5):
+    for i in range(5,max_cifer,5):
         # nalezení rozvoje pro levý i limitní pravý kraj
         zacatek_vypoctu = time.time()
         rozvoj.spocitej_rozvoj_leveho_kraje(False, i)
@@ -49,7 +55,7 @@ if __name__ == "__main__":
         if rozvoj.perioda_praveho_kraje is not None and rozvoj.perioda_leveho_kraje is not None:
             break
 
-    for i in range(5,25,5):
+    for i in range(5,max_cifer,5):
         # nalezení rozvoje pro levý i limitní pravý kraj
         zacatek = time.time()
         rozvoj.spocitej_rozvoj_leveho_kraje(True, i)

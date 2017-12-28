@@ -151,6 +151,7 @@ class Perioda(object):
         pomocny_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne)
         levy_rozvoj = pomocny_rozvoj.rozvoj_leveho_kraje
         leva_perioda = pomocny_rozvoj.perioda_leveho_kraje
+
         pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='0')
         pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(self.presne, 30)
         pravy_rozvoj = pomocny_rozvoj.rozvoj_praveho_kraje
@@ -158,10 +159,11 @@ class Perioda(object):
 
         vyhodit = set()
 
-        for i in range(len(hodnoty)):
-            if not pomocny_rozvoj.lezi_retezec_mezi(hodnoty[i], self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
-                vyhodit.add(i)
+        for retezec in hodnoty:
+            if not pomocny_rozvoj.lezi_retezec_mezi(retezec, self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
+                vyhodit.add(retezec)
 
+        print("Vyhazujeme: ")
         print(vyhodit)
 
         procisteny_retezec = [x for x in hodnoty if not x in vyhodit]

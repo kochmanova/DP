@@ -16,8 +16,8 @@ if __name__ == "__main__":
     zacatek_vypoctu = time.time()
     rozvoj = Soustava.Soustava(rovnice, znamenko, symbol_levy_kraj=None)
 
-    periodycke_leve_kraje = Perioda.Perioda(rovnice, rozvoj.baze, znamenko, predperioda, perioda, presnost_limit)
-    periodycke_leve_kraje.dosazeni_vse()
+    periodicke_leve_kraje = Perioda.Perioda(rovnice, rozvoj.baze, znamenko, predperioda, perioda, presnost_limit)
+    periodicke_leve_kraje.dosazeni_vse()
 
     # export výsledků do LaTeXového souboru
     if znamenko > 0:
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     soubor = "vystup/" + nazev + ".tex"
     file = latex_export.Soubor(soubor)
-    file.vypis_perioda(periodycke_leve_kraje)
+    file.vypis_perioda(periodicke_leve_kraje)
 
     konec_vypoctu = time.time() - zacatek_vypoctu
     file.vypis_cas(konec_vypoctu)

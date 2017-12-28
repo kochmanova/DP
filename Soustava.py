@@ -100,7 +100,7 @@ class Soustava(object):
         i = 1
         while (not periodicke) and (i <= pocet_cifer):
             #start = time()
-            #print("Počítáme {0:.0f}. cifru".format(i))
+            print("Počítáme {0:.0f}. cifru".format(i))
             cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
             # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
             #mez = time()
@@ -531,9 +531,9 @@ class Soustava(object):
     def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy:tuple, levy_perioda: int, pravy:tuple, pravy_perioda: int):
         pom_retezec = list(retezec)
         while len(pom_retezec)>0:
-            if self.porovnej_retezce(pom_retezec, list(levy), perioda_retezce, levy_perioda)<=0:
+            if self.porovnej_retezce(pom_retezec, list(levy), perioda_retezce, levy_perioda) <= 0:
                 return False
-            if self.porovnej_retezce(pom_retezec, list(pravy), perioda_retezce, pravy_perioda)>=0:
+            if self.porovnej_retezce(pom_retezec, list(pravy), perioda_retezce, pravy_perioda) >= 0:
                 return False
             pom_retezec.pop(0)
         return True
