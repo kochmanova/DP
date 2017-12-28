@@ -366,7 +366,63 @@ class Soustava(object):
                 return 1  # prvni retezec je VETSI jak druhy retezec
         return 0  # retezce se rovnaji
 
-    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: int):
+    def porovnej_retezce_perioda(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list, perioda_druheho: list):
+        """
+        Funkce, která porovná dva řetězce i různé délky.
+
+        :param prvni_retezec: první řetezec, který porovnáváme
+        :param druhy_retezec: řetězec, se kterým porovnáváme prvni_retezec
+        :param perioda_prvniho: délka periody prvního řetězce (int), pokud nemá periodu, hodnota je None
+        :param perioda_druheho: délka periody druhého řetězce (int), pokud nemá periodu, hodnota je None
+
+        :returns: -1: prvni_retezec < druhy_retezec
+        :returns: 1: prvni_retezec > druhy_retezec
+        :returns: 0: prvni_retezec = druhy_retezec
+        """
+
+        pracovni_retezec_1 = prvni_retezec.copy()
+        pracovni_retezec_2 = druhy_retezec.copy()
+        if perioda_prvniho == [0] and perioda_druheho == [0]:
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2))
+        elif perioda_prvniho != [0]:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_prvniho
+        elif perioda_druheho != [0]:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_druheho
+        else:
+            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+max(len(perioda_prvniho),len(perioda_druheho))
+        pracovni_retezec_1 = self.prilep_periodu_per(pracovni_retezec_1,perioda_prvniho,delka_retezce)
+        pracovni_retezec_2 = self.prilep_periodu_per(pracovni_retezec_2,perioda_druheho,delka_retezce)
+        for i in range(len(pracovni_retezec_1)):
+            if self.znamenko ** (i + 1) * pracovni_retezec_1[i] < self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
+                return -1  # prvni retezec je MENSI jak druhy retezec
+            elif self.znamenko ** (i + 1) * pracovni_retezec_1[i] \
+                    > self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
+                return 1  # prvni retezec je VETSI jak druhy retezec
+        return 0  # retezce se rovnaji
+
+    def prilep_periodu_per(self, retezec: list, perioda: list, delka_retezce: int):
+        """
+        Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla
+        rovna delka_retezce; v případě, že retezec není periodický, se zřetězí na požadovanou délku pomocí nul.
+        V případě, že původní retezec je delší než delka_retezce, je retezec zkrácen na požadovanou délku.
+
+        :param retezec: počáteční řetězec, který chceme prodloužit
+        :param perioda: délka periody řetězce (int), pokud nemá periodu, hodnota je None a řetezec se doplní nulami
+        :param delka_retezce: požadovaná délka prodlouženého řetězce
+        :returns list: prodloužený nebo zkrácený řetězec na požadovanou délku
+        """
+        pom = list(retezec)
+        delka = len(pom)
+        pridam_periodu = (delka_retezce - delka) // len(perioda) + 1
+        prodlouzeni = perioda * pridam_periodu
+        pom.extend(prodlouzeni)
+        useknu = len(pom) - delka_retezce
+        pom = pom[:-useknu]
+        return pom
+
+
+
+    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: int): # TODO TU JE CHYBA
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix >=lex/alt rozvoj_leveho_kraje.rozvoj_bodu
         :param retezec:
@@ -382,7 +438,7 @@ class Soustava(object):
             pracovni_retezec.pop(0)
         return True
 
-    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: int):
+    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: int): # TODO TU je CHYBA!!!!!!
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix <lex/alt rozvoj_praveho_kraje.rozvoj_bodu
         :param retezec:
@@ -529,11 +585,15 @@ class Soustava(object):
         self.vzdalenosti_symbolicky = delta
 
     def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy:tuple, levy_perioda: int, pravy:tuple, pravy_perioda: int):
+        # TODO TU JE CHYBA
         pom_retezec = list(retezec)
+        periodicka_cast=pom_retezec[-perioda_retezce:]
         while len(pom_retezec)>0:
-            if self.porovnej_retezce(pom_retezec, list(levy), perioda_retezce, levy_perioda) <= 0:
+            leva_periodicka_cast = list(levy)[-levy_perioda:]
+            prava_periodicka_cast = list(pravy)[-pravy_perioda:]
+            if self.porovnej_retezce_perioda(pom_retezec, list(levy), periodicka_cast, leva_periodicka_cast) <= 0:
                 return False
-            if self.porovnej_retezce(pom_retezec, list(pravy), perioda_retezce, pravy_perioda) >= 0:
+            if self.porovnej_retezce(pom_retezec, list(pravy), periodicka_cast, prava_periodicka_cast) >= 0:
                 return False
             pom_retezec.pop(0)
         return True
