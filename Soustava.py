@@ -1,11 +1,8 @@
 import sympy as sp
-from sympy import latex
-from time import time
-from numpy import isreal, complex
 from sympy.abc import x
 
 EPS = 9e-17
-presnost = 1000#684  # max 684, 700 nejde zatím
+presnost = 1000  # 684  # max 684, 700 nejde zatím
 MALO = 2e-8
 
 
@@ -51,7 +48,7 @@ class Soustava(object):
 
         # TODO existuje funkce, která se jmenuje podobně a možná dělá jen tu konkrétní věc a to chci -> podívat
         reseni_rovnice = sp.solve(self.fce, x)
-        #realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))] -> dělá to to samé?? :D SNAD ANO, zjistit
+        # realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))] -> dělá to to samé?? :D SNAD ANO, zjistit
         realne_koreny = [koren for koren in reseni_rovnice if sp.sympify(koren).is_real]
         if len(realne_koreny) < 1:
             raise ValueError("Špatně zvolená rovnice. Rovnice musí mít alespoň jeden reálný kořen.")
@@ -99,28 +96,28 @@ class Soustava(object):
         transformace.append(bod)
         i = 1
         while (not periodicke) and (i <= pocet_cifer):
-            #start = time()
+            # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
             # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
-            #mez = time()
-            #print("Nalezli jsme cifru čas {0:.2f}".format(mez-start))
-            rozvoj.append(int(sp.N(sp.cancel(sp.floor(cifra)),n=1,chop=True)))
-            #mm = time()
-            #print("Pripojili jsme cifru trvalo to {0:.2f}".format(mm-mez))
+            # mez = time()
+            # print("Nalezli jsme cifru čas {0:.2f}".format(mez-start))
+            rozvoj.append(int(sp.N(sp.cancel(sp.floor(cifra)), n=1, chop=True)))
+            # mm = time()
+            # print("Pripojili jsme cifru trvalo to {0:.2f}".format(mm-mez))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            #tr = time()
-            #print("nova transformace s časem {0:.2f}".format(tr-mm))
+            # tr = time()
+            # print("nova transformace s časem {0:.2f}".format(tr-mm))
             transformace.append(nova_transformace)
-            #kk = time()
-            #print("Pripojeni s časem {0:.2f}".format(kk-tr))
+            # kk = time()
+            # print("Pripojeni s časem {0:.2f}".format(kk-tr))
             for j in range(len(transformace)):
                 if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
                     periodicke = True
                     perioda = i - j
             i += 1
-            #tada = time()
-            #print("Proběhl forcyklus s časem {0:.2f}".format(tada-kk))
+            # tada = time()
+            # print("Proběhl forcyklus s časem {0:.2f}".format(tada-kk))
             # cyklus = time() - start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
         return tuple(rozvoj), perioda
@@ -148,8 +145,8 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
-            #rozvoj.append(int(sp.N(sp.cancel(cifra),n=1, chop=True)))
-            rozvoj.append(int(sp.N(cifra,n=1,chop=True)))
+            # rozvoj.append(int(sp.N(sp.cancel(cifra),n=1, chop=True)))
+            rozvoj.append(int(sp.N(cifra, n=1, chop=True)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(sp.N(nova_transformace, n=presnost, chop=True))
             for j in range(len(transformace)):
@@ -216,7 +213,7 @@ class Soustava(object):
         """
         # TODO zjistit, zda je časově rychlejší oproti pravému kraji
 
-        #print("Jsem tu")
+        # print("Jsem tu")
         periodicke = False
         perioda = None
         transformace = list()
@@ -292,81 +289,8 @@ class Soustava(object):
         print("Nalezli jsme rozvoj pravého kraje: [%s]" % ",".join(map(str, self.rozvoj_praveho_kraje)))
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
 
-    def prilep_periodu(self, retezec: list, perioda: int, delka_retezce: int):
-        """
-        Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla
-        rovna delka_retezce; v případě, že retezec není periodický, se zřetězí na požadovanou délku pomocí nul.
-        V případě, že původní retezec je delší než delka_retezce, je retezec zkrácen na požadovanou délku.
-
-        :param retezec: počáteční řetězec, který chceme prodloužit
-        :param perioda: délka periody řetězce (int), pokud nemá periodu, hodnota je None a řetezec se doplní nulami
-        :param delka_retezce: požadovaná délka prodlouženého řetězce
-        :returns list: prodloužený nebo zkrácený řetězec na požadovanou délku
-        """
-        pom = retezec # jak je to s retezec.copy()?
-        delka = len(pom)
-        if perioda is None:
-            pridam_nuly = [0] * (delka_retezce - delka)
-            pom.extend(pridam_nuly)
-        else:
-            perioda_retezce = pom[-perioda:]
-            pridam_periodu = (delka_retezce - delka) // perioda + 1
-            prodlouzeni = perioda_retezce * pridam_periodu
-            pom.extend(prodlouzeni)
-        useknu = len(pom) - delka_retezce
-        pom = pom[:-useknu]
-        return pom
-
-    def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: int, perioda_druheho: int):
-        """
-        Funkce, která porovná dva řetězce i různé délky.
-
-        :param prvni_retezec: první řetezec, který porovnáváme
-        :param druhy_retezec: řetězec, se kterým porovnáváme prvni_retezec
-        :param perioda_prvniho: délka periody prvního řetězce (int), pokud nemá periodu, hodnota je None
-        :param perioda_druheho: délka periody druhého řetězce (int), pokud nemá periodu, hodnota je None
-
-        :returns: -1: prvni_retezec < druhy_retezec
-        :returns: 1: prvni_retezec > druhy_retezec
-        :returns: 0: prvni_retezec = druhy_retezec
-        """
-
-        #if (perioda_prvniho is not None) and (perioda_druheho is not None):
-        #    raise ValueError("V současnosti neumíme a neporovnáváme dva řetězce s periodou!")
-
-        # TODO Budeme umět
-
-        pracovni_retezec_1 = prvni_retezec.copy()
-        pracovni_retezec_2 = druhy_retezec.copy()
-        if perioda_prvniho is None and perioda_druheho is None:
-            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2))
-        elif perioda_prvniho is not None:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_prvniho
-        elif perioda_druheho is not None:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_druheho
-        else:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+max(perioda_prvniho,perioda_druheho)
-        #if perioda_prvniho is not None:
-        #    pridam_nuly = [0] * perioda_prvniho
-        #    pracovni_retezec_2.extend(pridam_nuly)
-        #if perioda_druheho is not None:
-        #    pridam_nuly = [0] * perioda_druheho
-        #    pracovni_retezec_1.extend(pridam_nuly)
-        #if len(pracovni_retezec_1) > len(pracovni_retezec_2):
-        #    pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, len(pracovni_retezec_1))
-        #elif len(pracovni_retezec_2) > len(pracovni_retezec_1):
-        #    pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, len(pracovni_retezec_2))
-        pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1,perioda_prvniho,delka_retezce)
-        pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2,perioda_druheho,delka_retezce)
-        for i in range(len(pracovni_retezec_1)):
-            if self.znamenko ** (i + 1) * pracovni_retezec_1[i] < self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
-                return -1  # prvni retezec je MENSI jak druhy retezec
-            elif self.znamenko ** (i + 1) * pracovni_retezec_1[i] \
-                    > self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
-                return 1  # prvni retezec je VETSI jak druhy retezec
-        return 0  # retezce se rovnaji
-
-    def porovnej_retezce_perioda(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list, perioda_druheho: list):
+    def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list,
+                         perioda_druheho: list):
         """
         Funkce, která porovná dva řetězce i různé délky.
 
@@ -385,13 +309,14 @@ class Soustava(object):
         if perioda_prvniho == [0] and perioda_druheho == [0]:
             delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2))
         elif perioda_prvniho != [0]:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_prvniho
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + len(perioda_prvniho)
         elif perioda_druheho != [0]:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+perioda_druheho
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + len(perioda_druheho)
         else:
-            delka_retezce = max(len(pracovni_retezec_1),len(pracovni_retezec_2))+max(len(perioda_prvniho),len(perioda_druheho))
-        pracovni_retezec_1 = self.prilep_periodu_per(pracovni_retezec_1,perioda_prvniho,delka_retezce)
-        pracovni_retezec_2 = self.prilep_periodu_per(pracovni_retezec_2,perioda_druheho,delka_retezce)
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + max(len(perioda_prvniho),
+                                                                                        len(perioda_druheho))
+        pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, delka_retezce)
+        pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, delka_retezce)
         for i in range(len(pracovni_retezec_1)):
             if self.znamenko ** (i + 1) * pracovni_retezec_1[i] < self.znamenko ** (i + 1) * pracovni_retezec_2[i]:
                 return -1  # prvni retezec je MENSI jak druhy retezec
@@ -400,7 +325,7 @@ class Soustava(object):
                 return 1  # prvni retezec je VETSI jak druhy retezec
         return 0  # retezce se rovnaji
 
-    def prilep_periodu_per(self, retezec: list, perioda: list, delka_retezce: int):
+    def prilep_periodu(self, retezec: list, perioda: list, delka_retezce: int):
         """
         Pomocná funkce, která zřetězí retezec, v případě periody o periodu tolikrát, aby délka výsledného řetězce byla
         rovna delka_retezce; v případě, že retezec není periodický, se zřetězí na požadovanou délku pomocí nul.
@@ -420,9 +345,7 @@ class Soustava(object):
         pom = pom[:-useknu]
         return pom
 
-
-
-    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: int): # TODO TU JE CHYBA
+    def je_retezec_zleva_pripustny(self, retezec: list, perioda_retezce: list):  # TODO TU JE CHYBA
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix >=lex/alt rozvoj_leveho_kraje.rozvoj_bodu
         :param retezec:
@@ -430,15 +353,16 @@ class Soustava(object):
         :returns: bool
         """
 
-        pracovni_retezec = retezec.copy()
+        pracovni_retezec = list(retezec)
+        leva_perioda = self.dej_periodu_kraje(list(self.rozvoj_leveho_kraje), self.perioda_leveho_kraje)
         while len(pracovni_retezec) > 0:
             if self.porovnej_retezce(list(self.rozvoj_leveho_kraje), pracovni_retezec,
-                                     self.perioda_leveho_kraje, perioda_retezce) > 0:
+                                     leva_perioda, perioda_retezce) > 0:
                 return False
             pracovni_retezec.pop(0)
         return True
 
-    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: int): # TODO TU je CHYBA!!!!!!
+    def je_retezec_zprava_pripustny(self, retezec: list, perioda_retezce: list):  # TODO TU je CHYBA!!!!!!
         """
         Funkce, která zjistí, zda je retezec a libovolný jeho sufix <lex/alt rozvoj_praveho_kraje.rozvoj_bodu
         :param retezec:
@@ -446,10 +370,11 @@ class Soustava(object):
         :returns: bool
         """
 
-        pracovni_retezec = retezec.copy()
+        pracovni_retezec = list(retezec)
+        prava_perioda = self.dej_periodu_kraje(list(self.rozvoj_praveho_kraje), self.perioda_praveho_kraje)
         while len(pracovni_retezec) > 0:
             if self.porovnej_retezce(pracovni_retezec, list(self.rozvoj_praveho_kraje), perioda_retezce,
-                                     self.perioda_praveho_kraje) >= 0:
+                                     prava_perioda) >= 0:
                 return False
             pracovni_retezec.pop(0)
         return True
@@ -463,8 +388,9 @@ class Soustava(object):
         :returns: bool
         """
 
-        if self.je_retezec_zprava_pripustny(retezec, perioda_retezce) \
-                and self.je_retezec_zleva_pripustny(retezec, perioda_retezce):
+        perioda = self.dej_periodu_kraje(retezec, perioda_retezce)
+        if self.je_retezec_zprava_pripustny(retezec, perioda) \
+                and self.je_retezec_zleva_pripustny(retezec, perioda):
             return True
         else:
             return False
@@ -478,6 +404,8 @@ class Soustava(object):
 
         rozvoj_levy = list(self.rozvoj_leveho_kraje)
         rozvoj_pravy = list(self.rozvoj_praveho_kraje)
+        leva_perioda = self.dej_periodu_kraje(rozvoj_levy, self.perioda_leveho_kraje)
+        prava_perioda = self.dej_periodu_kraje(rozvoj_pravy, self.perioda_praveho_kraje)
         mink = list()
         maxk = list()
         min0 = []
@@ -485,10 +413,8 @@ class Soustava(object):
         mink.append(min0)
         maxk.append(max0)
         for i in range(1, k):
-            mini = self.prilep_periodu(rozvoj_levy, self.perioda_leveho_kraje,
-                                       i)
-            maxi = self.prilep_periodu(rozvoj_pravy,
-                                       self.perioda_praveho_kraje, i)
+            mini = self.prilep_periodu(rozvoj_levy, leva_perioda, i)
+            maxi = self.prilep_periodu(rozvoj_pravy, prava_perioda, i)
             print(mini)
             print(maxi)
             mk = 0
@@ -512,12 +438,12 @@ class Soustava(object):
                     mozne_max1.append(max_cifra + 1)
                     mozne_max1.extend(mink[mk])
                 if self.je_retezec_pripustny(mozne_min1, None):
-                    if self.porovnej_retezce(mini, mozne_min1, None, None) == 1:
+                    if self.porovnej_retezce(mini, mozne_min1, [0], [0]) == 1:
                         mini = mozne_min1
                     if not self.je_retezec_pripustny(mini, None):
                         mini = mozne_min1
                 if self.je_retezec_pripustny(mozne_max1, None):
-                    if self.porovnej_retezce(maxi, mozne_max1, None, None) == -1:
+                    if self.porovnej_retezce(maxi, mozne_max1, [0], [0]) == -1:
                         maxi = mozne_max1
                     if not self.je_retezec_pripustny(maxi, None):
                         maxi = mozne_max1
@@ -580,20 +506,27 @@ class Soustava(object):
         delta = list()
         for i in range(k):
             vzdalenost = abs(
-                (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(self.maxk[i]))
+                (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(
+                    self.maxk[i]))
             delta.append(vzdalenost)
         self.vzdalenosti_symbolicky = delta
 
-    def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy:tuple, levy_perioda: int, pravy:tuple, pravy_perioda: int):
-        # TODO TU JE CHYBA
+    def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy: tuple, levy_perioda: int, pravy: tuple,
+                          pravy_perioda: int):
         pom_retezec = list(retezec)
-        periodicka_cast=pom_retezec[-perioda_retezce:]
-        while len(pom_retezec)>0:
-            leva_periodicka_cast = list(levy)[-levy_perioda:]
-            prava_periodicka_cast = list(pravy)[-pravy_perioda:]
-            if self.porovnej_retezce_perioda(pom_retezec, list(levy), periodicka_cast, leva_periodicka_cast) <= 0:
+        periodicka_cast = pom_retezec[-perioda_retezce:]
+        while len(pom_retezec) > 0:
+            leva_periodicka_cast = self.dej_periodu_kraje(list(levy), levy_perioda)
+            prava_periodicka_cast = self.dej_periodu_kraje(list(pravy), pravy_perioda)
+            if self.porovnej_retezce(pom_retezec, list(levy), periodicka_cast, leva_periodicka_cast) <= 0:
                 return False
             if self.porovnej_retezce(pom_retezec, list(pravy), periodicka_cast, prava_periodicka_cast) >= 0:
                 return False
             pom_retezec.pop(0)
         return True
+
+    def dej_periodu_kraje(self, retezec: list, perioda: int):
+        if perioda is None:
+            return [0]
+        else:
+            return retezec[-perioda:]
