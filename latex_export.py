@@ -1,6 +1,7 @@
 from sympy import latex, sympify, N, cancel
 from sympy.abc import x, beta
-
+import Soustava
+import Perioda
 
 class Soubor(object):
     def __init__(self, nazev: str):
@@ -127,7 +128,6 @@ class Soubor(object):
         Metoda, která výraz převede do LaTeX formy. (Pozor: nevypíše výraz v matematickém modu)
         :param vyraz: převáděný výraz
         """
-        # TODO je vyraz str???
         prevod = sympify(vyraz)
         self.f.write(latex(prevod))
 
@@ -150,7 +150,6 @@ class Soubor(object):
         :param baze:
         :param znamenko:
         """
-        # TODO zjistit co je baze
         self.f.write("Vytvořili jsme soustavu ")
         if znamenko < 0:
             self.f.write("se zápornou bází ")
@@ -174,13 +173,12 @@ class Soubor(object):
         self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3, chop=True)))
         # self.f.write("$.\n\n")
 
-    def vypis_perioda(self, perioda):
+    def vypis_perioda(self, perioda: Perioda):
         """
         Funkce, která vypíše vše při výpočtu period; tj. rovnici, ze které vycházíme, bázi, znaménko, jednotlivé hodnoty
          levého kraje, které se pro danou periodu a předperiodu našli, jejich rozvoj, a následně i rozvoj pravého kraje.
         :param perioda: instance třídy Perioda
         """
-        # TODO perioda instance Perioda
         self.vypis_rovnice(perioda.fce, perioda.baze, perioda.znamenko)
         self.f.write(
             "Počítáme rozvoje, které mají {} dlouhou předperiodu a {} délku periody. ".format(perioda.k, perioda.p))
@@ -228,14 +226,13 @@ class Soubor(object):
         """
         self.f.write("Celé to trvalo {0:.2f} sekund. ".format(cas))
 
-    def vypis_rozvoj_vse(self, soustava):
+    def vypis_rozvoj_vse(self, soustava: Soustava):
         """
         Funkce, která vypíše vše při výpočtu rozvoje konkrétní soustavy; tj. rovnici, ze které vycházíme, bázi,
         znaménko, hodnotu levého kraje, jeho rozvoj a následně i rozvoj pravého kraje. Pokud bylo spočteno mink, maxk,
         pak i jejich hodnoty.
         :param soustava: instance třídy Soustava
         """
-        # TODO v def funkci soustava: instance?
         self.vypis_rovnice(soustava.fce, soustava.baze, soustava.znamenko)
         self.vypis_levy(soustava.symbol_levy_kraj, soustava.levy_kraj)
         if not (soustava.rozvoj_leveho_kraje == None):
