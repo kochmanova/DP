@@ -272,16 +272,16 @@ class Soustava(object):
         print("Nalezli jsme rozvoj levého kraje: [%s]" % ",".join(map(str, self.rozvoj_leveho_kraje)))
         print("S periodou délky {}".format(self.perioda_leveho_kraje))
 
-    def spocitej_rozvoj_praveho_kraje(self, presne=True, pocet_cifer=30):
+    def spocitej_rozvoj_praveho_kraje(self, limitne=True, pocet_cifer=30):
         """
         Funkce, která zavolá funkci pro nalezení limitního rozvoje pravého kraje pomocí limity, resp. bez limity
         podle parametru presne, na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že
         perioda nebyla nalezena, bude tato proměnná obsahovat hodnotu None.
-        :param presne:
+        :param limitne:
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         """
 
-        if presne:
+        if limitne:
             self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoje(pocet_cifer)
         else:
             self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoj_bez_limit(

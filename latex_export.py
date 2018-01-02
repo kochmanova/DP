@@ -49,6 +49,8 @@ class Soubor(object):
         """
         self.f.write("Rozvoj levého kraje: ")
         self.prevod_rozvoj_s_periodou(retezec, perioda)
+        if perioda is None:
+            self.f.write("\dots")
         self.f.write(" \n\n")
 
     def vypis_rozvoj_praveho(self, retezec: list, perioda: int):
@@ -59,6 +61,8 @@ class Soubor(object):
         """
         self.f.write("Limitní rozvoj pravého kraje: ")
         self.prevod_rozvoj_s_periodou(retezec, perioda)
+        if perioda is None:
+            self.f.write("\dots")
         self.f.write(" \n\n")
 
     def vypis_minmax(self, mink: list, maxk: list, vzdalenosti: list, vzdalenosti_symbol: list):
@@ -195,6 +199,10 @@ class Soubor(object):
                                   perioda.prave_kraje, perioda.prave_kraje_perioda)
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
+        if perioda.presne:
+            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity.")
+        else:
+            self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity.")
         print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
 
     def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
@@ -242,3 +250,7 @@ class Soubor(object):
         if not (soustava.mink == None):
             print(soustava.vzdalenosti)
             self.vypis_minmax(soustava.mink, soustava.maxk, soustava.vzdalenosti, soustava.vzdalenosti_symbolicky)
+        if Soustava.presnost:
+            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity. ")
+        else:
+            self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
