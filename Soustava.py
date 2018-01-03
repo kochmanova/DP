@@ -313,8 +313,7 @@ class Soustava(object):
         elif perioda_druheho != [0]:
             delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + len(perioda_druheho)
         else:
-            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + max(len(perioda_prvniho),
-                                                                                        len(perioda_druheho))
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + sp.lcm(len(perioda_prvniho),len(perioda_druheho),2)
         pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, delka_retezce)
         pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, delka_retezce)
         for i in range(len(pracovni_retezec_1)):
