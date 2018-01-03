@@ -165,10 +165,10 @@ class Perioda(object):
             if not pomocny_rozvoj.lezi_retezec_mezi(retezec, self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
                 vyhodit.add(retezec)
 
-        print("Vyhazujeme: ")
-        print(vyhodit)
+        #print("Vyhazujeme: ")
+        #print(vyhodit)
 
-        procisteny_retezec = [x for x in hodnoty if not x in vyhodit]
+        procisteny_retezec = [x for x in hodnoty if x not in vyhodit]
         return procisteny_retezec
 
     def zpetne_overeni(self, hodnoty: tuple, levy):

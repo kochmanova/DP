@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     predperioda = 0
     perioda = 2
-    rovnice = 'x**3-x**2-x-1'
+    rovnice = 'x**2-x-1'
     znamenko = 1
     presnost_limit = False
 
