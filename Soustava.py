@@ -178,8 +178,8 @@ class Soustava(object):
             # start = time.time()
             print("Počítáme {0:.0f}.cifru ".format(i))
             cifra_dosazena = cifra.subs(x, transformace[i - 1])
-            # zjednoduseni = sp.simplify(cifra_dosazena) # tu je to zlý -> opraveno ?
-            zjednoduseni = sp.cancel(cifra_dosazena)
+            zjednoduseni = sp.cancel(sp.expand(cifra_dosazena))
+#            zjednoduseni = sp.cancel(cifra_dosazena)
 
             if sp.sympify(zjednoduseni).is_Integer:
                 if (self.znamenko < 0) and (i % 2 == 1):
@@ -226,8 +226,8 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}.cifru ".format(i))
             cifra_dosazena = cifra.subs(x, transformace[i - 1])
-            # zjednoduseni = sp.simplify(cifra_dosazena) # Tu je to zlý
-            zjednoduseni = sp.cancel(cifra_dosazena)
+            zjednoduseni = sp.cancel(sp.expand(cifra_dosazena))
+            #zjednoduseni = sp.cancel(cifra_dosazena)
             if sp.sympify(zjednoduseni).is_Integer:
                 if (self.znamenko < 0) and (i % 2 == 1):
                     rozvoj.append(zjednoduseni)

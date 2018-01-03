@@ -200,9 +200,9 @@ class Soubor(object):
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
         if perioda.presne:
-            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity.")
+            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity. ")
         else:
-            self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity.")
+            self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
         print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
 
     def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
