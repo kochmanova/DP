@@ -114,7 +114,7 @@ class Soubor(object):
                 j += 1
             self.f.write(")^\omega")
 
-        self.f.write("$\n")
+        #self.f.write("$\n")
 
     def prevod_rozvoj_na_retezec(self, rozvoj: list):
         """
@@ -254,3 +254,25 @@ class Soubor(object):
             self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity. ")
         else:
             self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
+
+    def vypis_perioda_DP(self, perioda: Perioda):
+        self.f.write("\\begin{labeling}{p=9, } \n")
+        self.f.write("  \item [$p= {} $,] \n".format(perioda.p))
+        self.f.write("  \\begin{labeling}{k=9, } \n\n")
+        self.f.write("      \item [$k= {} $,] \n".format(perioda.k))
+        self.f.write("      \\begin{labeling}{$\circ$} \n")
+        #self.f.write("\\begin{itemize} ")
+        for i in range(len(perioda.hodnoty)):
+            self.f.write("        \item [$\circ$] $\ell = ")
+            self.f.write(latex(perioda.leve_kraje_symbolicky[i]))
+            self.f.write("\doteq {} $ \\\\ \n".format(N(perioda.leve_kraje[i], n=3)))
+            self.f.write("          $d(\ell) = $ ")
+            self.prevod_rozvoj_s_periodou(perioda.hodnoty[i],perioda.p)
+            self.f.write(", $d^*(\ell+1) = $ ")
+            self.prevod_rozvoj_s_periodou(perioda.prave_kraje[i], perioda.prave_kraje_perioda[i])
+            self.f.write("\\\\            $(\Delta_k)_{k \geq 1} = $ \n")
+#            self.vypis_rozvoj_leveho(hodnoty[i], p)
+#            self.vypis_rozvoj_praveho(prave_kraje[i], perioda_praveho[i])
+        self.f.write("      \end{labeling}\n\n")
+        self.f.write("  \end{labeling}\n")
+        self.f.write("\end{labeling}\n")

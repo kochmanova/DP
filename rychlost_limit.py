@@ -23,10 +23,10 @@ if __name__ == "__main__":
     # následuje část, kdy se volají jednotlivé metody, tedy dále není potřeba cokoliv upravovat
     cas = time.localtime()
     if znamenko > 0:
-        nazev = "rozvoj_kladny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
+        nazev = "rychlost_lim_kladny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
                                                       cas.tm_min)
     else:
-        nazev = "rozvoj_zaporny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
+        nazev = "rychlost_lim_zaporny_{}_{}_{}_{}_{}".format(cas.tm_year, cas.tm_mon, cas.tm_mday, cas.tm_hour,
                                                        cas.tm_min)
 
     soubor = "vystup/" + nazev + ".tex"
