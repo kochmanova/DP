@@ -181,7 +181,7 @@ class Perioda(object):
 
         hledany_rozvoj = Soustava.Soustava(self.fce, self.znamenko, levy)
         #print(levy)
-        hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, 2 * self.p + self.k)
+        hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, self.p + self.k)
         if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
             if self.p == hledany_rozvoj.perioda_leveho_kraje:
                 self.hodnoty.append(hodnoty)
@@ -191,6 +191,6 @@ class Perioda(object):
                 print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
                 print(hodnoty)
                 print(levy)
-                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(False, 8)
+                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(self.presne, 8)
                 self.prave_kraje.append(hledany_rozvoj.rozvoj_praveho_kraje)
                 self.prave_kraje_perioda.append(hledany_rozvoj.perioda_praveho_kraje)
