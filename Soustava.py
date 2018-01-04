@@ -12,7 +12,7 @@ class Soustava(object):
     Dále může spočítat rozvoj levého a pravého kraje s možností spočítat mink, maxk a jejich vzdálenosti.
     """
 
-    def __init__(self, fce='x**3-x**2-x-1', znamenko=1, symbol_levy_kraj='-x/3'):
+    def __init__(self, fce='x**3-x**2-x-1', znamenko: int = 1, symbol_levy_kraj='-x/3'):
         """
         Funkce, která se zavolá sama, jakmile vytvořím instanci třídy Soustava, v rámci dané instance si uloží
         rovnici (proměnná fce), znaménko, bázi a symbolický levý kraj
@@ -68,7 +68,7 @@ class Soustava(object):
 
         symbolicky_levy_kraj = sp.sympify(symbol_levy_kraj)
         symbolicky_levy_kraj = symbolicky_levy_kraj.subs({x: self.baze})
-        priblizny_kraj = sp.N(symbolicky_levy_kraj, n=presnost)
+        priblizny_kraj = sp.N(symbolicky_levy_kraj, n=presnost, chop = True)
         # print(priblizny_kraj) # výpis hodnoty levého kraje
         if (priblizny_kraj > 0) or (priblizny_kraj < -1):
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
@@ -504,10 +504,15 @@ class Soustava(object):
 
         delta = list()
         for i in range(k):
-            vzdalenost = abs(
+            if self.znamenko <0:
+                vzdalenost = abs(
                 (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(
                     self.maxk[i]))
-            delta.append(vzdalenost)
+            else:
+                vzdalenost = (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(
+                        self.mink[i]) - self.gamma_funkce_symbolicky(
+                        self.maxk[i])
+            delta.append(sp.cancel(vzdalenost))
         self.vzdalenosti_symbolicky = delta
 
     def lezi_retezec_mezi(self, retezec: tuple, perioda_retezce: int, levy: tuple, levy_perioda: int, pravy: tuple,

@@ -5,7 +5,7 @@ import Perioda
 
 if __name__ == "__main__":
 
-    predperioda = 0
+    predperioda = 2
     perioda = 2
     rovnice = 'x**2-x-1'
     znamenko = 1

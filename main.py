@@ -74,13 +74,13 @@ if __name__=="__main__":
     #print("\n\n")
 
     #
-    tribonaci = Soustava.Soustava('x**2-x-1', znamenko=1,symbol_levy_kraj='-1')
-    tribonaci.spocitej_rozvoj_leveho_kraje(False)
-    tribonaci.spocitej_rozvoj_leveho_kraje(True)
-
-    fibonacci = Soustava.Soustava('x**2-x-1', znamenko=1, symbol_levy_kraj='0')
-    fibonacci.spocitej_rozvoj_praveho_kraje(False)
-    fibonacci.spocitej_rozvoj_praveho_kraje(True)
+    # tribonaci = Soustava.Soustava('x**2-x-1', znamenko=1,symbol_levy_kraj='-1')
+    # tribonaci.spocitej_rozvoj_leveho_kraje(False)
+    # tribonaci.spocitej_rozvoj_leveho_kraje(True)
+    #
+    # fibonacci = Soustava.Soustava('x**2-x-1', znamenko=1, symbol_levy_kraj='0')
+    # fibonacci.spocitej_rozvoj_praveho_kraje(False)
+    # fibonacci.spocitej_rozvoj_praveho_kraje(True)
 
 
     #zac = time.time()
@@ -103,3 +103,6 @@ if __name__=="__main__":
 
  #   file.vypis_cas(time.time()-zac)
   #  file.ukonceni_souboru()
+    pocitam = Soustava.Soustava(' x**2-x-1 ', 1, ' -1/(1/2 + sqrt(5)/2) - 1/((-1 + (1/2 + sqrt(5)/2)**2)*'
+                                                 '(1/2 + sqrt(5)/2)**2) + 1/((-1 + (1/2 + sqrt(5)/2)**2)*(1/2 + sqrt(5)/2)) ')
+    pocitam.spocitej_rozvoj_leveho_kraje(False)

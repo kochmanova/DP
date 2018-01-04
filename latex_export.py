@@ -28,7 +28,7 @@ class Soubor(object):
         Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
         zapisuje.
         """
-        hl = open("resources/hlavicka.tex", "r")
+        hl = open("resources/hlavicka_dp.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
         hl.close()
@@ -94,7 +94,7 @@ class Soubor(object):
         :param retezec: rozvoj bodu
         :param perioda: délka periody
         """
-        self.f.write("$")
+        #self.f.write("$")
         if perioda is None:
             self.prevod_rozvoj_na_retezec(retezec)
         elif len(retezec) == perioda:
@@ -114,7 +114,7 @@ class Soubor(object):
                 j += 1
             self.f.write(")^\omega")
 
-        #self.f.write("$\n")
+        self.f.write("$")
 
     def prevod_rozvoj_na_retezec(self, rozvoj: list):
         """
@@ -195,8 +195,9 @@ class Soubor(object):
         else:
             self.f.write("Celkem jsme prošli {} možností.\n\n".format(len(perioda.A) ** (perioda.k + perioda.p)))
         if len(perioda.hodnoty) > 0:
-            self.nalezene_periody(perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p,
-                                  perioda.prave_kraje, perioda.prave_kraje_perioda)
+            self.nalezene_periody(perioda)
+                    #perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p,
+                                  #perioda.prave_kraje, perioda.prave_kraje_perioda)
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
         if perioda.presne:
@@ -205,8 +206,9 @@ class Soubor(object):
             self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
         print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
 
-    def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
-                         perioda_praveho: list):
+    def nalezene_periody(self, perioda: Perioda):
+#                        self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
+  #                        perioda_praveho: list):
         """
         Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
         rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
@@ -219,13 +221,20 @@ class Soubor(object):
         """
         # TODO popis parametru
         self.f.write("\\begin{itemize} ")
-        for i in range(len(hodnoty)):
+        for i in range(len(perioda.hodnoty)):
             self.f.write("\item $\ell = ")
-            self.f.write(latex(leve_kraje_symbolicke[i]))
-            self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i], n=3)))
-            self.vypis_rozvoj_leveho(hodnoty[i], p)
-            self.vypis_rozvoj_praveho(prave_kraje[i], perioda_praveho[i])
+            self.f.write(latex(perioda.leve_kraje_symbolicky[i]))
+            self.f.write("\doteq {} $ \n".format(N(perioda.leve_kraje[i], n=3)))
+            self.vypis_parametry_soustavy(perioda.fce, perioda.znamenko, perioda.leve_kraje[i])
+            self.vypis_rozvoj_leveho(perioda.hodnoty[i], perioda.p)
+            self.vypis_rozvoj_praveho(perioda.prave_kraje[i], perioda.prave_kraje_perioda[i])
         self.f.write("\end{itemize}")
+
+    def vypis_parametry_soustavy(self, fce, znamenko, levy):
+        self.f.write("%% Soustava.Soustava(' ")
+        self.f.write(fce)
+        self.f.write(" ', {}, ' {} ') \n".format(znamenko, levy))
+
 
     def vypis_cas(self, cas: int):
         """
@@ -256,8 +265,8 @@ class Soubor(object):
             self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
 
     def vypis_perioda_DP(self, perioda: Perioda):
-        self.f.write("\\begin{labeling}{p=9, } \n")
-        self.f.write("  \item [$p= {} $,] \n".format(perioda.p))
+        #self.f.write("\\begin{labeling}{p=9, } \n")
+        #self.f.write("  \item [$p= {} $,] \n".format(perioda.p))
         self.f.write("  \\begin{labeling}{k=9, } \n\n")
         self.f.write("      \item [$k= {} $,] \n".format(perioda.k))
         self.f.write("      \\begin{labeling}{$\circ$} \n")
@@ -266,13 +275,30 @@ class Soubor(object):
             self.f.write("        \item [$\circ$] $\ell = ")
             self.f.write(latex(perioda.leve_kraje_symbolicky[i]))
             self.f.write("\doteq {} $ \\\\ \n".format(N(perioda.leve_kraje[i], n=3)))
-            self.f.write("          $d(\ell) = $ ")
+            self.f.write("          $d(\ell) =  ")
             self.prevod_rozvoj_s_periodou(perioda.hodnoty[i],perioda.p)
-            self.f.write(", $d^*(\ell+1) = $ ")
+            self.f.write(", $d^*(\ell+1) =  ")
             self.prevod_rozvoj_s_periodou(perioda.prave_kraje[i], perioda.prave_kraje_perioda[i])
-            self.f.write("\\\\            $(\Delta_k)_{k \geq 1} = $ \n")
+            self.f.write("\\\\            $(\Delta_k)_{k \geq 1} = \{ \n")
+            #print(perioda.leve_kraje_symbolicky[i])
+            pomoc = Soustava.Soustava(perioda.fce, perioda.znamenko, perioda.leve_kraje[i])
+            pomoc.spocitej_rozvoj_leveho_kraje(False)
+            assert pomoc.rozvoj_leveho_kraje == tuple(perioda.hodnoty[i])
+            pomoc.spocitej_rozvoj_praveho_kraje(False)
+            assert pomoc.rozvoj_praveho_kraje == tuple(perioda.prave_kraje[i])
+            pomoc.spocitej_mink_maxk(10)
+            #self.prevod_vyrazu_na_latex(pomoc.vzdalenosti_symbolicky[0])
+            for k in range (len(pomoc.vzdalenosti)):
+                self.prevod_x_na_beta(pomoc.vzdalenosti_symbolicky[k])
+                self.f.write("$, \n $")
+            self.f.write("\dots\}$ \n")
+            #self.f.write(pomoc.vzdalenosti)
+            vzdalenosti = [N(x,n=5,chop=True) for x in pomoc.vzdalenosti]
+            #vzdalenosti = N(pomoc.vzdalenosti, n=5, chop=True)
+            self.f.write("%% Vzdalenosti: [%s]" % ",".join(map(str, vzdalenosti)))
+            self.f.write("\n")
 #            self.vypis_rozvoj_leveho(hodnoty[i], p)
 #            self.vypis_rozvoj_praveho(prave_kraje[i], perioda_praveho[i])
         self.f.write("      \end{labeling}\n\n")
         self.f.write("  \end{labeling}\n")
-        self.f.write("\end{labeling}\n")
+        #self.f.write("\end{labeling}\n")
