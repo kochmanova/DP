@@ -504,9 +504,14 @@ class Soustava(object):
 
         delta = list()
         for i in range(k):
-            vzdalenost = abs(
+            if self.znamenko < 0:
+                vzdalenost = abs(
                 (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(
                     self.maxk[i]))
+            else:
+                vzdalenost = (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(
+                        self.mink[i]) - self.gamma_funkce_symbolicky(
+                        self.maxk[i])
             delta.append(vzdalenost)
         self.vzdalenosti_symbolicky = delta
 

@@ -195,8 +195,7 @@ class Soubor(object):
         else:
             self.f.write("Celkem jsme prošli {} možností.\n\n".format(len(perioda.A) ** (perioda.k + perioda.p)))
         if len(perioda.hodnoty) > 0:
-            self.nalezene_periody(perioda.leve_kraje, perioda.leve_kraje_symbolicky, perioda.hodnoty, perioda.p,
-                                  perioda.prave_kraje, perioda.prave_kraje_perioda)
+            self.nalezene_periody(perioda)
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
         if perioda.presne:
@@ -205,8 +204,7 @@ class Soubor(object):
             self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
         print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
 
-    def nalezene_periody(self, leve_kraje, leve_kraje_symbolicke, hodnoty: list, p: int, prave_kraje: list,
-                         perioda_praveho: list):
+    def nalezene_periody(self, perioda: Perioda):
         """
         Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
         rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
@@ -219,13 +217,19 @@ class Soubor(object):
         """
         # TODO popis parametru
         self.f.write("\\begin{itemize} ")
-        for i in range(len(hodnoty)):
+        for i in range(len(perioda.hodnoty)):
             self.f.write("\item $\ell = ")
-            self.f.write(latex(leve_kraje_symbolicke[i]))
-            self.f.write("\doteq {} $ \n\n".format(N(leve_kraje[i], n=3)))
-            self.vypis_rozvoj_leveho(hodnoty[i], p)
-            self.vypis_rozvoj_praveho(prave_kraje[i], perioda_praveho[i])
+            self.f.write(latex(perioda.leve_kraje_symbolicky[i]))
+            self.f.write("\doteq {} $ \n\n".format(N(perioda.leve_kraje[i], n=3)))
+            self.vypis_parametry_soustavy(perioda.fce, perioda.znamenko, perioda.leve_kraje[i])
+            self.vypis_rozvoj_leveho(perioda.hodnoty[i], perioda.p)
+            self.vypis_rozvoj_praveho(perioda.prave_kraje[i], perioda.prave_kraje_perioda[i])
         self.f.write("\end{itemize}")
+
+    def vypis_parametry_soustavy(self, fce, znamenko, levy):
+        self.f.write("%% Soustava.Soustava(' ")
+        self.f.write(fce)
+        self.f.write(" ', {}, '{}') \n".format(znamenko, levy))
 
     def vypis_cas(self, cas: int):
         """
