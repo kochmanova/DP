@@ -46,7 +46,7 @@ if __name__ == "__main__":
         file.vypis_cas(stred-zacatek_vypoctu)
         file.f.write("\n\n")
 
-        rozvoj.spocitej_rozvoj_praveho_kraje(False, i)
+        rozvoj.spocitej_rozvoj_praveho_kraje(i)
         file.vypis_rozvoj_praveho(rozvoj.rozvoj_praveho_kraje,rozvoj.perioda_praveho_kraje)
         konec = time.time()
         file.vypis_cas(konec - stred)
@@ -64,13 +64,7 @@ if __name__ == "__main__":
         file.vypis_cas(stred-zacatek)
         file.f.write("\n\n")
 
-        rozvoj.spocitej_rozvoj_praveho_kraje(True, i)
-        file.vypis_rozvoj_praveho(rozvoj.rozvoj_praveho_kraje,rozvoj.perioda_praveho_kraje)
-        konec = time.time()
-        file.vypis_cas(konec - stred)
-        file.f.write("\n\n")
-
-        if rozvoj.perioda_praveho_kraje is not None and rozvoj.perioda_leveho_kraje is not None:
+        if rozvoj.perioda_leveho_kraje is not None:
             break
 
     konec_vypoctu = time.time() - zacatek_vypoctu

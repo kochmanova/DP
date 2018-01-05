@@ -134,11 +134,12 @@ class Perioda(object):
 
         delka = self.k + self.p
         hodnoty = list(product(self.A, repeat=delka))
-        # upravit, abychom hodnoty dostávali po jednom, jednodušší pro paměť
         print("Celkem máme {0:.0f} řetezců".format(len(self.A) ** delka))
-        procistene_retezce = self.odstraneni_retezcu(hodnoty)
-        #procistene_retezce = hodnoty
-        print("Celkem máme {0:.0f} řetezců".format(len(procistene_retezce)))
+        if self.znamenko>0:
+            procistene_retezce = self.odstraneni_retezcu(hodnoty)
+            print("Celkem máme {0:.0f} řetezců".format(len(procistene_retezce)))
+        else:
+            procistene_retezce = hodnoty
         i = 0
 
         for retezec in procistene_retezce:
@@ -155,7 +156,7 @@ class Perioda(object):
         leva_perioda = pomocny_rozvoj.perioda_leveho_kraje
 
         pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='0')
-        pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(self.presne, 30)
+        pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(30)
         pravy_rozvoj = pomocny_rozvoj.rozvoj_praveho_kraje
         prava_perioda = pomocny_rozvoj.perioda_praveho_kraje
 
@@ -164,9 +165,6 @@ class Perioda(object):
         for retezec in hodnoty:
             if not pomocny_rozvoj.lezi_retezec_mezi(retezec, self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
                 vyhodit.add(retezec)
-
-        #print("Vyhazujeme: ")
-        #print(vyhodit)
 
         procisteny_retezec = [x for x in hodnoty if x not in vyhodit]
         return procisteny_retezec
@@ -191,6 +189,6 @@ class Perioda(object):
                 print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
                 print(hodnoty)
                 print(levy)
-                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(self.presne, 8)
+                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(15)
                 self.prave_kraje.append(hledany_rozvoj.rozvoj_praveho_kraje)
                 self.prave_kraje_perioda.append(hledany_rozvoj.perioda_praveho_kraje)

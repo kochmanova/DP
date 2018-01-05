@@ -16,7 +16,7 @@ if __name__ == "__main__":
             #     ' 19/27)**(1/3))**4)'
     print(cancel(levy_kraj))
     levy_kraj = cancel(levy_kraj)
-    presnost_limit = True
+    presnost = True
     pocet_cifer = 10
     k = 5
 
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     rozvoj = Soustava.Soustava(rovnice, znamenko, levy_kraj)
 
     # nalezení rozvoje pro levý i limitní pravý kraj
-    rozvoj.spocitej_rozvoj_leveho_kraje(presnost_limit, pocet_cifer)
-    rozvoj.spocitej_rozvoj_praveho_kraje(presnost_limit, pocet_cifer)
+    rozvoj.spocitej_rozvoj_leveho_kraje(presnost, pocet_cifer)
+    rozvoj.spocitej_rozvoj_praveho_kraje(pocet_cifer)
 
     # nalezení mink, maxk řetězců a jejich vzdáleností
     rozvoj.spocitej_mink_maxk(k)

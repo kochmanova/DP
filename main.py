@@ -79,8 +79,7 @@ if __name__=="__main__":
     tribonaci.spocitej_rozvoj_leveho_kraje(True)
 
     fibonacci = Soustava.Soustava('x**2-x-1', znamenko=1, symbol_levy_kraj='0')
-    fibonacci.spocitej_rozvoj_praveho_kraje(False)
-    fibonacci.spocitej_rozvoj_praveho_kraje(True)
+    fibonacci.spocitej_rozvoj_praveho_kraje()
 
 
     #zac = time.time()

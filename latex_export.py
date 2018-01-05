@@ -199,7 +199,8 @@ class Soubor(object):
         else:
             self.f.write("Bohužel ani jedna z možností nebyla rozvojem levého kraje s danou předperiodou a periodou. ")
         if perioda.presne:
-            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity. ")
+            self.f.write("Rozvoj levého kraje je spočten nepřesně (jednotlivé transformace zaokrouhlujeme na 1000 "
+                         "desetinných míst. Limitní rozvoj pravého kraje je spočten přesně. ")
         else:
             self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
         print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)
@@ -209,11 +210,7 @@ class Soubor(object):
         Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
         rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
         :param leve_kraje: hodnota levého kraje
-        :param leve_kraje_symbolicke: hodnota levého kraje vyjádřena pomocí báze
-        :param hodnoty: rozvoje levých krajů s periodou p
-        :param p:
-        :param prave_kraje: rozvoje pravých krajů s periodami perioda_praveho
-        :param perioda_praveho:
+
         """
         # TODO popis parametru
         self.f.write("\\begin{itemize} ")
@@ -233,10 +230,10 @@ class Soubor(object):
 
     def vypis_cas(self, cas: int):
         """
-        Metoda pro výpis času stráveného nad danným výpočtem.
+        Metoda pro výpis času stráveného nad daným výpočtem.
         :param cas: čas strávený nad výpočtem
         """
-        self.f.write("Celé to trvalo {0:.2f} sekund. ".format(cas))
+        self.f.write("Celé to trvalo vypočítat {0:.2f} sekund. ".format(cas))
 
     def vypis_rozvoj_vse(self, soustava: Soustava):
         """
@@ -255,6 +252,7 @@ class Soubor(object):
             print(soustava.vzdalenosti)
             self.vypis_minmax(soustava.mink, soustava.maxk, soustava.vzdalenosti, soustava.vzdalenosti_symbolicky)
         if Soustava.presnost:
-            self.f.write("Rozvoje krajů jsou spočteny přesně, resp. s použitím limity. ")
+            self.f.write("Rozvoj levého kraje je spočten přesně, stejně tak limitní rozvoj pravého kraje. ")
         else:
-            self.f.write("Rozvoje krajů jsou spočteny nepřesně, resp. bez použití limity. ")
+            self.f.write("Rozvoj levého kraje je spočten nepřesně (jednotlivé transformace zaokrouhlujeme na 1000 "
+                         "desetinných míst. Limitní rozvoj pravého kraje je spočten přesně. ")

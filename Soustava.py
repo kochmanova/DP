@@ -160,60 +160,13 @@ class Soustava(object):
 
     def nalezeni_limitniho_rozvoje(self, pocet_cifer=30):
         """
-        Funkce, která pro pravý kraj spočte limitní rozvoj v dané bázi na pocet_cifer.
-        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
-        :returns rozvoj (list)
-        :returns perioda (int/None)
-        """
-
-        periodicke = False
-        perioda = None
-        transformace = list()
-        rozvoj = list()
-        transformace.append(self.levy_kraj + 1)
-        i = 1
-        dolni_cifra = sp.floor(self.znamenko * self.baze * x - self.levy_kraj)
-        cifra = self.znamenko * self.baze * x - self.levy_kraj
-        while (not periodicke) and (i <= pocet_cifer):
-            # start = time.time()
-            print("Počítáme {0:.0f}.cifru ".format(i))
-            cifra_dosazena = cifra.subs(x, transformace[i - 1])
-            zjednoduseni = sp.cancel(sp.expand(cifra_dosazena))
-#            zjednoduseni = sp.cancel(cifra_dosazena)
-
-            if sp.sympify(zjednoduseni).is_Integer:
-                if (self.znamenko < 0) and (i % 2 == 1):
-                    rozvoj.append(zjednoduseni)
-                else:
-                    rozvoj.append(zjednoduseni - 1)
-            else:
-                if (self.znamenko < 0) and (i % 2 == 0):
-                    rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
-                else:
-                    rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='-'))
-
-            nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            transformace.append(nova_transformace)
-            for j in range(len(transformace)):
-                if (abs(sp.N((transformace[j] - transformace[i]).subs({x: self.levy_kraj + 1}))) < MALO) and (j != i):
-                    periodicke = True
-                    perioda = i - j
-            i += 1
-            # cyklus = time() - start
-            # print("Cyklus trval {0:.2f} s".format(cyklus))
-        return tuple(rozvoj), perioda
-
-    def nalezeni_limitniho_rozvoj_bez_limit(self, pocet_cifer=30):
-        """
         Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje bez použití limit v dané bázi
         na pocet_cifer.
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list)
         :returns perioda (int/None)
         """
-        # TODO zjistit, zda je časově rychlejší oproti pravému kraji
 
-        # print("Jsem tu")
         periodicke = False
         perioda = None
         transformace = list()
@@ -227,20 +180,12 @@ class Soustava(object):
             print("Počítáme {0:.0f}.cifru ".format(i))
             cifra_dosazena = cifra.subs(x, transformace[i - 1])
             zjednoduseni = sp.cancel(sp.expand(cifra_dosazena))
-            #zjednoduseni = sp.cancel(cifra_dosazena)
             if sp.sympify(zjednoduseni).is_Integer:
                 if (self.znamenko < 0) and (i % 2 == 1):
                     rozvoj.append(zjednoduseni)
                 else:
                     rozvoj.append(zjednoduseni - 1)
-                    # print("Na {0:.0f}.pozici jsme nalezli integer, proto přičítáme -1".format(i))
             else:
-                #                 if (self.znamenko < 0) and (i % 2 == 0):
-                #                     rozvoj.append(dolni_cifra.subs(x,transformace[i-1]))
-                # #                     rozvoj.append(sp.limit(dolni_cifra, x, transformace[i - 1], dir='+'))
-                #                 else:
-                #                     cifra_upr = sp.floor(cifra-1)
-                #                     rozvoj.append(cifra_upr.subs(x,transformace[i-1]))
                 rozvoj.append(sp.cancel(dolni_cifra.subs(x, transformace[i - 1])))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(nova_transformace)
@@ -272,7 +217,7 @@ class Soustava(object):
         print("Nalezli jsme rozvoj levého kraje: [%s]" % ",".join(map(str, self.rozvoj_leveho_kraje)))
         print("S periodou délky {}".format(self.perioda_leveho_kraje))
 
-    def spocitej_rozvoj_praveho_kraje(self, limitne=True, pocet_cifer=30):
+    def spocitej_rozvoj_praveho_kraje(self, pocet_cifer=30):
         """
         Funkce, která zavolá funkci pro nalezení limitního rozvoje pravého kraje pomocí limity, resp. bez limity
         podle parametru presne, na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že
@@ -281,13 +226,19 @@ class Soustava(object):
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         """
 
-        if limitne:
-            self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoje(pocet_cifer)
-        else:
-            self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoj_bez_limit(
-                pocet_cifer)
+        self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoje(pocet_cifer)
         print("Nalezli jsme rozvoj pravého kraje: [%s]" % ",".join(map(str, self.rozvoj_praveho_kraje)))
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
+
+    def spociter_rozvoj_bodu(self, bod, presne=True, pocet_cifer: int = 30):
+        #TODO dodělat pro libovolný bod z R
+        bod = sp.sympify(bod)
+        if presne:
+            rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod, pocet_cifer)
+        else:
+            rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod, pocet_cifer)
+        print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, self.rozvoj_leveho_kraje)))
+        print("S periodou délky {}".format(self.perioda_leveho_kraje))
 
     def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list,
                          perioda_druheho: list):
