@@ -28,7 +28,7 @@ class Soubor(object):
         Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
         zapisuje.
         """
-        hl = open("resources/hlavicka_dp.tex", "r")
+        hl = open("resources/hlavicka.tex", "r")
         radky = hl.readlines()
         self.f.writelines(radky)
         hl.close()
@@ -282,7 +282,7 @@ class Soubor(object):
             pomoc = Soustava.Soustava(perioda.fce, perioda.znamenko, perioda.leve_kraje[i])
             pomoc.spocitej_rozvoj_leveho_kraje(False)
             assert pomoc.rozvoj_leveho_kraje == tuple(perioda.hodnoty[i])
-            pomoc.spocitej_rozvoj_praveho_kraje(False)
+            pomoc.spocitej_rozvoj_praveho_kraje(False,15)
             assert pomoc.rozvoj_praveho_kraje == tuple(perioda.prave_kraje[i])
             pomoc.spocitej_mink_maxk(10)
             #self.prevod_vyrazu_na_latex(pomoc.vzdalenosti_symbolicky[0])

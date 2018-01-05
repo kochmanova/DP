@@ -5,8 +5,8 @@ import Perioda
 
 if __name__ == "__main__":
 
-    predperioda = 5
-    perioda = 2
+    predperioda = 2
+    perioda = 6
     rovnice = 'x**2-x-1'
     znamenko = 1
     presnost_limit = True
@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     # export výsledků do LaTeXového souboru
     if znamenko > 0:
-        nazev = "periody_kladne_{}_{}".format(predperioda, perioda)
+        nazev = "DP_kladne_{}_{}".format(predperioda, perioda)
     else:
-        nazev = "periody_zap{}_{}".format(predperioda, perioda)
+        nazev = "DP_zap{}_{}".format(predperioda, perioda)
 
     soubor = "vystup/" + nazev + ".tex"
     file = latex_export.Soubor(soubor)
