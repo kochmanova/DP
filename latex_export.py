@@ -6,9 +6,10 @@ import Perioda
 class Soubor(object):
     def __init__(self, nazev: str):
         """
-        Funkce, která se spustí automaticky s vytvořením instance Soubor, uloží si název souboru, který vytvoří a vloží
-        do něj hlavičku LaTeXu.
-        :param nazev: název souboru
+        Metoda je spuštěna automaticky s vytvořením instance Soubor, uloží si název souboru, který vytvoří a vloží
+        do něj hlavičku pro LaTeXový dokument.
+
+        :param nazev: název souboru včetně cesty
         """
         self.f = None
         self.nazev = nazev
@@ -25,8 +26,8 @@ class Soubor(object):
 
     def napis_hlavicku(self):
         """
-        Funkce, která si otevře hlavicka.tex, ze kterého si zkopíruje celý text a vloží jej do souboru, do kterého
-        zapisuje.
+        Metoda, která otevře soubor resources/hlavicka.tex a zkopíruje obsah souboru hlavicka.tex
+        do vytvořeného souboru.
         """
         hl = open("resources/hlavicka.tex", "r")
         radky = hl.readlines()
@@ -35,15 +36,16 @@ class Soubor(object):
 
     def ukonceni_souboru(self):
         """
-        Jednoduchá funkce, která bezpečně zavře soubor, do kterého zapisovala a předtím jej doplní o syntax pro ukončení
-        souboru v LaTeXu, aby šel tento soubor bez problémů zkonvertovat na pdf.
+        Jednoduchá metoda, která doplní do souboru, do kterého se v ostatních metodách zapisovalo, syntax pro ukončení
+        LaTeXového dokumentu a bezpečně jej zavře.
         """
         self.f.write("\n \end{document}")
         self.f.close()
 
     def vypis_rozvoj_leveho(self, retezec: list, perioda: int):
         """
-        Funkce, pro vypsání rozvoje levého kraje do souboru.
+        Metoda, pro vypsání rozvoje levého kraje do souboru.
+
         :param retezec: rozvoj levého kraje
         :param perioda: délka periody
         """
@@ -55,7 +57,8 @@ class Soubor(object):
 
     def vypis_rozvoj_praveho(self, retezec: list, perioda: int):
         """
-        Funkce, pro vypsání rozvoje levého kraje do souboru.
+        Metoda, pro vypsání limitního rozvoje pravého kraje do souboru.
+
         :param retezec: rozvoj pravého kraje
         :param perioda: délka periody
         """
@@ -67,10 +70,13 @@ class Soubor(object):
 
     def vypis_minmax(self, mink: list, maxk: list, vzdalenosti: list, vzdalenosti_symbol: list):
         """
-        Funkce pro vypsání řetězců min(k), max(k), a jejich vzdáleností do souboru v podobě tabulky.
-        :param mink:
-        :param maxk:
-        :param vzdalenosti:
+        Funkce pro vypsání řetězců mink, maxk, a jejich vzdáleností do souboru v podobě tabulky.
+        Hlavička tabulky je zkopírována ze souboru resources/tabulka.tex.
+
+        :param mink: seznam řetězců mink
+        :param maxk: seznam řetězců maxk
+        :param vzdalenosti: seznam vzdáleností
+        :param vzdalenosti_symbol: seznam vzdáleností vyjádřených se symbolickou bází beta
         """
         hl = open("resources/tabulka.tex", "r")
         radky = hl.readlines()
@@ -90,7 +96,8 @@ class Soubor(object):
 
     def prevod_rozvoj_s_periodou(self, retezec: list, perioda: int):
         """
-        Funkce pro vypsání rozvoje bodu s periodou do souboru.
+        Metoda pro vypsání rozvoje bodu s periodou.
+
         :param retezec: rozvoj bodu
         :param perioda: délka periody
         """
@@ -118,7 +125,9 @@ class Soubor(object):
 
     def prevod_rozvoj_na_retezec(self, rozvoj: list):
         """
-        Funkce pro vypsání rozvoje bodu bez periody do souboru. (Pozor: nevypíše rozvoj v matematickém modu)
+        Metoda pro vypsání rozvoje bodu bez periody.
+        Pozor, při samostatném užití nevypíše rozvoj v matematickém prostředí.
+
         :param rozvoj: rozvoj bodu
         """
         for i in rozvoj:
@@ -129,7 +138,9 @@ class Soubor(object):
 
     def prevod_vyrazu_na_latex(self, vyraz: str):
         """
-        Metoda, která výraz převede do LaTeX formy. (Pozor: nevypíše výraz v matematickém modu)
+        Metoda převede výraz do matematického prostředí v LaTeXu.
+        Pozor, při samostatném užití nevypíše výraz v matematickém prostředí.
+
         :param vyraz: převáděný výraz
         """
         prevod = sympify(vyraz)
@@ -137,9 +148,9 @@ class Soubor(object):
 
     def prevod_x_na_beta(self, vyraz: str):
         """
-        Metoda, která ve výrazu zasubstitutuje proměnnou x za betu a výraz převede do LaTeX formy.
-        Využíváno pro výpis hodnoty levého kraje vyjádřeného pomocí báze beta. (Pozor: nevypíše výraz v matematickém
-        modu)
+        Metoda, která ve výrazu provede substituci x -> beta a výraz převede do matematického prostředí v LaTeXu.
+        Pozor, při samostatném užití nevypíše výraz v matematickém prostředí.
+
         :param vyraz: převáděný výraz
         """
         prevod = sympify(vyraz)
@@ -149,10 +160,12 @@ class Soubor(object):
 
     def vypis_rovnice(self, rovnice: str, baze, znamenko: int):
         """
-        Metoda, která vypíše základní informace o soustavě, tj. kladná/záporná báze, její hodnota a rovnice.
-        :param rovnice:
-        :param baze:
-        :param znamenko:
+        Metoda, která vypíše základní informace o soustavě, tj. kladná nebo záporná báze, její hodnota a polynom,
+        jehož je báze beta kořenem.
+
+        :param rovnice: polynom
+        :param baze: beta
+        :param znamenko: hodnota +1 nebo -1, udává, zda se jedná o zápornou nebo kladnou bázi
         """
         self.f.write("Vytvořili jsme soustavu ")
         if znamenko < 0:
@@ -167,7 +180,8 @@ class Soubor(object):
 
     def vypis_levy(self, symbol_levy_kraj, levy_kraj):
         """
-        Metoda, která vypíše informace o levém kraji, jeho vyjádření pomocí báze i jeho přibližnou hodnotu
+        Metoda, která vypíše informace o levém kraji, jeho vyjádření pomocí báze i jeho přibližnou hodnotu.
+
         :param symbol_levy_kraj:
         :param levy_kraj
         """
@@ -179,8 +193,10 @@ class Soubor(object):
 
     def vypis_perioda(self, perioda: Perioda):
         """
-        Funkce, která vypíše vše při výpočtu period; tj. rovnici, ze které vycházíme, bázi, znaménko, jednotlivé hodnoty
-         levého kraje, které se pro danou periodu a předperiodu našli, jejich rozvoj, a následně i rozvoj pravého kraje.
+        Metoda, která vypíše vše při výpočtu period; tj. rovnici, ze které vycházíme, bázi, znaménko, jednotlivé
+        hodnoty levého kraje, které se pro danou periodu a předperiodu našly, jejich rozvoj, a následně i rozvoj
+        pravého kraje. Tato metoda v rámci výpisu volá funkci nalezene_periody.
+
         :param perioda: instance třídy Perioda
         """
         self.vypis_rovnice(perioda.fce, perioda.baze, perioda.znamenko)
@@ -207,10 +223,10 @@ class Soubor(object):
 
     def nalezene_periody(self, perioda: Perioda):
         """
-        Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází i přibližnou hodnotu, jejich periodický
-        rozvoj s danou délkou předperiody a periody i hodnoty pravého kraje pro dané l.
-        :param leve_kraje: hodnota levého kraje
+        Funkce, která vypíše jednotlivé hodnoty levého kraje, vyjádřeného bází $\beta$ i přibližnou hodnotu, jejich
+        periodický rozvoj s danou délkou předperiody a periody i limitní rozvoj pravého kraje pro dané l.
 
+        :param perioda: instance třídy Perioda
         """
         # TODO popis parametru
         self.f.write("\\begin{itemize} ")
@@ -224,22 +240,33 @@ class Soubor(object):
         self.f.write("\end{itemize}")
 
     def vypis_parametry_soustavy(self, fce, znamenko, levy):
+        """
+        Metoda pro vypsání jednotlivých paramatrů soustavy (polynom, znaménko, levý kraj) jakožto komentář v LaTeXu.
+        Pomůcka pro snadný výpočet konkrétního případu.
+
+        :param fce: polynom
+        :param znamenko: hodnota +1 nebo -1, udává, zda se jedná o zápornou nebo kladnou bázi
+        :param levy: symbolické vyjádření levého kraje, kde symbolická proměnná x představuje zjednodušený zápis
+                     báze beta
+        """
         self.f.write("%% Soustava.Soustava(' ")
         self.f.write(fce)
         self.f.write(" ', {}, '{}') \n".format(znamenko, levy))
 
     def vypis_cas(self, cas: int):
         """
-        Metoda pro výpis času stráveného nad daným výpočtem.
-        :param cas: čas strávený nad výpočtem
+        Metoda pro výpis času v sekundách do LaTeX dokumentu.
+
+        :param cas: počet sekund k vypsání
         """
         self.f.write("Celé to trvalo vypočítat {0:.2f} sekund. ".format(cas))
 
     def vypis_rozvoj_vse(self, soustava: Soustava):
         """
-        Funkce, která vypíše vše při výpočtu rozvoje konkrétní soustavy; tj. rovnici, ze které vycházíme, bázi,
-        znaménko, hodnotu levého kraje, jeho rozvoj a následně i rozvoj pravého kraje. Pokud bylo spočteno mink, maxk,
-        pak i jejich hodnoty.
+        Funkce, která vypíše vše při výpočtu rozvoje konkrétní soustavy; tj. polynom, ze kterého vycházíme,
+        bázi beta, znaménko, hodnotu levého kraje ell, jeho rozvoj a následně i limitní rozvoj pravého kraje
+        (pokud byly tyto hodnoty spočteny). Dále pak mink, maxk a vzdálenosti, pokud byly spočteny.
+
         :param soustava: instance třídy Soustava
         """
         self.vypis_rovnice(soustava.fce, soustava.baze, soustava.znamenko)
