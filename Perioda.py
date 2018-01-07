@@ -54,7 +54,7 @@ class Perioda(object):
 
     def vyjadreni_predperiody(self):
         """
-        Metoda, která podle hodnoty předperiody k vyjádří 1. část výrazu pro výpočet hodnoty levého kraje
+        Metoda, která podle hodnoty předperiody k vyjádří 1. část výrazu pro výpočet hodnoty levého kraje.
         """
 
         vyraz = 0

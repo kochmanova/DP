@@ -58,7 +58,6 @@ class Soustava(object):
 
         # TODO existuje funkce, která se jmenuje podobně a možná dělá jen tu konkrétní věc a to chci -> podívat
         reseni_rovnice = sp.solve(self.fce, x)
-        # realne_koreny = [koren for koren in reseni_rovnice if isreal(complex(koren))] -> dělá to to samé?? :D SNAD ANO, zjistit
         realne_koreny = [koren for koren in reseni_rovnice if sp.sympify(koren).is_real]
         if len(realne_koreny) < 1:
             raise ValueError("Špatně zvolená rovnice. Rovnice musí mít alespoň jeden reálný kořen.")
@@ -100,7 +99,7 @@ class Soustava(object):
         :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list) bodu
-        :returns perioda (int/None)
+        :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
         # TODO podmínka pro bod - ValueError, bod je sympy/ int?
 
@@ -140,13 +139,13 @@ class Soustava(object):
     def nalezeni_priblizneho_rozvoje(self, bod, pocet_cifer=30):
         """
         Funkce, která pro zadaný bod spočte rozvoj_bodu v dané bázi na pocet_cifer. Tato funkce nepracuje
-        s přesnými hodnotami (ukládá hodnoty vyjádřené na max. 684 desetinných míst), dochází zde k zaokrouhlování,
-        což může vést k chybám, avšak oproti přesnému rozvoji je výpočet výrazně rychlejší.
+        s přesnými hodnotami, dochází zde k zaokrouhlování, což může vést k chybám, avšak oproti přesnému
+        rozvoji je výpočet výrazně rychlejší.
 
         :param bod (float, nebo přesný výraz, který leží v intervalu <l,l+1)) , tomuto bodu nalezne rozvoj
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list) bodu
-        :returns perioda (int/None)
+        :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
         # TODO podmínka pro bod - ValueError
 
