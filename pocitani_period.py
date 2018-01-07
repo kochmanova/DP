@@ -26,7 +26,7 @@ if __name__ == "__main__":
         nazev = "periody_zap{}_{}".format(predperioda, perioda)
 
     soubor = "vystup/" + nazev + ".tex"
-    file = latex_export.Soubor(soubor)
+    file = latex_export.LatexExport(soubor)
     file.vypis_perioda(periodicke_leve_kraje)
 
     konec_vypoctu = time.time() - zacatek_vypoctu

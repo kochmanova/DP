@@ -52,7 +52,7 @@ if __name__=="__main__":
     #
     # nazev = "periody_zap{}_{}".format(k,p)
     # soubor = "/home/mysska/Plocha/DP/vystup/" + nazev + ".tex"
-    # file = latex_export.Soubor(soubor)
+    # file = latex_export.LatexExport(soubor)
     # # file.vypis_rovnice(rovnice,tribonaci.baze,znamenko)
     #
     # file.vypis_perioda(period)
@@ -96,7 +96,7 @@ if __name__=="__main__":
     #else:
     #    nazev = "rozvoj_kladna_{}".format(int(time.time()))
     #soubor = "vystup/" + nazev + ".tex"
-    #file = latex_export.Soubor(soubor)
+    #file = latex_export.LatexExport(soubor)
 
 #    file.vypis_rozvoj_vse(tribonaci)
 

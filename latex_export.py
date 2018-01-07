@@ -3,10 +3,10 @@ from sympy.abc import x, beta
 import Soustava
 import Perioda
 
-class Soubor(object):
+class LatexExport(object):
     def __init__(self, nazev: str):
         """
-        Metoda je spuštěna automaticky s vytvořením instance Soubor, uloží si název souboru, který vytvoří a vloží
+        Metoda je spuštěna automaticky s vytvořením instance LatexExport, uloží si název souboru, který vytvoří a vloží
         do něj hlavičku pro LaTeXový dokument.
 
         :param nazev: název souboru včetně cesty

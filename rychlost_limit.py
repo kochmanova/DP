@@ -30,7 +30,7 @@ if __name__ == "__main__":
                                                        cas.tm_min)
 
     soubor = "vystup/" + nazev + ".tex"
-    file = latex_export.Soubor(soubor)
+    file = latex_export.LatexExport(soubor)
 
     rozvoj = Soustava.Soustava(rovnice, znamenko, levy_kraj)
 
