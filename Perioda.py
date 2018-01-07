@@ -11,8 +11,18 @@ EPS = 9e-17
 class Perioda(object):
     def __init__(self, fce, baze, znamenko, k, p, presne=True, abeceda=(-1, 0, 1)):
         """
-        Funkce, která se spustí automaticky s vytvořením instance Perioda, uloží si jednotlivé hodnoty a spočte
-        vyjádření celého výrazu pro předperiodu délky k a periodu p.
+        Metoda je spouštěna automaticky s vytvořením instance Perioda, uloží si jednotlivé hodnoty
+        a volá metodu vyjadreni_celeho_vyrazu pro l.
+
+        :param fce: polynom, jehož největším kořenem je báze beta
+        :param baze: beta
+        :param znamenko: -1 nebo +1, udává, zda se jedná o zápornou, resp. kladnou bázi
+        :param k: délka předperiodické části rozvoje levého kraje
+        :param p: velikost periody rozvoje levého kraje
+        :param presne: zda rozvoj levého kraje bude počítán přesně nebo přibližně
+        :param abeceda: abeceda pm,beta,l-rozvojů používaných cifer, defaultně nastavena na {-1,0,1}
+
+        :raises ValueError v případě chybně nastavených parametrů k a p
         """
 
         self.baze = baze
@@ -44,7 +54,7 @@ class Perioda(object):
 
     def vyjadreni_predperiody(self):
         """
-        Funkce, která podle hodnoty předperiody vyjádří 1. část vzorce pro výpočet hodnoty levého kraje.
+        Metoda, která podle hodnoty předperiody k vyjádří 1. část výrazu pro výpočet hodnoty levého kraje
         """
 
         vyraz = 0
@@ -58,7 +68,7 @@ class Perioda(object):
 
     def vyjadreni_periody(self):
         """
-        Funkce, která podle hodnoty periody vyjádří 2. část vzorce pro výpočet hodnoty levého kraje.
+        Metoda, která podle hodnoty periody p vyjádří 2. část výrazu odkaz pro výpočet hodnoty levého kraje.
         """
 
         vyraz = 0
@@ -83,7 +93,7 @@ class Perioda(object):
 
     def vycisleni_vyrazu_beta(self):
         """
-        Funkce, která do proměnné vyraz dosadí za proměnnou beta reálnou hodnotu báze.
+        Metoda, která do proměnné vyraz dosadí za symbolickou proměnnou beta reálnou hodnotu báze beta.
         """
 
         vycisleny = self.vyraz.subs(beta, self.baze)
@@ -91,11 +101,11 @@ class Perioda(object):
 
     def vycisleni_vyrazu_abc(self, vyraz, hodnoty: tuple):
         """
-        Funkce pro vyčíslení výrazu. Do proměnné vyraz dosadí za jednotlivé proměnné a, b, c, ... postupně jednotlivé
-        cifry z listu hodnoty.
+        Metoda pro vyčíslení výrazu. Do proměnné vyraz dosadí za jednotlivé symbolické proměnné a, b, c, ...
+        postupně jednotlivé cifry z hodnoty.
 
         :param vyraz: Symbolický výraz s proměnnými a, b, c, ...do kterého se dosadí jednotlivé hodnoty
-        :param hodnoty: Pole dosazovaných hodnot.
+        :param hodnoty: N-tice dosazovaných hodnot.
         :return: pom_vyraz (): Vyčíslený výraz
         """
 
@@ -108,8 +118,8 @@ class Perioda(object):
 
     def dosazeni_overeni_leveho_kraje(self, hodnoty: tuple):
         """
-        Funkce pro ověření, zda vyčíslená hodnota levého kraje splňuje základní požadavky a ověření, že rozvoj tohoto
-        kraje skutečně odpovídá námi odhadnutému rozvoji.
+        Metoda ověří, zda vyčíslená hodnota levého kraje splňuje základní požadavky a poté
+        ověří, že rozvoj tohoto kraje skutečně odpovídá námi odhadnutému rozvoji.
         :param hodnoty: Odhadnutý rozvoj levého kraje
         :return:
         """
@@ -127,9 +137,10 @@ class Perioda(object):
 
     def dosazeni_vse(self):
         """
-        Funkce, která vygeneruje všechny možné kombinace konečných slov nad abecedou A s délkou k+p. Tyto slova pak
-        ověří, po dosazení do vzorce pro levý kraj, spňují základní podmínky pro levý kraj. Pokud ano, je tato vzniklá
-        hodnota levého kraje ověřena ve funkci zpetne_overeni.
+        Tato metoda vygeneruje všechny možné kombinace konečných slov nad abecedou A s délkou k+p.
+        Z těchto kombinace v případě kladné báze odstraní nevhodné řetězce v metodě odstraneni_retezcu
+        podle speciálního pravidla. Po té pro jednotlivé zbývající řetězce zavolá metodu
+        dosazeni_overeni_leveho_kraje. v rámci níž dochází k další kontrole.
         """
 
         delka = self.k + self.p
@@ -150,6 +161,14 @@ class Perioda(object):
             i += 1
 
     def odstraneni_retezcu(self, hodnoty:list):
+        """
+        Tato metoda ořeže seznam řetězců o řetězce, které nesplňují speciální vztah.
+        V rámci této metody se vytváří pomocná soustava pro nalezení minimálního rozvoje levého kraje
+        a maximálního limitního rozvoje pravého kraje.
+        :param hodnoty: seznam vygenerovaných řetězců
+        :return: seznam řetězců, jejichž sufix leží mezi minimálním rozvojem levého kraje
+                 a maximálním limitním rozvojem pravého kraje
+        """
         pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='-1')
         pomocny_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne)
         levy_rozvoj = pomocny_rozvoj.rozvoj_leveho_kraje
@@ -171,10 +190,13 @@ class Perioda(object):
 
     def zpetne_overeni(self, hodnoty: tuple, levy):
         """
-        Funkce, která zadané konečné slovo (resp. navrhovaný rozvoj levého kraje) a jeho spočtená hodnota levého kraje
-        ověří, zda se skutečně jedná o rozvoj tohoto levého kraje.
-        :param hodnoty: Navrhovaný rozvoj levého kraje nad danou abecenou
-        :param levy: spočtená hodnota levého kraje
+        Metoda, která zadané konečné slovo (resp. navrhovaný rozvoj levého kraje) a jeho vypočítaná hodnota
+        levého kraje ověří, zda se skutečně jedná o rozvoj tohoto levého kraje. Pokud ano, obě hodnoty se uloží
+        do self.levy a self.hodnoty, vypočte se levý kraj vyjádřený pomocí báze beta a uloží se do
+        leve_kraje_symbolicky, spočte se hodnota pravého kraje a spolu s periodou se uloží do proměnných
+        .prave_kraje a prave_kraje_perioda.
+        :param hodnoty: navrhovaný rozvoj levého kraje nad danou abecedou
+        :param levy: vypočítaná hodnota levého kraje
         """
 
         hledany_rozvoj = Soustava.Soustava(self.fce, self.znamenko, levy)
