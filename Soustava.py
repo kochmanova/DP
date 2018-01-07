@@ -160,8 +160,7 @@ class Soustava(object):
 
     def nalezeni_limitniho_rozvoje(self, pocet_cifer=30):
         """
-        Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje bez použití limit v dané bázi
-        na pocet_cifer.
+        Funkce, která pro pravý kraj spočte limitní rozvoj pravého kraje v dané bázi na pocet_cifer.
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         :returns rozvoj (list)
         :returns perioda (int/None)
@@ -230,7 +229,7 @@ class Soustava(object):
         print("Nalezli jsme rozvoj pravého kraje: [%s]" % ",".join(map(str, self.rozvoj_praveho_kraje)))
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
 
-    def spociter_rozvoj_bodu(self, bod, presne=True, pocet_cifer: int = 30):
+    def spocitej_rozvoj_bodu(self, bod, presne=True, pocet_cifer: int = 30):
         #TODO dodělat pro libovolný bod z R
         bod = sp.sympify(bod)
         if presne:
@@ -362,7 +361,7 @@ class Soustava(object):
         max0 = []
         mink.append(min0)
         maxk.append(max0)
-        for i in range(1, k):
+        for i in range(1, k+1):
             mini = self.prilep_periodu(rozvoj_levy, leva_perioda, i)
             maxi = self.prilep_periodu(rozvoj_pravy, prava_perioda, i)
             print(mini)
@@ -402,8 +401,8 @@ class Soustava(object):
             maxk.append(maxi)
         self.mink = mink
         self.maxk = maxk
-        self.spocitej_vzdalenosti(k)
-        self.spocitej_vzdalenosti_symbolicky(k)
+        self.spocitej_vzdalenosti(k+1)
+        self.spocitej_vzdalenosti_symbolicky(k+1)
 
     def gamma_funkce(self, retezec: list):
         """
