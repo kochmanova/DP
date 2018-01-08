@@ -4,8 +4,9 @@ from itertools import product
 from sympy.abc import a, b, c, d, e, f, g, h, l, m, n, o, q, r, s, t, u, v, w, beta
 import Soustava
 
-presnost = 1000 #684
+presnost = 1000
 EPS = 9e-17
+pocet_cifer = 20
 
 
 class Perioda(object):
@@ -128,11 +129,9 @@ class Perioda(object):
         priblizny_levy_kraj = sp.N(levy_kraj, n=presnost)
         if priblizny_levy_kraj <= 0 and priblizny_levy_kraj > -1:
             if (self.znamenko == -1) and ((-priblizny_levy_kraj / self.baze - EPS > (priblizny_levy_kraj + 1)) or (
-                        -(priblizny_levy_kraj + 1) / self.baze + EPS < priblizny_levy_kraj)):
-                # print("Jsem tu")
+                                -(priblizny_levy_kraj + 1) / self.baze + EPS < priblizny_levy_kraj)):
                 pass
             else:
-                # rozvoj_leveho_kraje = list(hodnoty)
                 self.zpetne_overeni(hodnoty, levy_kraj)
 
     def dosazeni_vse(self):
@@ -146,7 +145,7 @@ class Perioda(object):
         delka = self.k + self.p
         hodnoty = list(product(self.A, repeat=delka))
         print("Celkem máme {0:.0f} řetezců".format(len(self.A) ** delka))
-        if self.znamenko>0:
+        if self.znamenko > 0:
             procistene_retezce = self.odstraneni_retezcu(hodnoty)
             print("Celkem máme {0:.0f} řetezců".format(len(procistene_retezce)))
         else:
@@ -155,12 +154,10 @@ class Perioda(object):
 
         for retezec in procistene_retezce:
             print("{}. případ dosazení, teď počítáme rozvoj: {}".format(i, list(retezec)))
-            # print("{}. případ dosazení, nyní děláme rozvoj tohohle: [%s]" % ",".format(i) .join(map(str, retezec)))
-            # print("Nyni delame rozvoj tohohle:  [%s]" % ",".join(map(str, hodnoty)))
             self.dosazeni_overeni_leveho_kraje(retezec)
             i += 1
 
-    def odstraneni_retezcu(self, hodnoty:list):
+    def odstraneni_retezcu(self, hodnoty: list):
         """
         Tato metoda ořeže seznam řetězců o řetězce, které nesplňují speciální vztah.
         V rámci této metody se vytváří pomocná soustava pro nalezení minimálního rozvoje levého kraje
@@ -175,14 +172,15 @@ class Perioda(object):
         leva_perioda = pomocny_rozvoj.perioda_leveho_kraje
 
         pomocny_rozvoj = Soustava.Soustava(self.fce, self.znamenko, symbol_levy_kraj='0')
-        pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(30)
+        pomocny_rozvoj.spocitej_rozvoj_praveho_kraje(pocet_cifer)
         pravy_rozvoj = pomocny_rozvoj.rozvoj_praveho_kraje
         prava_perioda = pomocny_rozvoj.perioda_praveho_kraje
 
         vyhodit = set()
 
         for retezec in hodnoty:
-            if not pomocny_rozvoj.lezi_retezec_mezi(retezec, self.p, levy_rozvoj, leva_perioda, pravy_rozvoj, prava_perioda):
+            if not pomocny_rozvoj.lezi_retezec_mezi(retezec, self.p, levy_rozvoj, leva_perioda, pravy_rozvoj,
+                                                    prava_perioda):
                 vyhodit.add(retezec)
 
         procisteny_retezec = [x for x in hodnoty if x not in vyhodit]
@@ -200,7 +198,6 @@ class Perioda(object):
         """
 
         hledany_rozvoj = Soustava.Soustava(self.fce, self.znamenko, levy)
-        #print(levy)
         hledany_rozvoj.spocitej_rozvoj_leveho_kraje(self.presne, self.p + self.k)
         if hodnoty == hledany_rozvoj.rozvoj_leveho_kraje:
             if self.p == hledany_rozvoj.perioda_leveho_kraje:
@@ -211,6 +208,6 @@ class Perioda(object):
                 print("Retezec, ktery ma {} predperiodu a {} periodu je (retezec, levy kraj):".format(self.k, self.p))
                 print(hodnoty)
                 print(levy)
-                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(15)
+                hledany_rozvoj.spocitej_rozvoj_praveho_kraje(pocet_cifer)
                 self.prave_kraje.append(hledany_rozvoj.rozvoj_praveho_kraje)
                 self.prave_kraje_perioda.append(hledany_rozvoj.perioda_praveho_kraje)

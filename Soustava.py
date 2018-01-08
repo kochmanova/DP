@@ -12,7 +12,7 @@ class Soustava(object):
     Dále může spočítat rozvoj levého a pravého kraje s možností spočítat mink, maxk a jejich vzdálenosti.
     """
 
-    def __init__(self, fce='x**3-x**2-x-1', znamenko=1, symbol_levy_kraj='-x/3'):
+    def __init__(self, fce='x**2-x-1', znamenko=1, symbol_levy_kraj='-1/x'):
         """
         Metoda je volána, jakmile vytvoříme instanci třídy Soustava.
         V rámci dané instance si uloží polynom (proměnná fce),

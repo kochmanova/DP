@@ -15,7 +15,6 @@ class LatexExport(object):
         self.nazev = nazev
         self.otevri_soubor()
         self.napis_hlavicku()
-        # self.ukonceni_souboru()
 
     def otevri_soubor(self):
         """
@@ -188,7 +187,6 @@ class LatexExport(object):
         self.f.write("Levý kraj $\ell = ")
         self.prevod_x_na_beta(symbol_levy_kraj)
         self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3, chop=True)))
-        # self.f.write("$.\n\n")
 
     def vypis_perioda(self, perioda: Perioda):
         """
@@ -281,3 +279,4 @@ class LatexExport(object):
         else:
             self.f.write("Rozvoj levého kraje je spočten nepřesně (jednotlivé transformace zaokrouhlujeme na 1000 "
                          "desetinných míst. Limitní rozvoj pravého kraje je spočten přesně. ")
+        print("Výsledky byly úspěšně zapsány do souboru ", self.nazev)

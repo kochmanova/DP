@@ -2,8 +2,6 @@ import Soustava
 import time
 import latex_export
 
-from sympy import cancel
-
 if __name__ == "__main__":
 
     rovnice = 'x**2-x-1'
