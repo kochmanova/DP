@@ -182,10 +182,9 @@ class LatexExport(object):
         """
         Metoda, která vypíše informace o levém kraji, jeho vyjádření pomocí báze i jeho přibližnou hodnotu.
 
-        :param symbol_levy_kraj:
-        :param levy_kraj
+        :param symbol_levy_kraj: symbolické vyjádření levého kraje pomocí báze beta
+        :param levy_kraj: hodnota levého kraje
         """
-        # TODO popis parametru
         self.f.write("Levý kraj $\ell = ")
         self.prevod_x_na_beta(symbol_levy_kraj)
         self.f.write("\doteq {} $. \n\n".format(N(levy_kraj, n=3, chop=True)))

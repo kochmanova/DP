@@ -55,8 +55,6 @@ class Soustava(object):
 
         :raises ValueError v případě, že báze beta <= 1 nebo není reálná
         """
-
-        # TODO existuje funkce, která se jmenuje podobně a možná dělá jen tu konkrétní věc a to chci -> podívat
         reseni_rovnice = sp.solve(self.fce, x)
         realne_koreny = [koren for koren in reseni_rovnice if sp.sympify(koren).is_real]
         if len(realne_koreny) < 1:
