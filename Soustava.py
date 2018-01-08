@@ -243,8 +243,8 @@ class Soustava(object):
             rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod, pocet_cifer)
         else:
             rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod, pocet_cifer)
-        print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, self.rozvoj_leveho_kraje)))
-        print("S periodou délky {}".format(self.perioda_leveho_kraje))
+        print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, rozvoj_bodu)))
+        print("S periodou délky {}".format(perioda_bodu))
         return rozvoj_bodu, perioda_bodu
 
     def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list,
