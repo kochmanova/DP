@@ -9,13 +9,6 @@ if __name__ == "__main__":
     rovnice = 'x**2-x-1'
     znamenko = 1
     levy_kraj = '-1/x'
-            # #'-1/(1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3)) - 1/(1/3 + ' \
-            #     '4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))**2 - (1/3 + 4/(9*(sqrt(33)/9 ' \
-            #     '+ 19/27)**(1/3)) + (sqrt(33)/9 + 19/27)**(1/3))/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) +' \
-            #     ' (sqrt(33)/9 + 19/27)**(1/3))**4) + 1/(-1 + (1/3 + 4/(9*(sqrt(33)/9 + 19/27)**(1/3)) + (sqrt(33)/9 +' \
-            #     ' 19/27)**(1/3))**4)'
-    print(cancel(levy_kraj))
-    levy_kraj = cancel(levy_kraj)
     presnost = True
     pocet_cifer = 10
     k = 5
@@ -32,8 +25,8 @@ if __name__ == "__main__":
     # nalezení mink, maxk řetězců a jejich vzdáleností
     rozvoj.spocitej_mink_maxk(k)
 
-    # spočtení rozvoje nějakého bodu
-    rozvoj.spocitej_rozvoj_bodu('0',True,10)
+    # spočtení rozvoje nějakého bodu z intervalu <l,l+1)
+    rozvoj_bodu, perioda = rozvoj.spocitej_rozvoj_bodu('0',True,10)
 
     # export výsledků do LaTeXového souboru
     cas = time.localtime()

@@ -2,7 +2,7 @@ import sympy as sp
 from sympy.abc import x
 
 EPS = 9e-17
-presnost = 1000  # 684  # max 684, 700 nejde zatím
+presnost = 1000
 MALO = 2e-8
 
 
@@ -96,7 +96,7 @@ class Soustava(object):
         :returns rozvoj (list) bodu
         :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
-        if bod >= self.levy_kraj+1 or bod < self.levy_kraj:
+        if bod >= self.levy_kraj + 1 or bod < self.levy_kraj:
             raise ValueError("Bod neleží v intervalu <l, l+1). V současnosti nelze vypočítat.")
 
         periodicke = False
@@ -132,7 +132,7 @@ class Soustava(object):
         :returns rozvoj (list) bodu
         :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
-        if bod >= self.levy_kraj+1 or bod < self.levy_kraj:
+        if bod >= self.levy_kraj + 1 or bod < self.levy_kraj:
             raise ValueError("Bod neleží v intervalu <l, l+1). V současnosti nelze vypočítat.")
 
         periodicke = False
@@ -238,7 +238,6 @@ class Soustava(object):
         :return: perioda_bodu
         """
 
-        #TODO dodělat pro libovolný bod z R
         bod = sp.sympify(bod)
         if presne:
             rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod, pocet_cifer)
@@ -246,6 +245,7 @@ class Soustava(object):
             rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod, pocet_cifer)
         print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, self.rozvoj_leveho_kraje)))
         print("S periodou délky {}".format(self.perioda_leveho_kraje))
+        return rozvoj_bodu, perioda_bodu
 
     def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list,
                          perioda_druheho: list):
@@ -272,7 +272,8 @@ class Soustava(object):
         elif perioda_druheho != [0]:
             delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + len(perioda_druheho)
         else:
-            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + sp.lcm(len(perioda_prvniho),len(perioda_druheho),2)
+            delka_retezce = max(len(pracovni_retezec_1), len(pracovni_retezec_2)) + sp.lcm(len(perioda_prvniho),
+                                                                                           len(perioda_druheho), 2)
         pracovni_retezec_1 = self.prilep_periodu(pracovni_retezec_1, perioda_prvniho, delka_retezce)
         pracovni_retezec_2 = self.prilep_periodu(pracovni_retezec_2, perioda_druheho, delka_retezce)
         for i in range(len(pracovni_retezec_1)):
@@ -375,7 +376,7 @@ class Soustava(object):
         max0 = []
         mink.append(min0)
         maxk.append(max0)
-        for i in range(1, k+1):
+        for i in range(1, k + 1):
             mini = self.prilep_periodu(rozvoj_levy, leva_perioda, i)
             maxi = self.prilep_periodu(rozvoj_pravy, prava_perioda, i)
             print(mini)
@@ -415,8 +416,8 @@ class Soustava(object):
             maxk.append(maxi)
         self.mink = mink
         self.maxk = maxk
-        self.spocitej_vzdalenosti(k+1)
-        self.spocitej_vzdalenosti_symbolicky(k+1)
+        self.spocitej_vzdalenosti(k + 1)
+        self.spocitej_vzdalenosti_symbolicky(k + 1)
 
     def gamma_funkce(self, retezec: list):
         """
@@ -470,12 +471,13 @@ class Soustava(object):
         for i in range(k):
             if self.znamenko < 0:
                 vzdalenost = abs(
-                (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(self.mink[i]) - self.gamma_funkce_symbolicky(
-                    self.maxk[i]))
+                    (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(
+                        self.mink[i]) - self.gamma_funkce_symbolicky(
+                        self.maxk[i]))
             else:
                 vzdalenost = (self.znamenko * x) ** i + self.gamma_funkce_symbolicky(
-                        self.mink[i]) - self.gamma_funkce_symbolicky(
-                        self.maxk[i])
+                    self.mink[i]) - self.gamma_funkce_symbolicky(
+                    self.maxk[i])
             delta.append(vzdalenost)
         self.vzdalenosti_symbolicky = delta
 
