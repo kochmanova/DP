@@ -32,6 +32,9 @@ if __name__ == "__main__":
     # nalezení mink, maxk řetězců a jejich vzdáleností
     rozvoj.spocitej_mink_maxk(k)
 
+    # spočtení rozvoje nějakého bodu
+    rozvoj.spocitej_rozvoj_bodu('0',True,10)
+
     # export výsledků do LaTeXového souboru
     cas = time.localtime()
     if znamenko > 0:

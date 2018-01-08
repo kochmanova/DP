@@ -76,17 +76,14 @@ class Soustava(object):
 
         :raises ValueError v případě, kdy nejsou splněny požadované podmínky pro výpočet
         """
-        # TODO ohledně té podmínky a její správnosti
 
         symbolicky_levy_kraj = sp.sympify(symbol_levy_kraj)
         symbolicky_levy_kraj = symbolicky_levy_kraj.subs({x: self.baze})
         priblizny_kraj = sp.N(symbolicky_levy_kraj, n=presnost)
-        # print(priblizny_kraj) # výpis hodnoty levého kraje
         if (priblizny_kraj > 0) or (priblizny_kraj < -1):
             raise ValueError("Nejsou splněny základní požadavky, nula neleží v zadaném intervalu.")
         if (self.znamenko == -1) and ((-priblizny_kraj / self.baze - EPS > (priblizny_kraj + 1)) or -(
                     priblizny_kraj + 1) / self.baze + EPS < priblizny_kraj):
-            # Je tahle podmínka správně nepsaná?
             raise ValueError("Nejsou splněny základní požadavky, interval není invariantní vůči posunutí.")
         self.levy_kraj = symbolicky_levy_kraj
 
@@ -99,7 +96,8 @@ class Soustava(object):
         :returns rozvoj (list) bodu
         :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
-        # TODO podmínka pro bod - ValueError, bod je sympy/ int?
+        if bod >= self.levy_kraj+1 or bod < self.levy_kraj:
+            raise ValueError("Bod neleží v intervalu <l, l+1). V současnosti nelze vypočítat.")
 
         periodicke = False
         perioda = None
@@ -111,25 +109,14 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj
-            # rozvoj.append(sp.simplify(sp.floor(cifra))) -> zjevně to dávám s cancel
-            # mez = time()
-            # print("Nalezli jsme cifru čas {0:.2f}".format(mez-start))
             rozvoj.append(int(sp.N(sp.cancel(sp.floor(cifra)), n=1, chop=True)))
-            # mm = time()
-            # print("Pripojili jsme cifru trvalo to {0:.2f}".format(mm-mez))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
-            # tr = time()
-            # print("nova transformace s časem {0:.2f}".format(tr-mm))
             transformace.append(nova_transformace)
-            # kk = time()
-            # print("Pripojeni s časem {0:.2f}".format(kk-tr))
             for j in range(len(transformace)):
                 if (abs(transformace[j] - transformace[i]) < MALO) and (j != i):
                     periodicke = True
                     perioda = i - j
             i += 1
-            # tada = time()
-            # print("Proběhl forcyklus s časem {0:.2f}".format(tada-kk))
             # cyklus = time() - start
             # print("Cyklus trval {0:.2f} s".format(cyklus))
         return tuple(rozvoj), perioda
@@ -145,7 +132,8 @@ class Soustava(object):
         :returns rozvoj (list) bodu
         :returns perioda (int/None): délka periody jestli, jestliže ji metoda nalezla
         """
-        # TODO podmínka pro bod - ValueError
+        if bod >= self.levy_kraj+1 or bod < self.levy_kraj:
+            raise ValueError("Bod neleží v intervalu <l, l+1). V současnosti nelze vypočítat.")
 
         periodicke = False
         perioda = None
@@ -157,7 +145,6 @@ class Soustava(object):
             # start = time()
             print("Počítáme {0:.0f}. cifru".format(i))
             cifra = sp.floor(self.znamenko * self.baze * transformace[i - 1] - self.levy_kraj)
-            # rozvoj.append(int(sp.N(sp.cancel(cifra),n=1, chop=True)))
             rozvoj.append(int(sp.N(cifra, n=1, chop=True)))
             nova_transformace = self.znamenko * self.baze * transformace[i - 1] - rozvoj[i - 1]
             transformace.append(sp.N(nova_transformace, n=presnost, chop=True))
@@ -215,7 +202,7 @@ class Soustava(object):
         Funkce, která zavolá funkci pro nalezení rozvoje levého kraje přesně, resp. nepřesně podle parametru presne,
         na pocet_cifer. Danou hodnotu spolu s hodnotou periody si uloží a vypíše. V případě, že perioda nebyla nalezena,
         bude tato proměnná obsahovat hodnotu None.
-        :param presne:
+        :param presne: True/False
         :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
         """
 
@@ -233,7 +220,7 @@ class Soustava(object):
         Funkce, která zavolá metodu nalezeni_limitniho_rozvoje pro nalezení limitního rozvoje pravého kraje
         na pocet_cifer. Danou hodnotu rozvoje spolu s hodnotou periody si uloží a vypíše. V případě, že
         perioda nebyla nalezena, bude tato proměnná obsahovat hodnotu None.
-        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat limitní rozvoj pravého kraje
         """
 
         self.rozvoj_praveho_kraje, self.perioda_praveho_kraje = self.nalezeni_limitniho_rozvoje(pocet_cifer)
@@ -241,6 +228,16 @@ class Soustava(object):
         print("S periodou délky {}".format(self.perioda_praveho_kraje))
 
     def spocitej_rozvoj_bodu(self, bod, presne=True, pocet_cifer: int = 30):
+        """
+        Funkce, která zavolá metodu nalezeni_presneho_rozvoje pro nalezení rozvoje bodu přesně, resp. nepřesně podle
+        parametru presne, na pocet_cifer. Rozvoj spolu s periodou vypíše.
+        :param bod: z intervalu <l,l+1)
+        :param presne:
+        :param pocet_cifer: volitelný parametr, na kolik cifer chceme získat rozvoj daného bodu
+        :return: rozvoj_bodu
+        :return: perioda_bodu
+        """
+
         #TODO dodělat pro libovolný bod z R
         bod = sp.sympify(bod)
         if presne:
@@ -362,7 +359,8 @@ class Soustava(object):
         Funkce pro zadané k nalézne řetězce mink a maxk až do délky řetězce k.
         Řetězce mink, resp. maxk uloží do mink, resp. maxk.
         Po nalezení jednotlivých řetězců mink a maxk zavolá tato metoda metodu spocitej_vzdalenosti,
-        poté spocitej_vzdalenosti_symbolicky pro výpočet jedlotlivých vzdáleností mezi sousedními pm,beta,l-celými čísly.
+        poté spocitej_vzdalenosti_symbolicky pro výpočet jedlotlivých vzdáleností mezi sousedními
+        pm,beta,l-celými čísly.
 
         :param k: maximální délka řetězců mink a maxk, kterou chceme nalézt
         """

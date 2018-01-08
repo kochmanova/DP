@@ -227,7 +227,6 @@ class LatexExport(object):
 
         :param perioda: instance třídy Perioda
         """
-        # TODO popis parametru
         self.f.write("\\begin{itemize} ")
         for i in range(len(perioda.hodnoty)):
             self.f.write("\item $\ell = ")
