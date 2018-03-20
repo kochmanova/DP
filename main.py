@@ -1,10 +1,10 @@
+
 from tkinter import *
 import limitni
 import rozvoj
 import periody
 import time
 import latex_export
-
 root = Tk()
 #root.resizable(width=500, height=200)
 # theLabel = Label(frame1, text = "Toto je program pro vytváření (+-beta,ell)-rozvojů")

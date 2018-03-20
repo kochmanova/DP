@@ -46,3 +46,8 @@ tmtagsHistory
 # Temp files #
 ##############
 *~
+
+# LaTeX #
+*.aux
+*.tex
+*.pdf
