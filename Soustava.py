@@ -1,5 +1,6 @@
 import sympy as sp
 from sympy.abc import x
+from itertools import product
 
 EPS = 9e-17
 presnost = 1000
@@ -239,13 +240,39 @@ class Soustava(object):
         """
 
         bod = sp.sympify(bod)
-        if presne:
-            rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod, pocet_cifer)
+        if (bod < self.levy_kraj+1) and (self.levy_kraj >= bod):
+            print("skočila jsem sem")
+            if presne:
+                rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod, pocet_cifer)
+            else:
+                rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod, pocet_cifer)
+            print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, rozvoj_bodu)))
+            print("S periodou délky {}".format(perioda_bodu))
+            tecka = None
+            return rozvoj_bodu, perioda_bodu, tecka
         else:
-            rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod, pocet_cifer)
-        print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, rozvoj_bodu)))
-        print("S periodou délky {}".format(perioda_bodu))
-        return rozvoj_bodu, perioda_bodu
+            bod_k = bod
+            bod_k1 = bod/ (self.znamenko*self.baze)
+            k=0
+            #print(sp.N(self.levy_kraj))
+            while (bod_k >= self.levy_kraj+1 or bod_k < self.levy_kraj):
+                #TODO nevím, jestli tuhle část u while mám správně - je to špatně, vlastně pokud bod_k1 tam neleží tak
+                # to přejde, prostě to řeší jen to, aby bod_k tam ležel - nutno pořešit
+                if (bod_k1 < self.levy_kraj+1 and bod_k1 >= self.levy_kraj):
+                    pass
+                k= k+1
+                bod_k = bod_k1
+                bod_k1 = bod_k/ (self.znamenko*self.baze)
+                #print(sp.N(bod_k))
+            if presne:
+                rozvoj_bodu, perioda_bodu = self.nalezeni_presneho_rozvoje(bod_k, pocet_cifer)
+            else:
+                rozvoj_bodu, perioda_bodu = self.nalezeni_priblizneho_rozvoje(bod_k, pocet_cifer)
+            print("Nalezli jsme rozvoj bodu: [%s]" % ",".join(map(str, rozvoj_bodu)))
+            print("S periodou délky {}".format(perioda_bodu))
+            print("Tecka je za {}. pozici".format(k))
+            tecka = k
+            return rozvoj_bodu, perioda_bodu, tecka
 
     def porovnej_retezce(self, prvni_retezec: list, druhy_retezec: list, perioda_prvniho: list,
                          perioda_druheho: list):
@@ -520,3 +547,26 @@ class Soustava(object):
             return [0]
         else:
             return retezec[-perioda:]
+
+    def vytvor_Zb(self, delka: int):
+        """
+
+        :param delka:
+        :return:
+        """
+        znaky = self.rozvoj_praveho_kraje + self.rozvoj_leveho_kraje
+        abeceda = set(znaky)
+        #print(abeceda)
+        mozne_retezce = list(product(abeceda, repeat=delka))
+        print(len(mozne_retezce))
+
+        vyhodit = set()
+
+        for retezec in mozne_retezce:
+            if not self.je_retezec_pripustny(retezec, None):
+                vyhodit.add(retezec)
+
+        Zb = [x for x in mozne_retezce if x not in vyhodit]
+        print(len(Zb))
+        return Zb
+
